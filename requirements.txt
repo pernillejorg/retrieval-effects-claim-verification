@@ -1,0 +1,29 @@
+# Core ML / NLP
+torch>=2.0.0
+transformers>=4.40.0
+sentence-transformers>=2.7.0
+
+# Retrieval
+rank-bm25>=0.2.2
+faiss-cpu>=1.8.0
+
+# NLI reranker (cross-encoder)
+# model: cross-encoder/nli-deberta-v3-small (loaded via sentence-transformers)
+
+# Datasets
+datasets>=2.19.0
+
+# Evaluation
+scikit-learn>=1.4.0
+numpy>=1.26.0
+pandas>=2.2.0
+
+# Notebook support
+jupyter>=1.0.0
+ipykernel>=6.29.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Utilities
+tqdm>=4.66.0
+python-dotenv>=1.0.0
