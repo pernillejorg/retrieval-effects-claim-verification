@@ -1,69 +1,71 @@
 # Data
 
-This folder contains scripts and documentation for the two datasets used in this project. Raw data files are not committed to the repository — they are downloaded locally using the scripts provided.
+This folder is for dataset loading and preprocessing. Raw data files are not committed to the repo — they get downloaded locally using the scripts in each subfolder.
 
 ---
 
 ## Dataset 1: SciFact (Primary)
 
-**Source:** [allenai/scifact](https://huggingface.co/datasets/allenai/scifact) on Hugging Face  
-**Paper:** Wadden et al. (2020) — *Fact or Fiction: Verifying Scientific Claims*  
-**Task:** Classify a scientific claim as `SUPPORT`, `CONTRADICT`, or `NOT ENOUGH INFO` given a corpus of paper abstracts as evidence.
+Source: [allenai/scifact](https://huggingface.co/datasets/allenai/scifact) on Hugging Face
+Paper: Wadden et al. (2020), *Fact or Fiction: Verifying Scientific Claims*
+Task: classify a scientific claim as SUPPORT, CONTRADICT, or NOT ENOUGH INFO using a corpus of paper abstracts as evidence
 
 ### Why SciFact?
-SciFact is the primary dataset for this project because retrieval is genuinely hard — the evidence corpus contains ~5,000 abstracts and retrieval quality varies substantially, which is exactly the condition we want to study. Claims are precise and domain-specific, meaning topically similar but non-committal documents are a real problem, which is the core motivation for stance-aware reranking.
+SciFact is the main dataset for this project because retrieval is genuinely difficult here. The evidence corpus has ~5,000 abstracts and the claims are precise enough that topically similar but non-committal documents are a real problem, which is exactly the motivation for the stance reranker. My supervisor specifically recommended it for this reason.
 
 ### Structure
-- `train`: 809 claims with labelled evidence
-- `validation`: 300 claims
-- `corpus`: 5,183 paper abstracts (the retrieval corpus)
+- train: 809 claims with labelled evidence
+- - validation: 300 claims
+  - - corpus: 5,183 paper abstracts (the retrieval corpus)
+   
+    - ### Labels
+   
+    - | Label | Meaning |
+    - |---|---|
+    - | SUPPORT | the evidence supports the claim |
+    - | CONTRADICT | the evidence contradicts the claim |
+    - | NOT_ENOUGH_INFO | no evidence found that directly addresses the claim |
+   
+    - ### How to load it
+    - ```python
+      from datasets import load_dataset
+      dataset = load_dataset("allenai/scifact")
+      corpus = load_dataset("allenai/scifact", "corpus")
+      ```
 
-### Labels
-| Label | Meaning |
-|---|---|
-| `SUPPORT` | The evidence supports the claim |
-| `CONTRADICT` | The evidence contradicts the claim |
-| `NOT_ENOUGH_INFO` | No evidence found that directly addresses the claim |
+      ---
 
-### Loading
-```python
-from datasets import load_dataset
-dataset = load_dataset("allenai/scifact")
-corpus = load_dataset("allenai/scifact", "corpus")
-```
+      ## Dataset 2: SciClaimHunt (Secondary)
 
----
+      Source: to be confirmed — check Hugging Face and recent ACL/EMNLP proceedings
+      Task: scientific claim verification, similar label structure to SciFact
 
-## Dataset 2: SciClaimHunt (Secondary)
+      ### Why SciClaimHunt?
+      The whole point of using a second dataset is to check whether the findings from SciFact actually generalise or whether they are specific to that corpus. Running the core pipeline variants on both means I can make claims like "stance reranking helps consistently" rather than just "stance reranking helped on SciFact." My supervisor asked for this specifically. If the results diverge between datasets that is also an interesting and valid finding.
 
-**Source:** To be confirmed — check Hugging Face and recent ACL/EMNLP proceedings  
-**Task:** Scientific claim verification, similar label structure to SciFact
+      The plan is to do full manual failure annotation on SciFact only, and use SciClaimHunt for quantitative comparison across conditions.
 
-### Why SciClaimHunt?
-SciClaimHunt is used as the secondary dataset to establish that findings generalise beyond SciFact. Running the core pipeline variants and experimental matrix on both datasets allows us to distinguish between results that are SciFact-specific and results that reflect broader properties of retrieval-augmented claim verification. This is what separates a case study from a research contribution.
+      ### Key differences from SciFact
+      - more recent dataset with a different source corpus
+      - - allows cross-dataset comparison of failure patterns and stance reranking effectiveness
+       
+        - ---
 
-### Key differences from SciFact
-- More recent dataset with a different source corpus
-- Allows cross-dataset comparison of failure patterns and stance reranking effectiveness
-- Full manual failure annotation is done on SciFact only; SciClaimHunt uses quantitative failure rate comparison
+        ## A note on raw data files
 
----
+        Raw data (JSON, JSONL, etc.) is excluded from version control via `.gitignore`. This keeps the repo lightweight and avoids any issues with redistributing dataset files. Download and cache them locally using the loading scripts.
 
-## What is NOT stored here
+        ---
 
-Raw data files (JSON, JSONL, etc.) are excluded from version control via `.gitignore`. Download and cache them locally using the loading scripts. This keeps the repository lightweight and avoids licensing issues with redistributing dataset files.
+        ## Folder structure once data is downloaded locally
 
----
-
-## Folder structure (once data is downloaded locally)
-
-```
-data/
-├── README.md               # This file
-├── scifact/
-│   ├── download.py         # Script to download and cache SciFact
-│   └── (cached files)      # gitignored
-└── sciclaimhunt/
-    ├── download.py         # Script to download and cache SciClaimHunt
-        └── (cached files)      # gitignored
+        ```
+        data/
+        ├── README.md               # this file
+        ├── scifact/
+        │   ├── download.py         # script to download and cache SciFact
+        │   └── (cached files)      # gitignored
+        └── sciclaimhunt/
+            ├── download.py         # script to download and cache SciClaimHunt
+            └── (cached files)      # gitignored
         ```
