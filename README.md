@@ -17,6 +17,53 @@
 > >
 > > ---
 > >
+> > ## Project Timeline
+> >
+> > ```mermaid
+> > gantt
+> >     title MSc Thesis Project Timeline
+> >     dateFormat  YYYY-MM-DD
+> >     axisFormat  %d %b
+> >
+> >     section 1. Literature Review
+> >     Background Research           :lit1, 2026-05-25, 2026-06-08
+> >     Related Work (Fact-checking/RAG) :lit2, 2026-05-29, 2026-06-15
+> >
+> >     section 2. Data Preparation
+> >     Dataset Download & Exploration of SciFact :data1, 2026-05-28, 2026-06-10
+> >     Data Cleaning & Formatting    :data2, 2026-06-04, 2026-06-19
+> >
+> >     section 3. Baseline Model
+> >     Model Setup (RoBERTa)         :base1, 2026-06-10, 2026-06-22
+> >     Training & Evaluation         :base2, 2026-06-17, 2026-06-30
+> >
+> >     section 4. Retrieval Module
+> >     BM25 Implementation           :ret1, 2026-06-15, 2026-06-26
+> >     Dense Retrieval Implementation :ret2, 2026-06-19, 2026-07-06
+> >
+> >     section 5. RAG System
+> >     Integration Claim             :rag1, 2026-06-29, 2026-07-08
+> >     Integration Evidence          :rag2, 2026-06-29, 2026-07-10
+> >
+> >     section 6. Evaluation & Analysis
+> >     Initial Evaluation (for draft) :eval1, 2026-07-02, 2026-07-17
+> >     Extended Experiments          :eval2, 2026-07-10, 2026-07-24
+> >     Error & Failure Analysis      :eval3, 2026-07-17, 2026-07-29
+> >
+> >     section 7. Real-world Application
+> >     Model behaviour on real-world scenarios :rw1, 2026-07-20, 2026-07-30
+> >
+> >     section 8. Writing
+> >     Draft Writing                 :write1, 2026-06-25, 2026-07-17
+> >     Final Writing: Refinement     :write2, 2026-07-08, 2026-08-11
+> >     Editing & Proofreading        :write3, 2026-08-05, 2026-08-12
+> >
+> >     section 9. Presentation
+> >     Presentation Prep & Finishing :pres1, 2026-08-05, 2026-08-12
+> > ```
+> >
+> > ---
+> >
 > > ## Project Structure
 > >
 > > ```
