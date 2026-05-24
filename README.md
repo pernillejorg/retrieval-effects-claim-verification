@@ -4,7 +4,7 @@
 
 > *MSc Thesis Project — supervised research*
 > ---
->>  Author: Pernille Bergesen
+>>  Author: Pernille Bergesen (MSc AI Student)
 > 
 >>  Supervisor: Arkaitz Zubiaga (Senior Lecturer in NLP)
 > ---
