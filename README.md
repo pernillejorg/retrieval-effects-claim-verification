@@ -71,25 +71,25 @@
 > >
 > > ```
 > > rag-claim-verification/
-> > ├── data/                    # dataset loading and preprocessing
-> > │   ├── scifact/             # SciFact (primary dataset)
-> > │   └── sciclaimhunt/        # SciClaimHunt (secondary dataset)
+> > ├── data/                    #dataset loading and preprocessing
+> > │   ├── scifact/             #SciFact (primary dataset)
+> > │   └── sciclaimhunt/        #SciClaimHunt (secondary dataset)
 > > ├── models/
-> > │   ├── baseline.py          # RoBERTa no-retrieval baseline
-> > │   ├── retrieval.py         # BM25 + dense retrieval
-> > │   ├── reranker.py          # stance-aware reranking via NLI
-> > │   └── pipeline.py          # full RAG pipeline
+> > │   ├── baseline.py          #RoBERTa no-retrieval baseline
+> > │   ├── retrieval.py         #BM25 + dense retrieval
+> > │   ├── reranker.py          #stance-aware reranking via NLI
+> > │   └── pipeline.py          #full RAG pipeline
 > > ├── experiments/
-> > │   ├── run_experiments.py   # controlled experimental matrix
-> > │   └── configs/             # experiment config files
+> > │   ├── run_experiments.py   #controlled experimental matrix
+> > │   └── configs/             #experiment config files
 > > ├── analysis/
-> > │   ├── failure_taxonomy.py  # failure category annotation and analysis
-> > │   ├── confidence.py        # retrieval-aware confidence scoring
-> > │   └── cross_dataset.py     # cross-dataset comparison
+> > │   ├── failure_taxonomy.py  #failure category annotation and analysis
+> > │   ├── confidence.py        #retrieval-aware confidence scoring
+> > │   └── cross_dataset.py     #cross-dataset comparison
 > > ├── realworld/
-> > │   └── seafood_claims.py    # real-world seafood/sustainability case study
-> > ├── results/                 # output tables and figures
-> > ├── notebooks/               # exploratory analysis notebooks
+> > │   └── seafood_claims.py    #real-world seafood/sustainability case study
+> > ├── results/                 #output tables and figures
+> > ├── notebooks/               #exploratory analysis notebooks
 > > ├── requirements.txt
 > > └── README.md
 > > ```
@@ -200,4 +200,3 @@
 > >
 > > - [ ] ## License
 > >
-> > - [ ] Private repository — MSc thesis work in progress.
