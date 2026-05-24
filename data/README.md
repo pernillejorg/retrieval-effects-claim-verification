@@ -61,10 +61,10 @@ SciFact is the main dataset for this project because retrieval is genuinely diff
 
         ```
         data/
-        ├── README.md               # this file
+        ├── README.md               #this file
         ├── scifact/
-        │   ├── download.py         # script to download and cache SciFact
-        │   └── (cached files)      # gitignored
+        │   ├── download.py         #script to download and cache SciFact
+        │   └── (cached files)      #gitignored
         └── sciclaimhunt/
             ├── download.py         # script to download and cache SciClaimHunt
             └── (cached files)      # gitignored
