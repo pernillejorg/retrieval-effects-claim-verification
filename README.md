@@ -196,7 +196,5 @@
 > > - [ ] Step 9: Cross-dataset comparison
 > > - [ ] Step 10: Real-world case study
 > >
-> > - [ ] ---
 > >
-> > - [ ] ## License
 > >
