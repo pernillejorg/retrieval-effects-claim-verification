@@ -186,15 +186,15 @@
 > > ## Status
 > >
 > > - [ ] Step 1: Dataset loading and preprocessing
-> > - [ ] - [ ] Step 2: RoBERTa baseline
-> > - [ ] - [ ] Step 3: BM25 + dense retrieval
-> > - [ ] - [ ] Step 4: Stance-aware reranker
-> > - [ ] - [ ] Step 5: Full RAG pipeline
-> > - [ ] - [ ] Step 6: Experimental matrix
-> > - [ ] - [ ] Step 7: Failure taxonomy and annotation
-> > - [ ] - [ ] Step 8: Confidence scoring analysis
-> > - [ ] - [ ] Step 9: Cross-dataset comparison
-> > - [ ] - [ ] Step 10: Real-world case study
+> > - [ ] Step 2: RoBERTa baseline
+> > - [ ] Step 3: BM25 + dense retrieval
+> > - [ ] Step 4: Stance-aware reranker
+> > - [ ] Step 5: Full RAG pipeline
+> > - [ ] Step 6: Experimental matrix
+> > - [ ] Step 7: Failure taxonomy and annotation
+> > - [ ] Step 8: Confidence scoring analysis
+> > - [ ] Step 9: Cross-dataset comparison
+> > - [ ] Step 10: Real-world case study
 > >
 > > - [ ] ---
 > >
