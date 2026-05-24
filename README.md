@@ -3,6 +3,7 @@
 **Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification**
 
 > *MSc Thesis Project — supervised research*
+> ---
 >  Author: Pernille Bergesen
 >  Supervisor: Arkaitz Zubiaga (Senior Lecturer in NLP)
 > ---
