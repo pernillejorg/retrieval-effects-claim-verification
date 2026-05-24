@@ -3,7 +3,8 @@
 **Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification**
 
 > *MSc Thesis Project — supervised research*
->
+>  Author: Pernille Bergesen
+>  Supervisor: Arkaitz Zubiaga (Senior Lecturer in NLP)
 > ---
 >
 > ## Overview
@@ -95,20 +96,20 @@
 > >
 > > ## Methodology
 > >
-> > ### Step 1 — Datasets
+> > ### Step 1: Datasets
 > > The primary dataset is SciFact, which contains scientific claims verified against paper abstracts. Retrieval is genuinely hard here, which is exactly what makes it interesting. SciClaimHunt is used as a secondary dataset with a similar structure, so that results can be compared across corpora rather than just reported for one.
 > >
 > > Core experiments run on both datasets. Manual failure annotation is done on SciFact only.
 > >
-> > ### Step 2 — Baseline Model
+> > ### Step 2: Baseline Model
 > > A RoBERTa model trained to verify claims without any retrieved evidence. Evaluated on both datasets, reporting F1, precision, and recall. This is the reference point that everything else is measured against.
 > >
-> > ### Step 3 — Evidence Retrieval
+> > ### Step 3: Evidence Retrieval
 > > Two retrieval methods are implemented:
 > > - BM25: keyword-based sparse retrieval
 > > - - Dense retrieval: semantic similarity via sentence-transformers
 > >  
-> >   - ### Step 4 — Stance-Aware Reranking *(the novel bit)*
+> >   - ### Step 4: Stance-Aware Reranking *(the novel bit)*
 > >   - After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked — only documents that actually take a stance on the claim get passed to the verifier.
 > >  
 > >   - The idea is that topical similarity is not enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. The stance filter catches this.
@@ -121,10 +122,10 @@
 > >
 > >   - Two filter thresholds are tested: loose and strict.
 > >
-> >   - ### Step 5 — RAG Pipeline
+> >   - ### Step 5: RAG Pipeline
 > >   - Four pipeline variants: no retrieval / BM25 + RoBERTa / Dense + RoBERTa / Dense + stance reranking + RoBERTa
 > >
-> >   - ### Step 6 — Controlled Experimental Matrix
+> >   - ### Step 6: Controlled Experimental Matrix
 > >
 > >   - | Variable | Values tested |
 > >   - |---|---|
@@ -134,7 +135,7 @@
 > >
 > >   - Metric: F1, precision, recall. Run on both datasets for the core conditions.
 > >
-> >   - ### Step 7 — Failure Taxonomy
+> >   - ### Step 7: Failure Taxonomy
 > >   - Four failure categories, defined before running any experiments:
 > >
 > >   - 1. Irrelevant retrieval: retrieved documents are not really about the claim
@@ -144,13 +145,13 @@
 > >             
 > >              5. 50–75 errors from SciFact are manually labelled into these categories. For SciClaimHunt, quantitative failure rates are compared across conditions without full annotation.
 > >             
-> >              6. ### Step 8 — Retrieval-Aware Confidence Scoring
+> >              6. ### Step 8: Retrieval-Aware Confidence Scoring
 > >              7. RoBERTa outputs a softmax probability distribution. The highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking produces better-calibrated confidence, and whether a simple flagging rule (mark predictions below a threshold as unreliable) actually catches more errors.
 > >             
-> >              8. ### Step 9 — Cross-Dataset Comparison
+> >              8. ### Step 9: Cross-Dataset Comparison
 > > Once results are in for both datasets, the key questions are: does stance reranking help on both? Are the dominant failure categories similar? Does the confidence-correctness pattern hold? Either consistent results or dataset-specific divergence is a valid and interesting outcome.
 > >
-> > ### Step 10 — Real-World Application
+> > ### Step 10: Real-World Application
 > > 20–30 real seafood and sustainability claims from social media, run through the best pipeline. The analysis is qualitative: which failure types come up, does the stance filter catch irrelevant evidence on out-of-domain claims, and does the confidence score flag uncertain predictions appropriately.
 > >
 > > ---
