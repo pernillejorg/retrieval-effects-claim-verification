@@ -25,7 +25,7 @@ CACHE_DIR = os.path.join(os.path.dirname(__file__), "cache")
 def download_sciclaimhunt():
     print("Downloading SciClaimHunt from HuggingFace (AnshulS/dataset_for_scicllaimhunt)...")
     print("Note: ~3.18 GB, first run may take a while.")
-    dataset = load_dataset("AnshulS/dataset_for_scicllaimhunt", cache_dir=CACHE_DIR)
+    dataset = load_dataset("AnshulS/dataset_for_scicllaimhunt", trust_remote_code=True, cache_dir=CACHE_DIR)
     print(f"  train split: {len(dataset['train'])} rows")
 
     print("\nColumn names:", dataset["train"].column_names)
