@@ -106,6 +106,10 @@ def check_max_token_length(claims, tokenizer):
     #iterating over every claim to measure its token length
     for claim_dict in claims:
 
+        #skipping claims with empty or None text to avoid tokenizer errors
+        if not claim_dict["claim"]:
+            continue
+
         #tokenising this claim without padding or truncation to get true length
         tokens = tokenizer(claim_dict["claim"], truncation=False)
 
