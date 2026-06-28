@@ -9,7 +9,6 @@
 | Task | 3-class claim verification (SUPPORT / CONTRADICT / NEI) |
 | Retrieval | None — claim text only |
 | Device | CUDA (Google Colab A100) |
-| Date run | 28 June 2026 |
 
 ---
 
