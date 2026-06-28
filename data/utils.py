@@ -44,6 +44,8 @@ SCIFACT_LABEL_MAP = {
     "SUPPORT":          LABEL_SUPPORT,
     "CONTRADICT":       LABEL_CONTRADICT,
     "NOT_ENOUGH_INFO":  LABEL_NEI,
+    #When some claims have empty string label, then treating as NEI
+    "":                 LABEL_NEI,  
 }
 
 # SciClaimHunt raw label -> unified label
@@ -70,7 +72,7 @@ def load_scifact(split="train"):
     """
     assert split in ("train", "validation"), f"SciFact has splits: train, validation. Got: {split}"
 
-    dataset = load_dataset("allenai/scifact", cache_dir=SCIFACT_CACHE)
+    dataset = load_dataset("allenai/scifact", "claims", cache_dir=SCIFACT_CACHE)
     corpus_ds = load_dataset("allenai/scifact", "corpus", cache_dir=SCIFACT_CACHE)
 
     # Build corpus dict: doc_id (str) -> abstract text
@@ -93,7 +95,7 @@ def load_scifact(split="train"):
         claims.append({
             "id":               str(row["id"]),
             "claim":            row["claim"],
-            "label":            SCIFACT_LABEL_MAP[row["gold_label"]],
+            "label":            SCIFACT_LABEL_MAP.get(row["evidence_label"], LABEL_NEI),
             "evidence_doc_ids": evidence_doc_ids,
         })
 
