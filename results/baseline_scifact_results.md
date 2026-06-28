@@ -1,4 +1,4 @@
-# Baseline Results: RoBERTa No-Retrieval — SciFact
+# Baseline Results: RoBERTa No-Retrieval for SciFact
 
 ## Experiment Overview
 
@@ -59,7 +59,7 @@
 
 ---
 
-## Final Results (best checkpoint — epoch 5)
+## Final Results (best checkpoint = epoch 5)
 
 ### Per-class performance
 
