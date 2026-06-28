@@ -427,8 +427,13 @@ def run_retrieval_evaluation(dataset_name="scifact"):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    #running retrieval evaluation on SciFact first
-    run_retrieval_evaluation(dataset_name="scifact")
+    import argparse
 
-    #LATER: uncomment to also run on SciClaimHunt
-    # run_retrieval_evaluation(dataset_name="sciclaimhunt")
+    #parsing command line arguments so we can specify the dataset without editing the file
+    parser = argparse.ArgumentParser(description="BM25 and dense retrieval evaluation")
+    parser.add_argument("--dataset", default="scifact", choices=["scifact", "sciclaimhunt"],
+                        help="Dataset to run retrieval on")
+    args = parser.parse_args()
+
+    #running retrieval evaluation on the chosen dataset
+    run_retrieval_evaluation(dataset_name=args.dataset)
