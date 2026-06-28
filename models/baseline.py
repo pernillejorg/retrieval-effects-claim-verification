@@ -592,8 +592,13 @@ def run_baseline(dataset_name="scifact"):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    #running the baseline experiment on SciFact first
-    run_baseline(dataset_name="scifact")
+    import argparse
 
-    #FOR later: uncomment the line below to also run on SciClaimHunt after SciFact
-    #run_baseline(dataset_name="sciclaimhunt")
+    #parsing command line arguments so we can specify the dataset without editing the file
+    parser = argparse.ArgumentParser(description="RoBERTa no-retrieval baseline")
+    parser.add_argument("--dataset", default="scifact", choices=["scifact", "sciclaimhunt"],
+                        help="Dataset to run baseline on")
+    args = parser.parse_args()
+
+    #running the baseline on the chosen dataset
+    run_baseline(dataset_name=args.dataset)
