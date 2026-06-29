@@ -158,7 +158,7 @@ def load_sciclaimhunt(split="train", seed=42):
             "evidence_doc_ids": [doc_id],
         })
 
-        return claims, corpus
+    return claims, corpus
 
 
 # ---------------------------------------------------------------------------
