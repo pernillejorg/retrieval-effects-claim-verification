@@ -146,7 +146,8 @@ def load_sciclaimhunt(split="train", seed=42):
     claims = []
     for row in selected:
         #skipping rows where Claim or Evidence is None or empty to avoid downstream tokenizer errors
-        if not row["Claim"] or not row["Evidence"]:
+        #if not row["Claim"] or not row["Evidence"]:
+        if not row["Claim"]:
             continue
         row_id = str(row["Unnamed: 0"])
         doc_id = f"sch_{row_id}"
