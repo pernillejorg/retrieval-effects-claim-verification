@@ -145,18 +145,20 @@ def load_sciclaimhunt(split="train", seed=42):
     corpus = {}
     claims = []
     for row in selected:
+        #skipping rows where Claim or Evidence is None or empty to avoid downstream tokenizer errors
+        if not row["Claim"] or not row["Evidence"]:
+            continue
         row_id = str(row["Unnamed: 0"])
         doc_id = f"sch_{row_id}"
         corpus[doc_id] = row["Evidence"]
         claims.append({
-            "id":               row_id,
-            "claim":            row["Claim"],
-            "label":            SCICLAIMHUNT_LABEL_MAP[row["Type"]],
+            "id": row_id,
+            "claim": row["Claim"],
+            "label": SCICLAIMHUNT_LABEL_MAP[row["Type"]],
             "evidence_doc_ids": [doc_id],
         })
 
-    return claims, corpus
-
+        return claims, corpus
 
 # ---------------------------------------------------------------------------
 # Quick sanity check
