@@ -301,11 +301,16 @@ def evaluate(model, dataloader, device):
     #computing macro-averaged recall score across all three classes
     macro_recall = recall_score(all_true_labels, all_predicted_labels, average="macro")
 
-    #generating a full per-class breakdown report for detailed analysis
+    # Determining which label ids are actually present in this dataset split
+    present_label_ids = sorted(set(all_true_labels))
+    present_label_names = [ID_TO_LABEL[label_id] for label_id in present_label_ids]
+
+    # Generating a full per-class breakdown report using only the labels present
     report = classification_report(
         all_true_labels,
         all_predicted_labels,
-        target_names=LABEL_LIST,
+        labels=present_label_ids,
+        target_names=present_label_names,
     )
 
     #returning all metrics and the detailed report
