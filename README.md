@@ -185,9 +185,9 @@
 > >
 > > ## Status
 > >
-> > - [ ] Step 1: Dataset loading and preprocessing
-> > - [ ] Step 2: RoBERTa baseline
-> > - [ ] Step 3: BM25 + dense retrieval
+> > - [ x] Step 1: Dataset loading and preprocessing
+> > - [ x] Step 2: RoBERTa baseline
+> > - [ x] Step 3: BM25 + dense retrieval
 > > - [ ] Step 4: Stance-aware reranker
 > > - [ ] Step 5: Full RAG pipeline
 > > - [ ] Step 6: Experimental matrix
