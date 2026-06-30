@@ -12,14 +12,18 @@ a related claim, but if it says nothing specific about that claim, it adds
 noise rather than signal. The stance filter catches this.
 
 Design decisions (document these in your thesis):
-- cross-encoder/nli-deberta-v3-small: small enough for CPU/MacBook,
+- Cross-encoder/nli-deberta-v3-small: small enough for CPU/MacBook,
   strong enough for zero-shot NLI stance scoring
+- Model used directly (not via pipeline) for transparency and control over
+  label order, which is fixed as: contradiction, entailment, neutral
 - Two thresholds (loose=0.5, strict=0.8): tests threshold sensitivity
   without over-engineering
-- Neutral score is the filter criterion: documents where the model
-  assigns high probability to neutral are filtered out
-- Stance score = max(entailment_prob, contradiction_prob): captures
-  whether a document takes any stance at all on the claim
+- Batched inference per claim: all documents for one claim encoded together
+  for efficiency, especially important for SciClaimHunt (108k inference calls)
+- Neutral score is the filter criterion: documents where the model assigns
+  high probability to neutral are filtered out
+- Stance score = max(entailment_prob, contradiction_prob): captures whether
+  a document takes any stance at all on the claim
 
 References:
 - He et al. (2021) -- DeBERTa: Decoding-enhanced BERT with Disentangled Attention
@@ -44,14 +48,16 @@ import json
 #importing argparse so we can specify the dataset from the command line
 import argparse
 
-#importing the cross-encoder pipeline for zero-shot NLI stance scoring
-from transformers import pipeline
+import torch.nn.functional as F
+
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 #importing our unified data loading functions for both datasets
 from data.utils import load_scifact, load_sciclaimhunt
 
 #importing the retrieval classes so we can build the candidate pool
-from retrieval.retrieval import BM25Retriever, DenseRetriever
+#only using DenseRetriever for this reranking evaluation, since BM25 resulted in a lower Recall@k numbers for both datasets
+from retrieval.retrieval import DenseRetriever
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -75,7 +81,12 @@ STRICT_NEUTRAL_THRESHOLD = 0.8
 
 #defining the label order that cross-encoder/nli-deberta-v3-small outputs
 #the model outputs scores in this fixed order: contradiction, entailment, neutral
-NLI_LABEL_ORDER = ["contradiction", "entailment", "neutral"]
+#NLI_LABEL_ORDER = ["contradiction", "entailment", "neutral"]
+
+#naming index constants instead of a list, to be used for the tensor below
+NLI_LABEL_INDEX_CONTRADICTION = 0
+NLI_LABEL_INDEX_ENTAILMENT = 1
+NLI_LABEL_INDEX_NEUTRAL = 2
 
 # ---------------------------------------------------------------------------
 # Stance Reranker
@@ -87,14 +98,18 @@ class StanceReranker:
 
     For each (claim, document) pair, the NLI model scores entailment,
     contradiction, and neutral probabilities. Documents with high neutral
-    scores are filtered out -- only stance-bearing documents are kept.
+    scores are filtered out, only stance-bearing documents are kept.
 
     This is the novel technical contribution of this project.
     """
 
     def __init__(self, device=None):
         """
-        Loading the NLI model and setting up the inference pipeline.
+        Loading the NLI model and tokenizer directly for transparent inference.
+
+        Using the model directly rather than the zero-shot pipeline gives us
+        explicit control over label ordering and batching, and is more
+        defensible and explainable in the thesis.
 
         device: torch.device or None (auto-detects if None)
         """
@@ -115,110 +130,87 @@ class StanceReranker:
         print(f"Loading stance reranker: {NLI_MODEL_NAME}")
         print(f"Using device: {device}")
 
-        #converting device to integer index for the transformers pipeline
-        #transformers pipeline expects -1 for CPU, 0 for first GPU
-        if str(device) == "cpu":
-            device_index = -1
-        elif str(device) == "mps":
-            device_index = -1
-        else:
-            device_index = 0
+        #loading the tokenizer for the NLI model
+        self.tokenizer = AutoTokenizer.from_pretrained(NLI_MODEL_NAME)
 
-        #loading the NLI cross-encoder model as a zero-shot classification pipeline
-        self.nli_pipeline = pipeline(
-            "zero-shot-classification",
-            model=NLI_MODEL_NAME,
-            device=device_index,
-        )
+        #loading the NLI sequence classification model
+        self.model = AutoModelForSequenceClassification.from_pretrained(NLI_MODEL_NAME)
+
+        #moving the model to the selected device
+        self.model.to(self.device)
+
+        #setting model to evaluation mode so dropout layers are disabled
+        self.model.eval()
+
+        #verifying the label order matches the index constants defined above
+        print(f"Model label order: {self.model.config.id2label}")
 
         #printing confirmation that the model is ready
         print(f"Stance reranker loaded successfully.")
-
-    def score_document(self, claim_text, document_text):
-        """
-        Scoring a single (claim, document) pair for stance.
-
-        claim_text: str -- the claim to verify
-        document_text: str -- the candidate evidence document
-
-        Returns: dict with keys:
-            entailment_score   (float) probability document supports claim
-            contradiction_score(float) probability document contradicts claim
-            neutral_score      (float) probability document is irrelevant
-            stance_score       (float) max(entailment, contradiction) -- overall stance strength
-            predicted_label    (str)   the highest-scoring NLI label
-        """
-
-        #running zero-shot NLI inference with entailment/contradiction/neutral as candidate labels
-        nli_result = self.nli_pipeline(
-            claim_text,
-            candidate_labels=["entailment", "contradiction", "neutral"],
-            hypothesis_template="{}",
-        )
-
-        #building a dictionary mapping label to score for easy access
-        label_to_score = {
-            label: score
-            for label, score in zip(nli_result["labels"], nli_result["scores"])
-        }
-
-        #extracting individual scores for each NLI label
-        entailment_score = label_to_score.get("entailment", 0.0)
-        contradiction_score = label_to_score.get("contradiction", 0.0)
-        neutral_score = label_to_score.get("neutral", 0.0)
-
-        #computing stance score as the maximum of entailment and contradiction
-        #this captures whether the document takes any position on the claim at all
-        stance_score = max(entailment_score, contradiction_score)
-
-        #finding the predicted label as the one with the highest score
-        predicted_label = max(label_to_score, key=label_to_score.get)
-
-        #returning a complete score dict for this document
-        return {
-            "entailment_score": entailment_score,
-            "contradiction_score": contradiction_score,
-            "neutral_score": neutral_score,
-            "stance_score": stance_score,
-            "predicted_label": predicted_label,
-        }
 
     def rerank(self, claim_text, retrieved_documents, neutral_threshold):
         """
         Reranking retrieved documents by stance score and filtering neutrals.
 
-        claim_text: str -- the claim to verify
-        retrieved_documents: list of dicts (from BM25Retriever or DenseRetriever)
-            each dict has keys: doc_id, text, score, rank
-        neutral_threshold: float -- documents with neutral_score above this are filtered out
-
-        Returns: list of dicts, each containing the original retrieval fields plus:
-            entailment_score   (float)
-            contradiction_score(float)
-            neutral_score      (float)
-            stance_score       (float)
-            predicted_label    (str)
-            reranked_position  (int) position after reranking (1 = most stance-bearing)
+        All documents for a single claim are scored in one batched forward pass
+        for efficiency. This is important for SciClaimHunt where we run
+        108,720 inference calls across the validation set.
+        ...
         """
 
-        #scoring each retrieved document for stance against the claim
+        #handling the edge case where no documents were retrieved
+        if not retrieved_documents:
+            return []
+
+        #building all (claim, document) text pairs for batched tokenisation
+        claim_texts = [claim_text] * len(retrieved_documents)
+        document_texts = [document["text"] for document in retrieved_documents]
+
+        #tokenising all pairs together in one batch
+        tokenised_inputs = self.tokenizer(
+            claim_texts,
+            document_texts,
+            return_tensors="pt",
+            truncation=True,
+            max_length=512,
+            padding=True,
+        ).to(self.device)
+
+        #running batched forward pass through the NLI model without gradient tracking
+        with torch.no_grad():
+            logits = self.model(**tokenised_inputs).logits
+
+        #applying softmax to convert logits to probabilities
+        probabilities = F.softmax(logits, dim=-1)
+
+        #extracting per-document scores using the fixed label order for this model
+        contradiction_scores = probabilities[:, NLI_LABEL_INDEX_CONTRADICTION].cpu().tolist()
+        entailment_scores = probabilities[:, NLI_LABEL_INDEX_ENTAILMENT].cpu().tolist()
+        neutral_scores = probabilities[:, NLI_LABEL_INDEX_NEUTRAL].cpu().tolist()
+
+        #assembling scored documents with all NLI scores attached
         scored_documents = []
-        for document in retrieved_documents:
-
-            #computing NLI stance scores for this (claim, document) pair
-            stance_scores = self.score_document(claim_text, document["text"])
-
-            #combining the original retrieval fields with the new stance scores
+        for document_index, document in enumerate(retrieved_documents):
+            stance_score = max(
+                entailment_scores[document_index],
+                contradiction_scores[document_index]
+            )
+            scores_dict = {
+                "entailment": entailment_scores[document_index],
+                "contradiction": contradiction_scores[document_index],
+                "neutral": neutral_scores[document_index],
+            }
+            predicted_label = max(scores_dict, key=scores_dict.get)
             scored_document = {
                 "doc_id": document["doc_id"],
                 "text": document["text"],
                 "retrieval_score": document["score"],
                 "retrieval_rank": document["rank"],
-                "entailment_score": stance_scores["entailment_score"],
-                "contradiction_score": stance_scores["contradiction_score"],
-                "neutral_score": stance_scores["neutral_score"],
-                "stance_score": stance_scores["stance_score"],
-                "predicted_label": stance_scores["predicted_label"],
+                "entailment_score": entailment_scores[document_index],
+                "contradiction_score": contradiction_scores[document_index],
+                "neutral_score": neutral_scores[document_index],
+                "stance_score": stance_score,
+                "predicted_label": predicted_label,
             }
             scored_documents.append(scored_document)
 
@@ -305,9 +297,9 @@ def run_reranking_evaluation(dataset_name="scifact"):
     """
     Running the full stance-aware reranking evaluation pipeline.
 
-    Loads the dataset, builds retrieval index, retrieves candidates,
+    Loads the dataset, builds dense retrieval index, retrieves candidates,
     applies stance reranking at two thresholds, and reports Recall@k
-    before and after reranking.
+    before and after reranking. Also logs average documents surviving each filter.
 
     dataset_name: str -- 'scifact' or 'sciclaimhunt'
 
@@ -327,17 +319,15 @@ def run_reranking_evaluation(dataset_name="scifact"):
     else:
         device = torch.device("cpu")
 
+    #printing which device will be used  
+    print(f"Using device: {device}\n")
+
     #loading the validation split and corpus for the chosen dataset
     if dataset_name == "scifact":
-        #loading SciFact validation claims and retrieval corpus
         val_claims, corpus = load_scifact(split="validation")
-
     elif dataset_name == "sciclaimhunt":
-        #loading SciClaimHunt validation claims and retrieval corpus
         val_claims, corpus = load_sciclaimhunt(split="val")
-
     else:
-        #raising an error for unrecognised dataset names
         raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'sciclaimhunt'.")
 
     #printing basic corpus and claim statistics
@@ -349,109 +339,92 @@ def run_reranking_evaluation(dataset_name="scifact"):
     print(f"Claims with evidence (non-NEI): {len(claims_with_evidence)}")
     print(f"NEI claims (excluded from Recall@k): {len(val_claims) - len(claims_with_evidence)}\n")
 
-    # -----------------------------------------------------------------------
-    # Dense retrieval -- building candidate pool
-    # -----------------------------------------------------------------------
-
-    #building the dense retriever over the full corpus
     print("--- Dense Retrieval (candidate pool) ---")
     dense_retriever = DenseRetriever(corpus, device=device)
 
-    #retrieving top-k candidates for every validation claim
     print(f"Running dense retrieval (k={RETRIEVAL_K})...")
     dense_retrieved = {}
     for claim_index, claim in enumerate(val_claims):
-
-        #printing progress every 100 claims
         if (claim_index + 1) % 100 == 1:
             print(f"  Retrieving for claim {claim_index + 1} / {len(val_claims)}...")
 
-        #retrieving top-k documents for this claim
         dense_retrieved[claim["id"]] = dense_retriever.retrieve(
-            claim["text"] if "text" in claim else claim["claim"],
+            claim["claim"],  
             k=RETRIEVAL_K,
         )
 
-    #computing baseline dense recall before reranking
     k_values = [1, 5, 10]
     dense_recall_before = compute_recall_at_k(val_claims, dense_retrieved, k_values)
 
-    # -----------------------------------------------------------------------
-    # Stance reranking -- applying NLI filter at two thresholds
-    # -----------------------------------------------------------------------
-
-    #loading the stance reranker model
     print("\n--- Stance-Aware Reranking ---")
     stance_reranker = StanceReranker(device=device)
 
-    #running reranking at loose threshold
     print(f"\nApplying loose threshold (neutral <= {LOOSE_NEUTRAL_THRESHOLD})...")
     loose_reranked = {}
     for claim_index, claim in enumerate(val_claims):
-
-        #printing progress every 100 claims
         if (claim_index + 1) % 100 == 1:
             print(f"  Reranking claim {claim_index + 1} / {len(val_claims)}...")
-
-        #applying stance filter with loose threshold
-        claim_text = claim["claim"]
         candidates = dense_retrieved[claim["id"]]
         loose_reranked[claim["id"]] = stance_reranker.rerank(
-            claim_text, candidates, LOOSE_NEUTRAL_THRESHOLD
+            claim["claim"], candidates, LOOSE_NEUTRAL_THRESHOLD
         )
 
-    #computing recall after loose reranking
     loose_recall = compute_recall_at_k(val_claims, loose_reranked, k_values)
 
-    #running reranking at strict threshold
+    #computing average number of documents surviving the loose filter 
+    average_docs_after_loose_filter = (
+        sum(len(docs) for docs in loose_reranked.values()) / len(val_claims)
+    )
+
     print(f"\nApplying strict threshold (neutral <= {STRICT_NEUTRAL_THRESHOLD})...")
     strict_reranked = {}
     for claim_index, claim in enumerate(val_claims):
-
-        #printing progress every 100 claims
         if (claim_index + 1) % 100 == 1:
             print(f"  Reranking claim {claim_index + 1} / {len(val_claims)}...")
-
-        #applying stance filter with strict threshold
-        claim_text = claim["claim"]
         candidates = dense_retrieved[claim["id"]]
         strict_reranked[claim["id"]] = stance_reranker.rerank(
-            claim_text, candidates, STRICT_NEUTRAL_THRESHOLD
+            claim["claim"], candidates, STRICT_NEUTRAL_THRESHOLD
         )
 
-    #computing recall after strict reranking
     strict_recall = compute_recall_at_k(val_claims, strict_reranked, k_values)
 
-    # -----------------------------------------------------------------------
-    # Results reporting
-    # -----------------------------------------------------------------------
+    #computing average number of documents surviving the strict filter 
+    average_docs_after_strict_filter = (
+        sum(len(docs) for docs in strict_reranked.values()) / len(val_claims)
+    )
 
-    #printing the recall comparison table
     print(f"\n{'='*60}")
     print(f"  Reranking Recall@k -- {dataset_name.upper()} (validation)")
     print(f"{'='*60}")
-    print(f"\n  {'Method':<30} {'R@1':>6} {'R@5':>6} {'R@10':>6}")
-    print(f"  {'-'*50}")
-    print(f"  {'Dense (before reranking)':<30} "
+    print(f"\n  {'Method':<35} {'R@1':>6} {'R@5':>6} {'R@10':>6}")  
+    print(f"  {'-'*55}")  
+    print(f"  {'Dense (before reranking)':<35} "  
           f"{dense_recall_before[1]:>6.3f} "
           f"{dense_recall_before[5]:>6.3f} "
           f"{dense_recall_before[10]:>6.3f}")
-    print(f"  {'Dense + loose filter':<30} "
+    print(f"  {'Dense + loose filter':<35} "  
           f"{loose_recall[1]:>6.3f} "
           f"{loose_recall[5]:>6.3f} "
           f"{loose_recall[10]:>6.3f}")
-    print(f"  {'Dense + strict filter':<30} "
+    print(f"  {'Dense + strict filter':<35} " 
           f"{strict_recall[1]:>6.3f} "
           f"{strict_recall[5]:>6.3f} "
           f"{strict_recall[10]:>6.3f}")
-    print(f"{'='*60}\n")
+    print(f"{'='*60}")  
 
-    #assembling results dict for saving to Drive
+    #printing filter survival statistics  
+    print(f"\n  Avg docs before filtering    : {RETRIEVAL_K:.1f}")
+    print(f"  Avg docs after loose filter  : {average_docs_after_loose_filter:.1f}")
+    print(f"  Avg docs after strict filter : {average_docs_after_strict_filter:.1f}\n")
+
     results = {
         "dataset": dataset_name,
         "retrieval_k": RETRIEVAL_K,
         "loose_neutral_threshold": LOOSE_NEUTRAL_THRESHOLD,
         "strict_neutral_threshold": STRICT_NEUTRAL_THRESHOLD,
+        "avg_docs_before_filter": RETRIEVAL_K,              
+        "avg_docs_after_loose_filter": average_docs_after_loose_filter,   
+        "avg_docs_after_strict_filter": average_docs_after_strict_filter, 
         "recall_at_k": {
             "dense_before_reranking": {
                 str(k): dense_recall_before[k] for k in k_values
@@ -465,7 +438,6 @@ def run_reranking_evaluation(dataset_name="scifact"):
         },
     }
 
-    #returning results dict for saving in Colab
     return results
 
 # ---------------------------------------------------------------------------
@@ -473,9 +445,6 @@ def run_reranking_evaluation(dataset_name="scifact"):
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-
-    #importing argparse for command line argument parsing
-    import argparse
 
     #parsing command line arguments so we can specify the dataset without editing the file
     parser = argparse.ArgumentParser(description="Stance-aware reranking evaluation")
