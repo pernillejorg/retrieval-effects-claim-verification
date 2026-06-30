@@ -2,7 +2,7 @@
 
 **Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification**
 
-> *MSc Thesis Project — supervised research*
+> *MSc AI Thesis Project — supervised research*
 > ---
 >>  Author: Pernille Bergesen (MSc AI Student)
 > 
@@ -67,7 +67,7 @@
 > >
 > > ---
 > >
-> > ## Project Structure
+> > ##Final Project Structure
 > >
 > > ```
 > > rag-claim-verification/
