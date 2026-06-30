@@ -188,7 +188,7 @@
 > > - [ x] Step 1: Dataset loading and preprocessing
 > > - [ x] Step 2: RoBERTa baseline
 > > - [ x] Step 3: BM25 + dense retrieval
-> > - [ ] Step 4: Stance-aware reranker
+> > - [ x] Step 4: Stance-aware reranker
 > > - [ ] Step 5: Full RAG pipeline
 > > - [ ] Step 6: Experimental matrix
 > > - [ ] Step 7: Failure taxonomy and annotation
