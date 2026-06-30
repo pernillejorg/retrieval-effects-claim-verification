@@ -20,8 +20,9 @@ Design decisions (document these in your thesis):
   without over-engineering
 - Batched inference per claim: all documents for one claim encoded together
   for efficiency, especially important for SciClaimHunt (108k inference calls)
-- Neutral score is the filter criterion: documents where the model assigns
-  high probability to neutral are filtered out
+- Soft reranking: all documents are kept but reordered by stance score so
+  stance-bearing documents appear first; would_be_filtered flag records
+  what hard filtering would have removed, for thesis analysis
 - Stance score = max(entailment_prob, contradiction_prob): captures whether
   a document takes any stance at all on the claim
 
@@ -150,12 +151,19 @@ class StanceReranker:
 
     def rerank(self, claim_text, retrieved_documents, neutral_threshold):
         """
-        Reranking retrieved documents by stance score and filtering neutrals.
+        Reranking retrieved documents by stance score using soft reranking.
 
         All documents for a single claim are scored in one batched forward pass
         for efficiency. This is important for SciClaimHunt where we run
-        108,720 inference calls across the validation set.
-        ...
+        inference calls across the full validation set.
+
+        Unlike hard filtering, soft reranking keeps all documents but reorders
+        them so stance-bearing documents (high entailment or contradiction score)
+        appear first. The neutral_threshold parameter is kept for compatibility
+        but used only to compute how many documents would have been filtered,
+        not to actually remove any documents. This avoids the over-filtering
+        failure mode where genuine evidence documents are discarded because
+        zero-shot NLI on scientific text tends to output high neutral scores.
         """
 
         #handling the edge case where no documents were retrieved
@@ -201,6 +209,11 @@ class StanceReranker:
                 "neutral": neutral_scores[document_index],
             }
             predicted_label = max(scores_dict, key=scores_dict.get)
+
+            #recording whether this document would have been filtered by the threshold
+            #this is logged for analysis but does NOT remove the document
+            would_be_filtered = neutral_scores[document_index] > neutral_threshold
+
             scored_document = {
                 "doc_id": document["doc_id"],
                 "text": document["text"],
@@ -211,26 +224,20 @@ class StanceReranker:
                 "neutral_score": neutral_scores[document_index],
                 "stance_score": stance_score,
                 "predicted_label": predicted_label,
+                "would_be_filtered": would_be_filtered,
             }
             scored_documents.append(scored_document)
 
-        #filtering out documents whose neutral score exceeds the threshold
-        #these are documents that are topically related but take no stance on the claim
-        stance_bearing_documents = [
-            document for document in scored_documents
-            if document["neutral_score"] <= neutral_threshold
-        ]
+        #sorting all documents by stance score descending so stance-bearing docs come first
+        #no documents are removed -- this is soft reranking not hard filtering
+        scored_documents.sort(key=lambda d: d["stance_score"], reverse=True)
 
-        #sorting remaining documents by stance score descending
-        #most stance-bearing documents come first
-        stance_bearing_documents.sort(key=lambda d: d["stance_score"], reverse=True)
-
-        #adding reranked position to each document
-        for position, document in enumerate(stance_bearing_documents, start=1):
+        #adding reranked position to each document after sorting
+        for position, document in enumerate(scored_documents, start=1):
             document["reranked_position"] = position
 
-        #returning the filtered and reranked list
-        return stance_bearing_documents
+        #returning all documents reranked by stance score
+        return scored_documents
 
 # ---------------------------------------------------------------------------
 # Recall@k computation
@@ -371,9 +378,12 @@ def run_reranking_evaluation(dataset_name="scifact"):
 
     loose_recall = compute_recall_at_k(val_claims, loose_reranked, k_values)
 
-    #computing average number of documents surviving the loose filter 
-    average_docs_after_loose_filter = (
-        sum(len(docs) for docs in loose_reranked.values()) / len(val_claims)
+    #computing average number of documents that would be filtered by the loose threshold
+    average_docs_would_filter_loose = (
+        sum(
+            sum(1 for doc in docs if doc["would_be_filtered"])
+            for docs in loose_reranked.values()
+        ) / len(val_claims)
     )
 
     print(f"\nApplying strict threshold (neutral <= {STRICT_NEUTRAL_THRESHOLD})...")
@@ -388,9 +398,12 @@ def run_reranking_evaluation(dataset_name="scifact"):
 
     strict_recall = compute_recall_at_k(val_claims, strict_reranked, k_values)
 
-    #computing average number of documents surviving the strict filter 
-    average_docs_after_strict_filter = (
-        sum(len(docs) for docs in strict_reranked.values()) / len(val_claims)
+    #computing average number of documents that would be filtered by the strict threshold
+    average_docs_would_filter_strict = (
+        sum(
+            sum(1 for doc in docs if doc["would_be_filtered"])
+            for docs in strict_reranked.values()
+        ) / len(val_claims)
     )
 
     print(f"\n{'='*60}")
@@ -413,18 +426,18 @@ def run_reranking_evaluation(dataset_name="scifact"):
     print(f"{'='*60}")  
 
     #printing filter survival statistics  
-    print(f"\n  Avg docs before filtering    : {RETRIEVAL_K:.1f}")
-    print(f"  Avg docs after loose filter  : {average_docs_after_loose_filter:.1f}")
-    print(f"  Avg docs after strict filter : {average_docs_after_strict_filter:.1f}\n")
+    print(f"\n  Avg docs retrieved           : {RETRIEVAL_K:.1f}")
+    print(f"  Avg docs would filter loose  : {average_docs_would_filter_loose:.1f}")
+    print(f"  Avg docs would filter strict : {average_docs_would_filter_strict:.1f}\n")
 
     results = {
         "dataset": dataset_name,
         "retrieval_k": RETRIEVAL_K,
         "loose_neutral_threshold": LOOSE_NEUTRAL_THRESHOLD,
         "strict_neutral_threshold": STRICT_NEUTRAL_THRESHOLD,
-        "avg_docs_before_filter": RETRIEVAL_K,              
-        "avg_docs_after_loose_filter": average_docs_after_loose_filter,   
-        "avg_docs_after_strict_filter": average_docs_after_strict_filter, 
+        "avg_docs_retrieved": RETRIEVAL_K,         
+        "avg_docs_would_filter_loose": average_docs_would_filter_loose,
+        "avg_docs_would_filter_strict": average_docs_would_filter_strict,
         "recall_at_k": {
             "dense_before_reranking": {
                 str(k): dense_recall_before[k] for k in k_values
