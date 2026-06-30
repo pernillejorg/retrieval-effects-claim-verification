@@ -112,7 +112,7 @@
 > > - - Dense retrieval: semantic similarity via sentence-transformers
 > >  
 > >   - ### Step 4: Stance-Aware Reranking *(the novel bit)*
-> >   - After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked — only documents that actually take a stance on the claim get passed to the verifier.
+> >   - After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked, where only documents that actually take a stance on the claim get passed to the verifier.
 > >  
 > >   - The idea is that topical similarity is not enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. The stance filter catches this.
 > >  
