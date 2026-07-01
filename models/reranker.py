@@ -58,7 +58,7 @@ from data.utils import load_scifact, load_sciclaimhunt
 
 #importing the retrieval classes so we can build the candidate pool
 #only using DenseRetriever for this reranking evaluation, since BM25 resulted in a lower Recall@k numbers for both datasets
-from retrieval.retrieval import DenseRetriever
+from models.retrieval import DenseRetriever
 
 # ---------------------------------------------------------------------------
 # Configuration
