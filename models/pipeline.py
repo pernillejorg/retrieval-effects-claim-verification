@@ -49,147 +49,28 @@ from models.retrieval import BM25Retriever, DenseRetriever
 #importing StanceReranker from our reranking module
 from models.reranker import StanceReranker
 
+#importing the shared data loading functions so we use one consistent loading path
+from data.utils import load_scifact, load_sciclaimhunt, LABEL_SUPPORT, LABEL_CONTRADICT, LABEL_NEI
 
 # ---------------------------------------------------------------------------
 # Label mappings
 # ---------------------------------------------------------------------------
 
-#defining the label string to integer mapping for SciFact
-SCIFACT_LABEL_MAP = {
-    "SUPPORT": 0,
-    "CONTRADICT": 1,
-    "NEI": 2,
-    "": 2,
-}
-
-#defining the label string to integer mapping for SciClaimHunt
-SCICLAIMHUNT_LABEL_MAP = {
-    "Supported": 0,
-    "Refuted": 1,
-    "NEI": 2,
-}
-
-#defining the integer to label string mapping for SciFact
-SCIFACT_INT_TO_LABEL = {0: "SUPPORT", 1: "CONTRADICT", 2: "NEI"}
-
-#defining the integer to label string mapping for SciClaimHunt
-SCICLAIMHUNT_INT_TO_LABEL = {0: "Supported", 1: "Refuted", 2: "NEI"}
-
 #defining how many documents to retrieve for reranking before cutting to top_k
 RERANK_POOL_SIZE = 10
 
+#defining the unified label to integer mapping used by both datasets
+LABEL_TO_ID = {
+    LABEL_SUPPORT: 0,
+    LABEL_CONTRADICT: 1,
+    LABEL_NEI: 2,
+}
 
-# ---------------------------------------------------------------------------
-# Data loading
-# ---------------------------------------------------------------------------
+#defining the integer to label string mapping for SciFact display
+SCIFACT_INT_TO_LABEL = {0: "SUPPORT", 1: "CONTRADICT", 2: "NEI"}
 
-def load_scifact_data(scifact_data_path):
-    #importing datasets here to keep the top-level imports clean
-    from datasets import load_dataset
-
-    #loading the SciFact claims config from the local cache directory
-    scifact_dataset = load_dataset(
-        "allenai/scifact",
-        "claims",
-        cache_dir=scifact_data_path,
-    )
-
-    #initialising empty lists for collecting claims and integer labels
-    claims = []
-    labels = []
-
-    #iterating over the test split to collect claims and their gold labels
-    for row in scifact_dataset["test"]:
-        #extracting the claim text from this row
-        claim_text = row["claim"]
-
-        #mapping empty evidence label string to NEI using the label map
-        label_string = row["evidence_label"] if row["evidence_label"] != "" else "NEI"
-
-        #appending the claim text and integer label to their lists
-        claims.append(claim_text)
-        labels.append(SCIFACT_LABEL_MAP[label_string])
-
-    #returning the collected claims and labels for evaluation
-    return claims, labels
-
-
-def load_sciclaimhunt_data(sciclaimhunt_data_path):
-    #importing datasets here to keep the top-level imports clean
-    from datasets import load_dataset
-
-    #loading the SciClaimHunt dataset from the local cache directory
-    sciclaimhunt_dataset = load_dataset(
-        "Skatinger/SciClaimHunt",
-        cache_dir=sciclaimhunt_data_path,
-    )
-
-    #initialising empty lists for collecting claims and integer labels
-    claims = []
-    labels = []
-
-    #iterating over the test split to collect claims and their gold labels
-    for row in sciclaimhunt_dataset["test"]:
-        #skipping any rows that have no claim text
-        if not row["Claim"]:
-            continue
-
-        #extracting the claim text and label string from this row
-        claim_text = row["Claim"]
-        label_string = row["Type"]
-
-        #appending the claim text and integer label to their lists
-        claims.append(claim_text)
-        labels.append(SCICLAIMHUNT_LABEL_MAP[label_string])
-
-    #returning the collected claims and labels for evaluation
-    return claims, labels
-
-
-def load_corpus(dataset_name, scifact_data_path, sciclaimhunt_data_path):
-    #importing datasets here to keep the top-level imports clean
-    from datasets import load_dataset
-
-    #initialising an empty dictionary to map document ids to their text
-    corpus = {}
-
-    #loading the SciFact corpus if the selected dataset is scifact
-    if dataset_name == "scifact":
-        #loading the corpus config of SciFact from the local cache
-        scifact_corpus_dataset = load_dataset(
-            "allenai/scifact",
-            "corpus",
-            cache_dir=scifact_data_path,
-        )
-
-        #iterating over all corpus documents and building the id to text mapping
-        for row in scifact_corpus_dataset["train"]:
-            #joining the list of abstract sentences into one string
-            abstract_text = " ".join(row["abstract"])
-
-            #storing the abstract text keyed by its doc_id string
-            corpus[str(row["doc_id"])] = abstract_text
-
-    #loading the SciClaimHunt corpus if the selected dataset is sciclaimhunt
-    elif dataset_name == "sciclaimhunt":
-        #loading the SciClaimHunt dataset from the local cache directory
-        sciclaimhunt_dataset = load_dataset(
-            "Skatinger/SciClaimHunt",
-            cache_dir=sciclaimhunt_data_path,
-        )
-
-        #iterating over the train split to build a corpus from evidence fields
-        for index, row in enumerate(sciclaimhunt_dataset["train"]):
-            #skipping rows that have no claim text to avoid empty corpus entries
-            if not row["Claim"]:
-                continue
-
-            #storing the evidence text keyed by its index as a string
-            corpus[str(index)] = row["Evidence"]
-
-    #returning the filled corpus dictionary
-    return corpus
-
+#defining the integer to label string mapping for SciClaimHunt display
+SCICLAIMHUNT_INT_TO_LABEL = {0: "Supported", 1: "Refuted", 2: "NEI"}
 
 # ---------------------------------------------------------------------------
 # Input preparation
@@ -521,12 +402,6 @@ def main():
     #parsing all the command line arguments
     parsed_arguments = parser.parse_args()
 
-    #setting the local cache path for SciFact data
-    scifact_data_path = "data/scifact"
-
-    #setting the local cache path for SciClaimHunt data
-    sciclaimhunt_data_path = "data/sciclaimhunt"
-
     #detecting whether a GPU is available and setting the device
     if torch.backends.mps.is_available():
         device = torch.device("mps")
@@ -547,19 +422,22 @@ def main():
     #moving the model to the selected device
     roberta_model = roberta_model.to(device)
 
-    #loading claims and labels from whichever dataset was selected
+    #loading claims and corpus using the shared data utils to keep one consistent loading path
     if parsed_arguments.dataset == "scifact":
-        #loading SciFact test claims and gold labels
-        claims, labels = load_scifact_data(scifact_data_path)
+        #loading SciFact validation claims and corpus using the shared utility
+        claims_data, corpus = load_scifact(split="validation")
     else:
-        #loading SciClaimHunt test claims and gold labels
-        claims, labels = load_sciclaimhunt_data(sciclaimhunt_data_path)
+        #loading SciClaimHunt val claims and corpus using the shared utility
+        claims_data, corpus = load_sciclaimhunt(split="val")
+
+    #extracting just the claim texts from the claims dicts
+    claims = [claim_dict["claim"] for claim_dict in claims_data]
+
+    #converting the string labels to integer ids using the unified label map
+    labels = [LABEL_TO_ID[claim_dict["label"]] for claim_dict in claims_data]
 
     #printing how many claims were loaded so we can verify it looks right
     print(f"Loaded {len(claims)} claims for evaluation")
-
-    #loading the document corpus for whichever dataset was selected
-    corpus = load_corpus(parsed_arguments.dataset, scifact_data_path, sciclaimhunt_data_path)
 
     #printing how many corpus documents were loaded
     print(f"Loaded corpus with {len(corpus)} documents")
