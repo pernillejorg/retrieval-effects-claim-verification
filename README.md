@@ -2,7 +2,7 @@
 
 **Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification**
 
-> *MSc Thesis Project — supervised research*
+> *MSc AI Thesis Project — supervised research*
 > ---
 >>  Author: Pernille Bergesen (MSc AI Student)
 > 
@@ -67,7 +67,7 @@
 > >
 > > ---
 > >
-> > ## Project Structure
+> > ##Final Project Structure
 > >
 > > ```
 > > rag-claim-verification/
@@ -112,7 +112,7 @@
 > > - - Dense retrieval: semantic similarity via sentence-transformers
 > >  
 > >   - ### Step 4: Stance-Aware Reranking *(the novel bit)*
-> >   - After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked — only documents that actually take a stance on the claim get passed to the verifier.
+> >   - After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked, where only documents that actually take a stance on the claim get passed to the verifier.
 > >  
 > >   - The idea is that topical similarity is not enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. The stance filter catches this.
 > >  
@@ -185,10 +185,10 @@
 > >
 > > ## Status
 > >
-> > - [ ] Step 1: Dataset loading and preprocessing
-> > - [ ] Step 2: RoBERTa baseline
-> > - [ ] Step 3: BM25 + dense retrieval
-> > - [ ] Step 4: Stance-aware reranker
+> > - [ x] Step 1: Dataset loading and preprocessing
+> > - [ x] Step 2: RoBERTa baseline
+> > - [ x] Step 3: BM25 + dense retrieval
+> > - [ x] Step 4: Stance-aware reranker
 > > - [ ] Step 5: Full RAG pipeline
 > > - [ ] Step 6: Experimental matrix
 > > - [ ] Step 7: Failure taxonomy and annotation
