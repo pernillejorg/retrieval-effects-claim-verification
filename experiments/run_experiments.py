@@ -7,8 +7,8 @@ to isolate the effect of each component on final claim verification accuracy.
 
 The experimental matrix is:
 
-    Retrieval condition : BM25, dense, dense + stance reranking
-    k (docs retrieved)  : 1, 5, 10
+    Retrieval condition : no retrieval, BM25, dense, dense + stance reranking
+    k (docs retrieved)  : 0 (no retrieval), 1, 5, 10
     Stance threshold    : loose (0.5), strict (0.8)
     Datasets            : SciFact, SciClaimHunt
 
@@ -18,10 +18,12 @@ The three k values are chosen deliberately:
     k=10 captures high retrieval -- most candidate documents, highest noise risk
 
 The two thresholds test whether the strictness of stance filtering matters.
-For BM25 and dense conditions the threshold is not applicable (recorded as N/A).
+For BM25 and dense conditions the threshold is recorded as N/A.
+The no-retrieval baseline is included with k=0 so all conditions are in one table.
 
-Output is a single JSON file with all conditions and a markdown summary table
-suitable for direct inclusion in the thesis results chapter.
+Important: retrievers are built once outside all loops to avoid redundant corpus
+encoding. DenseRetriever encodes the full corpus on init so building it once and
+reusing it across all k values is critical for SciClaimHunt performance.
 
 References:
     Wadden et al. (2020) -- SciFact dataset and baseline
@@ -138,10 +140,11 @@ def compute_metrics(predicted_labels, true_labels, dataset_name):
     from sklearn.metrics import classification_report, f1_score, precision_score, recall_score
 
     #setting the class name list depending on which dataset we are evaluating
+    #SciFact has three classes, SciClaimHunt is binary with no NEI class
     if dataset_name == "scifact":
         target_names = ["SUPPORT", "CONTRADICT", "NEI"]
     else:
-        target_names = ["Supported", "Refuted"]
+        target_names = ["SUPPORT", "CONTRADICT"]
 
     #computing macro F1 across all classes
     macro_f1 = f1_score(true_labels, predicted_labels, average="macro", zero_division=0)
@@ -169,7 +172,7 @@ def compute_metrics(predicted_labels, true_labels, dataset_name):
 # Single condition runner
 # ---------------------------------------------------------------------------
 
-def run_condition(condition_name, claims, labels, corpus, model, tokenizer, device, dataset_name, k, threshold=None):
+def run_condition(condition_name, claims, labels, model, tokenizer, device, dataset_name, k, threshold=None, bm25_retriever=None, dense_retriever=None, stance_reranker=None):
     #printing a clear header for this experimental condition
     print(f"\n{'='*60}")
     print(f"  Condition: {condition_name}  |  k={k}  |  threshold={threshold if threshold else 'N/A'}")
@@ -181,14 +184,31 @@ def run_condition(condition_name, claims, labels, corpus, model, tokenizer, devi
     #setting the model to evaluation mode so dropout layers are turned off
     model.eval()
 
-    #handling the BM25 retrieval condition
-    if condition_name == "bm25":
-        #initialising the BM25 retriever with the full corpus
-        bm25_retriever = BM25Retriever(corpus)
-
-        #iterating over every claim to retrieve then classify
+    #handling the no retrieval baseline condition
+    if condition_name == "no_retrieval":
+        #iterating over every claim and classifying without any retrieved context
         for claim_text in claims:
-            #retrieving the top-k document dicts using BM25 scoring
+            #tokenising just the claim text with truncation and padding
+            encoded_input = tokenizer(claim_text, return_tensors="pt", truncation=True, max_length=512, padding=True)
+
+            #moving tensors to the device
+            encoded_input = {key: value.to(device) for key, value in encoded_input.items()}
+
+            #running the forward pass without gradient tracking
+            with torch.no_grad():
+                model_output = model(**encoded_input)
+
+            #taking the argmax as the predicted class
+            predicted_class = torch.argmax(model_output.logits, dim=1).item()
+
+            #appending the prediction to the list
+            predicted_labels.append(predicted_class)
+
+    #handling the BM25 retrieval condition
+    elif condition_name == "bm25":
+        #iterating over every claim to retrieve with BM25 then classify
+        for claim_text in claims:
+            #retrieving the top-k document dicts using the pre-built BM25 retriever
             retrieved_documents = bm25_retriever.retrieve(claim_text, k=k)
 
             #collecting the text of each retrieved document
@@ -215,12 +235,9 @@ def run_condition(condition_name, claims, labels, corpus, model, tokenizer, devi
 
     #handling the dense retrieval condition
     elif condition_name == "dense":
-        #initialising the dense retriever with the full corpus
-        dense_retriever = DenseRetriever(corpus)
-
-        #iterating over every claim to retrieve then classify
+        #iterating over every claim to retrieve with dense similarity then classify
         for claim_text in claims:
-            #retrieving the top-k document dicts using dense similarity
+            #retrieving the top-k document dicts using the pre-built dense retriever
             retrieved_documents = dense_retriever.retrieve(claim_text, k=k)
 
             #collecting the text of each retrieved document
@@ -247,18 +264,12 @@ def run_condition(condition_name, claims, labels, corpus, model, tokenizer, devi
 
     #handling the dense + stance reranking condition
     elif condition_name == "dense_reranked":
-        #initialising the dense retriever with the full corpus
-        dense_retriever = DenseRetriever(corpus)
-
-        #initialising the stance reranker
-        stance_reranker = StanceReranker()
-
         #iterating over every claim to retrieve, rerank, then classify
         for claim_text in claims:
-            #retrieving a larger pool to give the reranker more to work with
+            #retrieving a larger pool using the pre-built dense retriever
             retrieved_documents = dense_retriever.retrieve(claim_text, k=RERANK_POOL_SIZE)
 
-            #reranking the retrieved documents by stance score
+            #reranking the retrieved documents by stance score using the pre-loaded reranker
             reranked_documents = stance_reranker.rerank(claim_text, retrieved_documents, neutral_threshold=threshold)
 
             #taking only the top-k documents after reranking
@@ -362,13 +373,45 @@ def main():
     #printing dataset statistics for verification
     print(f"Loaded {len(claims)} claims and {len(corpus)} corpus documents")
 
+    #building all retrievers once here outside all loops to avoid redundant corpus encoding
+    print("\nBuilding BM25 index (happens once)...")
+    bm25_retriever = BM25Retriever(corpus)
+
+    #building the dense retriever once -- this encodes the full corpus into vectors
+    print("\nBuilding dense retriever and encoding corpus (happens once)...")
+    dense_retriever = DenseRetriever(corpus)
+
+    #loading the stance reranker once -- this loads the NLI model into memory
+    print("\nLoading stance reranker (happens once)...")
+    stance_reranker = StanceReranker()
+
     #initialising the results dictionary to hold all experimental conditions
     all_results = {
         "dataset": parsed_arguments.dataset,
         "conditions": []
     }
 
-    #running BM25 conditions across all k values
+    #running the no retrieval baseline first as k=0 for the thesis table
+    print("\n--- No Retrieval Baseline ---")
+    no_retrieval_metrics = run_condition(
+        condition_name="no_retrieval",
+        claims=claims,
+        labels=labels,
+        model=roberta_model,
+        tokenizer=roberta_tokenizer,
+        device=device,
+        dataset_name=parsed_arguments.dataset,
+        k=0,
+        threshold=None,
+    )
+    all_results["conditions"].append({
+        "condition": "no_retrieval",
+        "k": 0,
+        "threshold": None,
+        "metrics": no_retrieval_metrics,
+    })
+
+    #running BM25 conditions across all k values using the pre-built retriever
     print("\n--- BM25 Retrieval Conditions ---")
     for k_value in K_VALUES:
         #running this BM25 condition and collecting metrics
@@ -376,13 +419,13 @@ def main():
             condition_name="bm25",
             claims=claims,
             labels=labels,
-            corpus=corpus,
             model=roberta_model,
             tokenizer=roberta_tokenizer,
             device=device,
             dataset_name=parsed_arguments.dataset,
             k=k_value,
             threshold=None,
+            bm25_retriever=bm25_retriever,
         )
 
         #storing this condition result with its configuration
