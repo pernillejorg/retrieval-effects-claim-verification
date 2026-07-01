@@ -300,11 +300,10 @@ def run_bm25_pipeline(claims, labels, corpus, model, tokenizer, device, dataset_
 
     #iterating over every claim, retrieving with BM25, then classifying
     for claim_text in claims:
-        #retrieving the top-k document ids using BM25 keyword scoring
-        retrieved_document_ids = bm25_retriever.retrieve(claim_text, top_k=top_k)
+        retrieved_documents = bm25_retriever.retrieve(claim_text, k=top_k)
 
-        #collecting the actual text of each retrieved document from the corpus
-        retrieved_document_texts = [corpus[doc_id] for doc_id in retrieved_document_ids if doc_id in corpus]
+        #collecting the actual text of each retrieved document from the retriever output
+        retrieved_document_texts = [doc["text"] for doc in retrieved_documents]
 
         #building the combined input string from the claim and retrieved docs
         combined_input_text = truncate_and_concatenate(claim_text, retrieved_document_texts, tokenizer)
@@ -345,9 +344,6 @@ def run_dense_pipeline(claims, labels, corpus, model, tokenizer, device, dataset
     #initialising the dense retriever with the full corpus
     dense_retriever = DenseRetriever(corpus)
 
-    #building the dense FAISS index over all corpus documents
-    dense_retriever.build_index()
-
     #initialising an empty list to collect predicted class indices
     predicted_labels = []
 
@@ -356,11 +352,11 @@ def run_dense_pipeline(claims, labels, corpus, model, tokenizer, device, dataset
 
     #iterating over every claim, retrieving with dense similarity, then classifying
     for claim_text in claims:
-        #retrieving the top-k document ids using dense embedding similarity
-        retrieved_document_ids = dense_retriever.retrieve(claim_text, top_k=top_k)
+        #retrieving the top-k document dictionaries using dense embedding similarity
+        retrieved_documents = dense_retriever.retrieve(claim_text, k=top_k)
 
         #collecting the actual text of each retrieved document from the corpus
-        retrieved_document_texts = [corpus[doc_id] for doc_id in retrieved_document_ids if doc_id in corpus]
+        retrieved_document_texts = [doc["text"] for doc in retrieved_documents]
 
         #building the combined input string from the claim and retrieved docs
         combined_input_text = truncate_and_concatenate(claim_text, retrieved_document_texts, tokenizer)
@@ -401,9 +397,6 @@ def run_dense_reranked_pipeline(claims, labels, corpus, model, tokenizer, device
     #initialising the dense retriever with the full corpus
     dense_retriever = DenseRetriever(corpus)
 
-    #building the dense FAISS index over all corpus documents
-    dense_retriever.build_index()
-
     #initialising the stance reranker which uses the NLI model internally
     stance_reranker = StanceReranker()
 
@@ -416,13 +409,10 @@ def run_dense_reranked_pipeline(claims, labels, corpus, model, tokenizer, device
     #iterating over every claim, retrieving a bigger pool, reranking, then classifying
     for claim_text in claims:
         #retrieving a larger pool of documents to give the reranker more to work with
-        retrieved_document_ids = dense_retriever.retrieve(claim_text, top_k=RERANK_POOL_SIZE)
-
-        #collecting the actual text of each retrieved document from the corpus
-        retrieved_document_texts = [corpus[doc_id] for doc_id in retrieved_document_ids if doc_id in corpus]
+        retrieved_documents = dense_retriever.retrieve(claim_text, k=RERANK_POOL_SIZE)
 
         #reranking all retrieved documents by their stance score using the NLI model
-        reranked_documents = stance_reranker.rerank(claim_text, retrieved_document_texts)
+        reranked_documents = stance_reranker.rerank(claim_text, retrieved_documents)
 
         #taking only the top-k documents after reranking for the classifier input
         #to match the reranker.py as it returns a list of dicts with keys
@@ -538,7 +528,12 @@ def main():
     sciclaimhunt_data_path = "data/sciclaimhunt"
 
     #detecting whether a GPU is available and setting the device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
 
     #printing which device will be used for all inference
     print(f"Using device: {device}")
