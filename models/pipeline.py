@@ -412,7 +412,7 @@ def run_dense_reranked_pipeline(claims, labels, corpus, model, tokenizer, device
         retrieved_documents = dense_retriever.retrieve(claim_text, k=RERANK_POOL_SIZE)
 
         #reranking all retrieved documents by their stance score using the NLI model
-        reranked_documents = stance_reranker.rerank(claim_text, retrieved_documents)
+        reranked_documents = stance_reranker.rerank(claim_text, retrieved_documents, neutral_threshold=0.5)
 
         #taking only the top-k documents after reranking for the classifier input
         #to match the reranker.py as it returns a list of dicts with keys
