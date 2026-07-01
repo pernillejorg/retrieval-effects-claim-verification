@@ -343,7 +343,8 @@ def compute_metrics(predicted_labels, true_labels, dataset_name):
     if dataset_name == "scifact":
         target_names = ["SUPPORT", "CONTRADICT", "NEI"]
     else:
-        target_names = ["Supported", "Refuted", "NEI"]
+        #as the sciclaimhunt dataset has no NEI class
+        target_names = ["Supported", "Refuted"]
 
     #computing the macro F1 score across all three classes
     macro_f1_score = f1_score(true_labels, predicted_labels, average="macro", zero_division=0)
