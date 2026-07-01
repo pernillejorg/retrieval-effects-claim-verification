@@ -436,7 +436,7 @@ def main():
             "metrics": metrics,
         })
 
-    #running dense retrieval conditions across all k values
+    #running dense retrieval conditions across all k values using the pre-built retriever
     print("\n--- Dense Retrieval Conditions ---")
     for k_value in K_VALUES:
         #running this dense condition and collecting metrics
@@ -444,13 +444,13 @@ def main():
             condition_name="dense",
             claims=claims,
             labels=labels,
-            corpus=corpus,
             model=roberta_model,
             tokenizer=roberta_tokenizer,
             device=device,
             dataset_name=parsed_arguments.dataset,
             k=k_value,
             threshold=None,
+            dense_retriever=dense_retriever,
         )
 
         #storing this condition result with its configuration
@@ -470,16 +470,17 @@ def main():
                 condition_name="dense_reranked",
                 claims=claims,
                 labels=labels,
-                corpus=corpus,
                 model=roberta_model,
                 tokenizer=roberta_tokenizer,
                 device=device,
                 dataset_name=parsed_arguments.dataset,
                 k=k_value,
                 threshold=threshold_value,
+                dense_retriever=dense_retriever,
+                stance_reranker=stance_reranker,
             )
 
-            #labelling the threshold as loose or strict for clarity
+            #labelling the threshold as loose or strict for the results file
             threshold_label = "loose" if threshold_value == LOOSE_THRESHOLD else "strict"
 
             #storing this condition result with its configuration
@@ -490,8 +491,10 @@ def main():
                 "metrics": metrics,
             })
 
-    #creating the output directory if it does not already exist
-    os.makedirs(os.path.dirname(parsed_arguments.output_path), exist_ok=True)
+    #creating the output directory only if there is a directory component in the path
+    output_dir = os.path.dirname(parsed_arguments.output_path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
 
     #saving all experimental results to a JSON file
     with open(parsed_arguments.output_path, "w") as output_file:
