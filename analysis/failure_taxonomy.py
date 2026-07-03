@@ -416,8 +416,8 @@ def main():
     #printing manual annotation instructions for SciFact
     if parsed_arguments.dataset == "scifact":
         print(f"\nFor manual annotation: open and annotate 50-75 errors from:")
-        print(f"  step7_errors_scifact_dense.json")
-        print(f"  Set the 'failure_category' field for each error to one of:")
+        print(f"step7_errors_scifact_dense.json")
+        print(f"Set the 'failure_category' field for each error to one of:")
         for category in VALID_CATEGORIES:
             print(f"    {category}")
 
