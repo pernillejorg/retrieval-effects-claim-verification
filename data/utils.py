@@ -14,17 +14,16 @@ SciFact:
   gold_label values: SUPPORT, CONTRADICT, NOT_ENOUGH_INFO -> mapped directly
   corpus keyed by integer doc ids (stored as strings here for consistency)
 
-SciClaimHunt:
-  Type values: positive -> SUPPORT, negative -> CONTRADICT
-  No NEI class exists in SciClaimHunt; all claims are binary
-  Evidence is a pre-extracted passage string, not a doc id reference
-  We construct a synthetic corpus from the evidence strings, keyed by row index
-  The dataset has one split (train); we split 80/10/10 for train/val/test
+SciFact-Open:
+  Test-only collection (no train/val split). Evidence is a dict keyed by doc_id,
+  each with a SUPPORT/CONTRADICT label (no NEI in raw data). We collapse to one
+  claim-level label (any SUPPORT -> SUPPORT, else CONTRADICT) and map claims with
+  no evidence to NEI. Read from cached .jsonl files, not HuggingFace.
 
 Usage:
-  from data.utils import load_scifact, load_sciclaimhunt
+  from data.utils import load_scifact, load_scifact_open
   claims, corpus = load_scifact(split="train")
-  claims, corpus = load_sciclaimhunt(split="train")
+  claims, corpus = load_scifact_open()
 """
 
 import os
@@ -32,7 +31,6 @@ import random
 from datasets import load_dataset
 
 SCIFACT_CACHE = os.path.join(os.path.dirname(__file__), "scifact", "cache")
-SCICLAIMHUNT_CACHE = os.path.join(os.path.dirname(__file__), "sciclaimhunt", "cache")
 
 # Unified label names used everywhere downstream
 LABEL_SUPPORT    = "SUPPORT"
@@ -47,13 +45,6 @@ SCIFACT_LABEL_MAP = {
     #When some claims have empty string label, then treating as NEI
     "":                 LABEL_NEI,  
 }
-
-# SciClaimHunt raw label -> unified label
-SCICLAIMHUNT_LABEL_MAP = {
-    "positive": LABEL_SUPPORT,
-    "negative": LABEL_CONTRADICT,
-}
-
 
 # ---------------------------------------------------------------------------
 # SciFact
@@ -103,61 +94,97 @@ def load_scifact(split="train"):
 
 
 # ---------------------------------------------------------------------------
-# SciClaimHunt
+# SciFact-Open
 # ---------------------------------------------------------------------------
 
-def load_sciclaimhunt(split="train", seed=42):
+def load_scifact_open():
     """
-    SciClaimHunt has one split (train, 110k rows).
-    We manually split 80/10/10 -> train/val/test using a fixed seed.
+    SciFact-Open (Wadden et al., 2022) -- TEST-ONLY collection, no train/val split.
+    Distributed as .jsonl files (see data/scifact_open/download.py). We read the
+    cached files rather than HuggingFace, since SciFact-Open is not on the Hub.
+
+    Label handling (documented in the thesis):
+      - SciFact-Open evidence is a dict keyed by doc_id, each with a per-document
+        SUPPORT/CONTRADICT label. There is NO NEI label in the raw data.
+      - We collapse per-document labels to one claim-level label:
+          * any SUPPORT  -> SUPPORT
+          * else any CONTRADICT -> CONTRADICT
+      - Claims with NO evidence at all are mapped to NEI (they are unverifiable
+        against the corpus, which is conceptually SciFact's NEI case). This keeps
+        all 279 claims and aligns SciFact-Open with SciFact's 3-class scheme.
 
     Returns:
         claims: list of dicts with keys:
-            id              (str)   row index as string
-            claim           (str)   the claim text
-            label           (str)   SUPPORT | CONTRADICT
-            evidence_doc_ids(list)  single synthetic doc id ['sch_{id}']
-        corpus: dict {'sch_{id}': evidence_text}
-            Keyed by 'sch_{row_index}'; value is the Evidence passage string
+            id              (str)
+            claim           (str)
+            label           (str)   SUPPORT | CONTRADICT | NEI
+            evidence_doc_ids(list)  doc ids with evidence (empty list for NEI)
+        corpus: dict {doc_id (str): "title abstract"}
     """
-    assert split in ("train", "val", "test"), f"SciClaimHunt splits: train, val, test. Got: {split}"
+    import json
 
-    raw = load_dataset("AnshulS/dataset_for_scicllaimhunt", cache_dir=SCICLAIMHUNT_CACHE)
-    all_rows = list(raw["train"])
+    cache_dir = os.path.join(os.path.dirname(__file__), "scifact_open", "cache")
+    claims_path = os.path.join(cache_dir, "claims.jsonl")
+    corpus_path = os.path.join(cache_dir, "corpus.jsonl")
 
-    # Reproducible 80/10/10 split
-    rng = random.Random(seed)
-    indices = list(range(len(all_rows)))
-    rng.shuffle(indices)
+    #helper: read a .jsonl file into a list of dicts
+    def _read_jsonl(path):
+        rows = []
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    rows.append(json.loads(line))
+        return rows
 
-    n = len(indices)
-    n_train = int(0.8 * n)
-    n_val   = int(0.1 * n)
-
-    split_indices = {
-        "train": indices[:n_train],
-        "val":   indices[n_train:n_train + n_val],
-        "test":  indices[n_train + n_val:],
-    }
-
-    selected = [all_rows[i] for i in split_indices[split]]
-
+    #building the corpus dict: doc_id (str) -> "title abstract"
     corpus = {}
+    for row in _read_jsonl(corpus_path):
+        doc_id = str(row["doc_id"])
+        abstract = row.get("abstract", "")
+        #abstracts may be stored as a list of sentences; join them if so
+        if isinstance(abstract, list):
+            abstract = " ".join(abstract)
+        title = row.get("title", "")
+        corpus[doc_id] = f"{title} {abstract}".strip()
+
+    #counters for the conflict report (claims with both SUPPORT and CONTRADICT evidence)
+    conflict_count = 0
+
+    #building the claims list with collapsed labels
     claims = []
-    for row in selected:
-        #skipping rows where Claim or Evidence is None or empty to avoid downstream tokenizer errors
-        #if not row["Claim"] or not row["Evidence"]:
-        if not row["Claim"]:
-            continue
-        row_id = str(row["Unnamed: 0"])
-        doc_id = f"sch_{row_id}"
-        corpus[doc_id] = row["Evidence"]
+    for row in _read_jsonl(claims_path):
+        evidence = row.get("evidence", {}) or {}
+
+        #collecting all per-document labels and the doc ids that carry evidence
+        doc_labels = [ev["label"] for ev in evidence.values() if isinstance(ev, dict)]
+        evidence_doc_ids = [str(doc_id) for doc_id in evidence.keys()]
+
+        #collapsing per-document labels into one claim-level label
+        if not doc_labels:
+            #no evidence at all -> unverifiable -> NEI
+            label = LABEL_NEI
+        else:
+            #noting conflicts for the thesis write-up (does not change the rule)
+            if LABEL_SUPPORT in doc_labels and LABEL_CONTRADICT in doc_labels:
+                conflict_count += 1
+            #any SUPPORT wins, else CONTRADICT
+            if LABEL_SUPPORT in doc_labels:
+                label = LABEL_SUPPORT
+            else:
+                label = LABEL_CONTRADICT
+
         claims.append({
-            "id": row_id,
-            "claim": row["Claim"],
-            "label": SCICLAIMHUNT_LABEL_MAP[row["Type"]],
-            "evidence_doc_ids": [doc_id],
+            "id":               str(row["id"]),
+            "claim":            row["claim"],
+            "label":            label,
+            "evidence_doc_ids": evidence_doc_ids,
         })
+
+    #reporting the conflict count so it can be cited honestly in the thesis
+    print(f"[load_scifact_open] {len(claims)} claims loaded "
+          f"({conflict_count} had conflicting SUPPORT/CONTRADICT evidence, "
+          f"resolved to SUPPORT).")
 
     return claims, corpus
 
@@ -179,10 +206,10 @@ if __name__ == "__main__":
     print(f"  sample label: {claims[0]['label']}")
 
     print()
-    print("=== SciClaimHunt (train split) ===")
-    claims, corpus = load_sciclaimhunt(split="train")
+    print("=== SciFact-Open (test-only) ===")
+    claims, corpus = load_scifact_open()
     print(f"  claims : {len(claims)}")
-    print(f"  corpus : {len(corpus)} evidence passages")
+    print(f"  corpus : {len(corpus)} abstracts")
     labels = Counter(c["label"] for c in claims)
     for label, count in labels.most_common():
         print(f"  {label}: {count}")
