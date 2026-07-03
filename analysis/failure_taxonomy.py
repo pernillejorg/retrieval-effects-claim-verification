@@ -436,3 +436,7 @@ def main():
 
     #returning the full results for Colab use
     return {"errors": all_condition_errors, "failure_rates": failure_rates}
+
+#running main only when this script is called directly
+if __name__ == "__main__":
+    main()
