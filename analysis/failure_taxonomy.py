@@ -24,18 +24,15 @@ The four failure categories defined upfront (hypothesis-driven, not post-hoc):
        The model predicts incorrectly despite reasonably relevant retrieval.
        The failure is in the classifier, not the retrieval component.
 
-
 The stance reranker is specifically designed to address categories 1 and 2
 by promoting stance-bearing documents over topically similar but neutral ones.
 The failure analysis directly evaluates whether this design goal is achieved.
-
 
 Scope decision: full manual annotation (50-75 errors) is performed on SciFact
 only, as it is the primary dataset. SciClaimHunt failure rates are computed
 quantitatively across conditions without full manual annotation, which is a
 reasonable and honest scoping decision for a solo research project.
 """
-
 
 #importing os for file path handling and directory creation
 import os
@@ -66,7 +63,6 @@ from models.reranker import StanceReranker
 
 #importing the shared data loading functions
 from data.utils import load_scifact, load_sciclaimhunt, LABEL_SUPPORT, LABEL_CONTRADICT, LABEL_NEI
-
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -104,7 +100,6 @@ RERANK_POOL_SIZE = 10
 
 #defining the loose threshold for reranking
 LOOSE_THRESHOLD = 0.5
-
 
 # ---------------------------------------------------------------------------
 # Input preparation
@@ -153,7 +148,6 @@ def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_le
 
     #returning the combined string
     return combined_input
-
 
 # ---------------------------------------------------------------------------
 # Error collector
@@ -252,12 +246,11 @@ def collect_errors(condition_name, claims_data, labels, model, tokenizer, device
     #returning the full list of error records
     return error_records
 
-
 # ---------------------------------------------------------------------------
 # Quantitative failure rate analysis
 # ---------------------------------------------------------------------------
 
-def compute_failure_rates(all_condition_errors):
+def compute_failure_rates(all_condition_errors, total_claims):
     #initialising a dictionary to hold failure rates per condition
     failure_rates = {}
 
@@ -279,6 +272,7 @@ def compute_failure_rates(all_condition_errors):
         #storing the failure rate information for this condition
         failure_rates[condition_name] = {
             "total_errors": total_errors,
+            "error_rate_percent": round(total_errors / total_claims * 100, 1),
             "annotated_errors": annotated_count,
             "category_counts": category_counts,
         }
@@ -292,7 +286,6 @@ def compute_failure_rates(all_condition_errors):
 
     #returning the failure rates dictionary
     return failure_rates
-
 
 # ---------------------------------------------------------------------------
 # Main
@@ -420,8 +413,16 @@ def main():
         #printing confirmation
         print(f"Saved {len(error_records)} errors to {output_path}")
 
+    #printing manual annotation instructions for SciFact
+    if parsed_arguments.dataset == "scifact":
+        print(f"\nFor manual annotation: open and annotate 50-75 errors from:")
+        print(f"  step7_errors_scifact_dense.json")
+        print(f"  Set the 'failure_category' field for each error to one of:")
+        for category in VALID_CATEGORIES:
+            print(f"    {category}")
+
     #computing quantitative failure rates across all conditions
-    failure_rates = compute_failure_rates(all_condition_errors)
+    failure_rates = compute_failure_rates(all_condition_errors, total_claims=len(claims_data))
 
     #saving the failure rates summary
     failure_rates_path = os.path.join(output_dir, f"step7_failure_rates_{parsed_arguments.dataset}.json")
