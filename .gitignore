@@ -214,3 +214,4 @@ data/scifact/*.json
 data/sciclaimhunt/*.jsonl
 data/sciclaimhunt/*.csv
 .venv311/
+data/*/cache/
