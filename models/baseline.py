@@ -17,6 +17,12 @@ Design decisions (document these in your thesis):
 - Macro F1 as primary metric: correct for imbalanced 3-class problems
 - Learning rate search over {1e-5, 2e-5, 3e-5}: we pick the best on val F1
 - Early stopping with patience 2: saves best checkpoint, avoids overfitting on small data
+- Shared 3-class head (SUPPORT/CONTRADICT/NEI): SciFact is 3-class, but the secondary
+  evaluation dataset SciFact-Open is 2-class (SUPPORT/CONTRADICT, no NEI). We keep one
+  unified head so the same SciFact-trained classifier can be scored on both. Metrics are
+  computed only over classes actually present in each split, so SciFact-Open's scores are
+  not distorted by the unused NEI class. On SciFact-Open the model can still predict NEI,
+  but since no gold label is NEI there, such predictions are simply counted as errors.
 """
 
 #importing the operating system module for handling file paths
@@ -52,9 +58,14 @@ from sklearn.metrics import f1_score, precision_score, recall_score, classificat
 #importing Counter to count label distributions in the training data
 from collections import Counter
 
-#importing our unified data loading functions for both datasets
-from data.utils import load_scifact, load_sciclaimhunt, LABEL_SUPPORT, LABEL_CONTRADICT, LABEL_NEI
+#importing numpy so we can seed it for reproducibility
+import numpy as np
 
+#importing random so we can seed Python's RNG (used by random.sample in the LR search)
+import random
+
+#importing our unified data loading functions for both datasets
+from data.utils import load_scifact, load_scifact_open, LABEL_SUPPORT, LABEL_CONTRADICT, LABEL_NEI
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -87,6 +98,28 @@ LABEL_TO_ID = {label: index for index, label in enumerate(LABEL_LIST)}
 
 #creating a dictionary mapping each integer index back to its label string for reporting
 ID_TO_LABEL = {index: label for label, index in LABEL_TO_ID.items()}
+
+# ---------------------------------------------------------------------------
+# Reproducibility
+# ---------------------------------------------------------------------------
+
+def set_seed(seed):
+    """
+    Seeding all random number generators so results are reproducible.
+    Documented in the thesis: all reported numbers use seed=42 unless stated.
+    """
+    #seeding Python's built-in random module (used by random.sample in LR search)
+    random.seed(seed)
+
+    #seeding NumPy's RNG
+    np.random.seed(seed)
+
+    #seeding PyTorch's CPU RNG
+    torch.manual_seed(seed)
+
+    #seeding PyTorch's GPU RNG for all CUDA devices, if any
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 # ---------------------------------------------------------------------------
@@ -293,13 +326,13 @@ def evaluate(model, dataloader, device):
             all_predicted_labels.extend(predictions.cpu().numpy().tolist())
 
     #computing macro-averaged F1 score across all three classes
-    macro_f1 = f1_score(all_true_labels, all_predicted_labels, average="macro")
+    macro_f1 = f1_score(all_true_labels, all_predicted_labels, average="macro", zero_division=0)
 
     #computing macro-averaged precision score across all three classes
-    macro_precision = precision_score(all_true_labels, all_predicted_labels, average="macro")
+    macro_precision = precision_score(all_true_labels, all_predicted_labels, average="macro", zero_division=0)
 
     #computing macro-averaged recall score across all three classes
-    macro_recall = recall_score(all_true_labels, all_predicted_labels, average="macro")
+    macro_recall = recall_score(all_true_labels, all_predicted_labels, average="macro", zero_division=0)
 
     # Determining which label ids are actually present in this dataset split
     present_label_ids = sorted(set(all_true_labels))
@@ -311,6 +344,7 @@ def evaluate(model, dataloader, device):
         all_predicted_labels,
         labels=present_label_ids,
         target_names=present_label_names,
+        zero_division=0,
     )
 
     #returning all metrics and the detailed report
@@ -334,7 +368,6 @@ def find_best_learning_rate(train_claims, val_claims, tokenizer, device):
     #limiting the LR search to 2000 examples maximum to keep compute manageable on large datasets
     MAX_SEARCH_EXAMPLES = 2000
     if len(train_claims) > MAX_SEARCH_EXAMPLES:
-        import random
         #sampling a random subset for the LR search only -- full data is used for actual training
         search_claims = random.sample(train_claims, MAX_SEARCH_EXAMPLES)
         print(f"  (Using {MAX_SEARCH_EXAMPLES} random examples for LR search on large dataset)")
@@ -410,12 +443,15 @@ def find_best_learning_rate(train_claims, val_claims, tokenizer, device):
 
 def run_baseline(dataset_name="scifact"):
     """
-    Loading the dataset, searching for the best learning rate,
-    fine-tuning RoBERTa with early stopping on claim text only,
-    evaluating on the validation split, and saving the best checkpoint.
+    Loading SciFact, searching for the best learning rate, fine-tuning RoBERTa
+    with early stopping on claim text only, evaluating on the validation split,
+    and saving the best checkpoint.
 
-    dataset_name: 'scifact' or 'sciclaimhunt'
+    dataset_name: 'scifact' (SciFact-Open is evaluated separately, see
+    evaluate_on_scifact_open, because it has no training split).
     """
+    #seeding everything for reproducibility before any randomness happens
+    set_seed(42)
 
     #printing a clear header so output is easy to read in the terminal
     print(f"\n{'=' * 60}")
@@ -441,16 +477,12 @@ def run_baseline(dataset_name="scifact"):
         #loading SciFact validation claims for evaluation after each epoch
         val_claims, _ = load_scifact(split="validation")
 
-    elif dataset_name == "sciclaimhunt":
-        #loading SciClaimHunt training claims
-        train_claims, _ = load_sciclaimhunt(split="train")
-
-        #loading SciClaimHunt validation claims
-        val_claims, _ = load_sciclaimhunt(split="val")
+        #SciFact's official test labels are withheld (blind leaderboard), so there is no
+        #held-out test set; validation is the final reported split (see thesis)
 
     else:
         #raising an error if an unrecognised dataset name is given
-        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'sciclaimhunt'.")
+        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact'.")
 
     #printing the number of training and validation claims
     print(f"Train claims : {len(train_claims)}")
@@ -489,16 +521,14 @@ def run_baseline(dataset_name="scifact"):
 
     #setting up AdamW optimiser with the best learning rate found above
     optimiser = AdamW(model.parameters(), lr=best_lr, weight_decay=0.01)
-
-    '''
-    Using a conservative epoch estimate for the scheduler rather than MAX_EPOCHS,
-    since early stopping typically terminates training well before the maximum.
-    This avoids the scheduler decaying too slowly due to an overly large step count.
-    Empirically, 3-5 epochs is typical for RoBERTa on small scientific datasets (consistent with Wadden et al., 2020 on SciFact).
-    '''
  
-    SCHEDULER_EPOCH_ESTIMATE = 5
-    total_training_steps = len(train_dataloader) * SCHEDULER_EPOCH_ESTIMATE
+    '''
+    The scheduler is planned over MAX_EPOCHS. If early stopping triggers earlier,
+    training simply ends before the schedule completes, which is standard practice.
+    '''
+    #tying total scheduler steps to MAX_EPOCHS so the LR never decays to zero mid-training;
+    #early stopping simply ends before the schedule completes, which is standard practice
+    total_training_steps = len(train_dataloader) * MAX_EPOCHS
 
     #computing the number of warmup steps as 10% of total training steps
     warmup_steps = int(0.1 * total_training_steps)
@@ -583,18 +613,84 @@ def run_baseline(dataset_name="scifact"):
         #printing a blank line between epochs for readability
         print()
 
-    #printing the final classification report from the best checkpoint epoch
-    print("\nFinal validation classification report (best checkpoint):")
-    print(best_val_report)
+    #reloading the best checkpoint from disk so we evaluate the best model, not the last epoch
+    best_model = RobertaForSequenceClassification.from_pretrained(save_directory).to(device)
+    best_tokenizer = RobertaTokenizer.from_pretrained(save_directory)
 
-    #printing a summary of the final best result
-    print(f"\nBest validation macro F1 : {best_val_f1:.4f}")
-    print(f"Best learning rate used  : {best_lr}")
+    #reporting the validation result -- this split was used for model selection (LR + early stopping)
+    print("\nValidation classification report (best checkpoint, used for model selection):")
+    print(best_val_report)
+    print(f"Best validation macro F1 : {best_val_f1:.4f}")
+
+    #SciFact has no public test labels, so the validation result above is the final reported result
+    print("\n(No held-out test set for SciFact, as validation is the final reported result.)")
+
+    #printing the remaining summary
+    print(f"\nBest learning rate used  : {best_lr}")
     print(f"Model saved to           : {save_directory}")
 
-    #returning the model and tokenizer for optional further use
-    return model, tokenizer
+    #returning the best model and tokenizer for optional further use
+    return best_model, best_tokenizer
 
+# ---------------------------------------------------------------------------
+# SciFact-Open evaluation -- zero-shot generalisation of the SciFact baseline
+# ---------------------------------------------------------------------------
+
+def evaluate_on_scifact_open():
+    """
+    Evaluating the SciFact-trained baseline on SciFact-Open WITHOUT retraining.
+    SciFact-Open is a test-only collection (no train/val split), so this is a
+    zero-shot generalisation reference: the same claim-only model trained on
+    SciFact is scored on SciFact-Open's claims.
+
+    SciFact-Open has no NEI class (SUPPORT/CONTRADICT only). Any NEI the model
+    predicts is necessarily wrong here; metrics are computed only over the labels
+    actually present, so scores reflect SciFact-Open's two real classes.
+    """
+    #seeding for reproducibility (evaluation is deterministic, but kept for consistency)
+    set_seed(42)
+
+    #selecting the device the same way run_baseline does
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+    print(f"Using device: {device}\n")
+
+    #locating the SciFact baseline checkpoint saved by run_baseline("scifact")
+    checkpoint_dir = os.path.join(
+        os.path.dirname(__file__), "saved_models", "baseline_scifact"
+    )
+    if not os.path.isdir(checkpoint_dir):
+        raise FileNotFoundError(
+            f"No SciFact baseline found at {checkpoint_dir}. "
+            "Run run_baseline('scifact') first to train and save it."
+        )
+
+    #loading the trained SciFact model and its tokenizer from disk
+    print(f"Loading SciFact-trained baseline from: {checkpoint_dir}")
+    model = RobertaForSequenceClassification.from_pretrained(checkpoint_dir).to(device)
+    tokenizer = RobertaTokenizer.from_pretrained(checkpoint_dir)
+
+    #loading SciFact-Open claims (test-only collection)
+    open_claims, _ = load_scifact_open()
+    print(f"SciFact-Open claims: {len(open_claims)}")
+    print(f"Label distribution: {dict(Counter(c['label'] for c in open_claims))}\n")
+
+    #wrapping in dataset/dataloader and evaluating once
+    open_dataset = ClaimDataset(open_claims, tokenizer)
+    open_dataloader = DataLoader(open_dataset, batch_size=BATCH_SIZE, shuffle=False)
+    open_f1, open_precision, open_recall, open_report = evaluate(model, open_dataloader, device)
+
+    print("SciFact-Open zero-shot classification report (SciFact-trained baseline):")
+    print(open_report)
+    print(f"SciFact-Open macro F1     : {open_f1:.4f}")
+    print(f"SciFact-Open precision    : {open_precision:.4f}")
+    print(f"SciFact-Open recall       : {open_recall:.4f}")
+
+    return open_f1, open_precision, open_recall, open_report
 
 # ---------------------------------------------------------------------------
 # Entry point
@@ -605,9 +701,15 @@ if __name__ == "__main__":
 
     #parsing command line arguments so we can specify the dataset without editing the file
     parser = argparse.ArgumentParser(description="RoBERTa no-retrieval baseline")
-    parser.add_argument("--dataset", default="scifact", choices=["scifact", "sciclaimhunt"],
-                        help="Dataset to run baseline on")
+    parser.add_argument("--dataset", default="scifact",
+                        choices=["scifact", "scifact_open"],
+                        help="'scifact' trains the baseline; 'scifact_open' evaluates "
+                             "the trained SciFact baseline on SciFact-Open (no training)")
     args = parser.parse_args()
 
-    #running the baseline on the chosen dataset
-    run_baseline(dataset_name=args.dataset)
+    if args.dataset == "scifact_open":
+        #evaluation-only: uses the already-trained SciFact baseline
+        evaluate_on_scifact_open()
+    else:
+        run_baseline(dataset_name=args.dataset)
+
