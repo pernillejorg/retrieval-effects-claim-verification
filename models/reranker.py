@@ -19,10 +19,11 @@ Design decisions (document these in your thesis):
 - Two thresholds (loose=0.5, strict=0.8): tests threshold sensitivity
   without over-engineering
 - Batched inference per claim: all documents for one claim encoded together
-  for efficiency, especially important for SciClaimHunt (108k inference calls)
-- Soft reranking: all documents are kept but reordered by stance score so
-  stance-bearing documents appear first; would_be_filtered flag records
-  what hard filtering would have removed, for thesis analysis
+  for efficiency across all (claim, document) pairs in the evaluation set
+- Soft reranking (mode="soft"): all documents are kept but reordered by stance
+  score so stance-bearing documents appear first. Hard filtering (mode="hard")
+  additionally removes documents whose neutral probability exceeds the threshold.
+  Both are evaluated so the choice between them is empirically justified, not assumed.
 - Stance score = max(entailment_prob, contradiction_prob): captures whether
   a document takes any stance at all on the claim
 
@@ -54,11 +55,11 @@ import torch.nn.functional as F
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 #importing our unified data loading functions for both datasets
-from data.utils import load_scifact, load_sciclaimhunt
+from data.utils import load_scifact, load_scifact_open
 
-#importing the retrieval classes so we can build the candidate pool
-#only using DenseRetriever for this reranking evaluation, since BM25 resulted in a lower Recall@k numbers for both datasets
-from models.retrieval import DenseRetriever
+#loading the saved retrieval candidates from Step 3 instead of re-running
+#retrieval, so no retriever import is needed here.
+#from models.retrieval import DenseRetriever
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -98,10 +99,9 @@ class StanceReranker:
     Implementing stance-aware reranking using zero-shot NLI inference.
 
     For each (claim, document) pair, the NLI model scores entailment,
-    contradiction, and neutral probabilities. Documents with high neutral
-    scores are filtered out, only stance-bearing documents are kept.
-
-    This is the novel technical contribution of this project.
+    contradiction, and neutral probabilities. Documents are first scored for stance. 
+    In soft mode, all documents are kept and reranked by stance score. 
+    In hard mode, documents with neutral scores above the threshold are removed.
     """
 
     def __init__(self, device=None):
@@ -154,7 +154,7 @@ class StanceReranker:
         Reranking retrieved documents by stance score using soft reranking.
 
         All documents for a single claim are scored in one batched forward pass
-        for efficiency. This is important for SciClaimHunt where we run
+        for efficiency. This is important for SciFact_open where we run
         inference calls across the full validation set.
 
         Unlike hard filtering, soft reranking keeps all documents but reorders
@@ -297,10 +297,88 @@ def compute_recall_at_k(claims, retrieved_results, k_values):
     return recall_at_k
 
 # ---------------------------------------------------------------------------
+# Loading saved retrieval candidates from Step 3
+# ---------------------------------------------------------------------------
+
+def load_saved_candidates(dataset_name, corpus, retriever="dense"):
+    """
+    Loading the retrieval candidates saved by Step 3 (retrieval.py) instead of
+    re-running the expensive dense retrieval. The saved file stores only
+    doc_id + score per candidate, so we look up each document's text from the
+    corpus and reconstruct the rank from list position.
+
+    dataset_name: str -- used to find results/retrieval_candidates_<dataset>.json
+    corpus: dict {doc_id: text} -- used to resolve doc_id -> document text
+    retriever: "dense" or "bm25" -- which retriever's candidates to load
+
+    Returns: dict {claim_id: [ {doc_id, text, score, rank}, ... ]}
+    """
+    #locating the candidates file saved by Step 3
+    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
+
+    if not os.path.exists(candidates_path):
+        raise FileNotFoundError(
+            f"No saved candidates at {candidates_path}. "
+            f"Run Step 3 (retrieval.py --dataset {dataset_name}) first."
+        )
+
+    #loading the saved candidates
+    with open(candidates_path, "r", encoding="utf-8") as f:
+        saved = json.load(f)
+
+    #selecting the chosen retriever's candidates (dense by default)
+    retriever_candidates = saved[retriever]
+
+    #rebuilding each candidate into the format rerank() expects:
+    #it needs doc_id, text (from corpus), score, and rank (from position)
+    rebuilt = {}
+    missing_docs = 0
+    for claim_id, docs in retriever_candidates.items():
+        rebuilt_docs = []
+        for position, doc in enumerate(docs, start=1):
+            doc_id = doc["doc_id"]
+            #looking up the document text from the corpus by doc_id
+            text = corpus.get(doc_id)
+            if text is None:
+                #a saved doc_id not present in the corpus -- skip it and count it
+                missing_docs += 1
+                continue
+            rebuilt_docs.append({
+                "doc_id": doc_id,
+                "text": text,
+                "score": doc["score"],
+                "rank": position,
+            })
+        rebuilt[claim_id] = rebuilt_docs
+
+    if missing_docs > 0:
+        print(f"  Warning: {missing_docs} saved candidate doc_ids not found in corpus (skipped).")
+
+    return rebuilt
+
+# ---------------------------------------------------------------------------
+# Helper function for hard filtering
+# ---------------------------------------------------------------------------
+
+def apply_mode(reranked_docs, mode):
+    """
+    Applying the chosen reranking mode to an already-scored, reranked doc list.
+      soft -> keep all documents, just reordered by stance (no removal)
+      hard -> remove documents flagged would_be_filtered (neutral above threshold)
+    Both use the SAME NLI scores, so the comparison is fair -- only removal differs.
+    Hard filtering can only lower or maintain recall (it only removes docs).
+    """
+    if mode == "hard":
+        return [doc for doc in reranked_docs if not doc["would_be_filtered"]]
+    #soft: keep everything as-is
+    return reranked_docs
+
+# ---------------------------------------------------------------------------
 # Main evaluation function
 # ---------------------------------------------------------------------------
 
-def run_reranking_evaluation(dataset_name="scifact"):
+def run_reranking_evaluation(dataset_name="scifact", mode="soft"):
     """
     Running the full stance-aware reranking evaluation pipeline.
 
@@ -308,9 +386,12 @@ def run_reranking_evaluation(dataset_name="scifact"):
     applies stance reranking at two thresholds, and reports Recall@k
     before and after reranking. Also logs average documents surviving each filter.
 
-    dataset_name: str -- 'scifact' or 'sciclaimhunt'
+    dataset_name: str -- 'scifact' or 'scifact_open'
 
     Returns: dict with recall numbers for thesis tables
+
+    dataset_name: str -- 'scifact' or 'scifact_open'
+    mode: str -- 'soft' (rerank, keep all docs) or 'hard' (remove would_be_filtered docs)
     """
 
     #printing the evaluation header
@@ -332,10 +413,10 @@ def run_reranking_evaluation(dataset_name="scifact"):
     #loading the validation split and corpus for the chosen dataset
     if dataset_name == "scifact":
         val_claims, corpus = load_scifact(split="validation")
-    elif dataset_name == "sciclaimhunt":
-        val_claims, corpus = load_sciclaimhunt(split="val")
+    elif dataset_name == "scifact_open":
+        val_claims, corpus = load_scifact_open(corpus_file="full")
     else:
-        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'sciclaimhunt'.")
+        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'scifact_open'.")
 
     #printing basic corpus and claim statistics
     print(f"Validation claims : {len(val_claims)}")
@@ -346,19 +427,11 @@ def run_reranking_evaluation(dataset_name="scifact"):
     print(f"Claims with evidence (non-NEI): {len(claims_with_evidence)}")
     print(f"NEI claims (excluded from Recall@k): {len(val_claims) - len(claims_with_evidence)}\n")
 
-    print("--- Dense Retrieval (candidate pool) ---")
-    dense_retriever = DenseRetriever(corpus, device=device)
-
-    print(f"Running dense retrieval (k={RETRIEVAL_K})...")
-    dense_retrieved = {}
-    for claim_index, claim in enumerate(val_claims):
-        if (claim_index + 1) % 100 == 1:
-            print(f"  Retrieving for claim {claim_index + 1} / {len(val_claims)}...")
-
-        dense_retrieved[claim["id"]] = dense_retriever.retrieve(
-            claim["claim"],  
-            k=RETRIEVAL_K,
-        )
+    print("--- Loading saved dense retrieval candidates from Step 3 ---")
+    #loading candidates saved by retrieval.py instead of re-encoding 500K docs.
+    #The corpus (loaded above) is used only to resolve doc_id -> document text.
+    dense_retrieved = load_saved_candidates(dataset_name, corpus, retriever="dense")
+    print(f"Loaded candidates for {len(dense_retrieved)} claims.\n")
 
     k_values = [1, 5, 10]
     dense_recall_before = compute_recall_at_k(val_claims, dense_retrieved, k_values)
@@ -368,46 +441,58 @@ def run_reranking_evaluation(dataset_name="scifact"):
 
     print(f"\nApplying loose threshold (neutral <= {LOOSE_NEUTRAL_THRESHOLD})...")
     loose_reranked = {}
+    #accumulating filter counts from the FULL reranked list, before apply_mode trims it,
+    #so the statistic is correct in hard mode too (where docs are actually removed)
+    total_would_filter_loose = 0
     for claim_index, claim in enumerate(val_claims):
         if (claim_index + 1) % 100 == 1:
             print(f"  Reranking claim {claim_index + 1} / {len(val_claims)}...")
-        candidates = dense_retrieved[claim["id"]]
-        loose_reranked[claim["id"]] = stance_reranker.rerank(
+        candidates = dense_retrieved.get(claim["id"], [])
+        reranked = stance_reranker.rerank(
             claim["claim"], candidates, LOOSE_NEUTRAL_THRESHOLD
         )
+        #counting filtered docs on the FULL list BEFORE applying the mode
+        total_would_filter_loose += sum(1 for doc in reranked if doc["would_be_filtered"])
+        #applying the chosen mode (soft keeps all, hard removes would_be_filtered)
+        loose_reranked[claim["id"]] = apply_mode(reranked, mode)
 
     loose_recall = compute_recall_at_k(val_claims, loose_reranked, k_values)
 
-    #computing average number of documents that would be filtered by the loose threshold
-    average_docs_would_filter_loose = (
-        sum(
-            sum(1 for doc in docs if doc["would_be_filtered"])
-            for docs in loose_reranked.values()
-        ) / len(val_claims)
-    )
+    #average docs the loose threshold would filter (identical across modes -- it's a
+    #property of the threshold, computed before removal)
+    average_docs_would_filter_loose = total_would_filter_loose / len(val_claims)
 
     print(f"\nApplying strict threshold (neutral <= {STRICT_NEUTRAL_THRESHOLD})...")
     strict_reranked = {}
+    total_would_filter_strict = 0
     for claim_index, claim in enumerate(val_claims):
         if (claim_index + 1) % 100 == 1:
             print(f"  Reranking claim {claim_index + 1} / {len(val_claims)}...")
-        candidates = dense_retrieved[claim["id"]]
-        strict_reranked[claim["id"]] = stance_reranker.rerank(
+        candidates = dense_retrieved.get(claim["id"], [])
+        reranked = stance_reranker.rerank(
             claim["claim"], candidates, STRICT_NEUTRAL_THRESHOLD
         )
+        #counting filtered docs on the FULL list BEFORE applying the mode
+        total_would_filter_strict += sum(1 for doc in reranked if doc["would_be_filtered"])
+        strict_reranked[claim["id"]] = apply_mode(reranked, mode)
 
     strict_recall = compute_recall_at_k(val_claims, strict_reranked, k_values)
 
-    #computing average number of documents that would be filtered by the strict threshold
-    average_docs_would_filter_strict = (
-        sum(
-            sum(1 for doc in docs if doc["would_be_filtered"])
-            for docs in strict_reranked.values()
-        ) / len(val_claims)
+    #average docs the strict threshold would filter (computed before removal)
+    average_docs_would_filter_strict = total_would_filter_strict / len(val_claims)
+
+    #average docs actually SURVIVING after apply_mode -- differs by mode:
+    #soft keeps all (== RETRIEVAL_K), hard removes filtered docs (fewer). This is the
+    #number that makes hard-mode over-filtering visible when comparing the two runs.
+    average_docs_surviving_loose = (
+        sum(len(docs) for docs in loose_reranked.values()) / len(val_claims)
+    )
+    average_docs_surviving_strict = (
+        sum(len(docs) for docs in strict_reranked.values()) / len(val_claims)
     )
 
     print(f"\n{'='*60}")
-    print(f"  Reranking Recall@k -- {dataset_name.upper()} (validation)")
+    print(f"  Reranking Recall@k -- {dataset_name.upper()} -- MODE: {mode.upper()}")
     print(f"{'='*60}")
     print(f"\n  {'Method':<35} {'R@1':>6} {'R@5':>6} {'R@10':>6}")  
     print(f"  {'-'*55}")  
@@ -415,29 +500,34 @@ def run_reranking_evaluation(dataset_name="scifact"):
           f"{dense_recall_before[1]:>6.3f} "
           f"{dense_recall_before[5]:>6.3f} "
           f"{dense_recall_before[10]:>6.3f}")
-    print(f"  {'Dense + loose filter':<35} "  
+    print(f"  {f'Dense + stance rerank {mode} (loose)':<35} "
           f"{loose_recall[1]:>6.3f} "
           f"{loose_recall[5]:>6.3f} "
           f"{loose_recall[10]:>6.3f}")
-    print(f"  {'Dense + strict filter':<35} " 
+    print(f"  {f'Dense + stance rerank {mode} (strict)':<35} "
           f"{strict_recall[1]:>6.3f} "
           f"{strict_recall[5]:>6.3f} "
           f"{strict_recall[10]:>6.3f}")
     print(f"{'='*60}")  
 
-    #printing filter survival statistics  
-    print(f"\n  Avg docs retrieved           : {RETRIEVAL_K:.1f}")
-    print(f"  Avg docs would filter loose  : {average_docs_would_filter_loose:.1f}")
-    print(f"  Avg docs would filter strict : {average_docs_would_filter_strict:.1f}\n")
+    #printing filter survival statistics
+    print(f"\n  Avg docs retrieved            : {RETRIEVAL_K:.1f}")
+    print(f"  Avg docs would filter loose   : {average_docs_would_filter_loose:.1f}")
+    print(f"  Avg docs would filter strict  : {average_docs_would_filter_strict:.1f}")
+    print(f"  Avg docs SURVIVING loose ({mode:<4}): {average_docs_surviving_loose:.1f}")
+    print(f"  Avg docs SURVIVING strict ({mode:<4}): {average_docs_surviving_strict:.1f}\n")
 
     results = {
         "dataset": dataset_name,
+        "mode": mode,
         "retrieval_k": RETRIEVAL_K,
         "loose_neutral_threshold": LOOSE_NEUTRAL_THRESHOLD,
         "strict_neutral_threshold": STRICT_NEUTRAL_THRESHOLD,
         "avg_docs_retrieved": RETRIEVAL_K,         
         "avg_docs_would_filter_loose": average_docs_would_filter_loose,
         "avg_docs_would_filter_strict": average_docs_would_filter_strict,
+        "avg_docs_surviving_loose": average_docs_surviving_loose,
+        "avg_docs_surviving_strict": average_docs_surviving_strict,
         "recall_at_k": {
             "dense_before_reranking": {
                 str(k): dense_recall_before[k] for k in k_values
@@ -451,6 +541,44 @@ def run_reranking_evaluation(dataset_name="scifact"):
         },
     }
 
+    #saving reranking results to disk for the thesis and later analysis
+    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    os.makedirs(results_dir, exist_ok=True)
+    results_path = os.path.join(results_dir, f"reranking_{mode}_{dataset_name}.json")
+    with open(results_path, "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"Reranking results saved to {results_path}")
+
+    #saving the actual reranked candidates so Step 5 (verification) can consume them
+    #without re-running reranking. Saved per mode+dataset so runs don't overwrite.
+    def _slim_candidates(reranked_dict):
+        return {
+            claim_id: [
+                {
+                    "doc_id": d["doc_id"],
+                    "stance_score": d["stance_score"],
+                    "entailment_score": d["entailment_score"],
+                    "contradiction_score": d["contradiction_score"],
+                    "neutral_score": d["neutral_score"],
+                    "predicted_label": d["predicted_label"],
+                    "reranked_position": d["reranked_position"],
+                }
+                for d in docs
+            ]
+            for claim_id, docs in reranked_dict.items()
+        }
+
+    candidates_out = {
+        "dataset": dataset_name,
+        "mode": mode,
+        "loose": _slim_candidates(loose_reranked),
+        "strict": _slim_candidates(strict_reranked),
+    }
+    candidates_path = os.path.join(results_dir, f"reranked_candidates_{mode}_{dataset_name}.json")
+    with open(candidates_path, "w") as f:
+        json.dump(candidates_out, f, indent=2)
+    print(f"Reranked candidates saved to {candidates_path}")
+
     return results
 
 # ---------------------------------------------------------------------------
@@ -461,9 +589,11 @@ if __name__ == "__main__":
 
     #parsing command line arguments so we can specify the dataset without editing the file
     parser = argparse.ArgumentParser(description="Stance-aware reranking evaluation")
-    parser.add_argument("--dataset", default="scifact", choices=["scifact", "sciclaimhunt"],
+    parser.add_argument("--dataset", default="scifact", choices=["scifact", "scifact_open"],
                         help="Dataset to run reranking evaluation on")
+    parser.add_argument("--mode", default="soft", choices=["soft", "hard"],
+                        help="soft = rerank keep all docs; hard = remove would_be_filtered docs")
     args = parser.parse_args()
 
-    #running the reranking evaluation on the chosen dataset
-    run_reranking_evaluation(dataset_name=args.dataset)
+    #running the reranking evaluation in the chosen mode
+    run_reranking_evaluation(dataset_name=args.dataset, mode=args.mode)
