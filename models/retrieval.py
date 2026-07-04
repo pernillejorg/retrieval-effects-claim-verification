@@ -348,7 +348,7 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     elif dataset_name == "scifact_open":
         #SciFact-Open: test-only collection, no split argument.
         #load_scifact_open returns (claims, corpus) where corpus is the full 500K set.
-        eval_claims, corpus = load_scifact_open(corpus_file="candidates")
+        eval_claims, corpus = load_scifact_open(corpus_file="full")
     else:
         #raising an error for unrecognised dataset names
         raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'scifact_open'.")
@@ -408,6 +408,49 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     print(f"  {'BM25':<20} {bm25_recall_at_1:>6.3f} {bm25_recall_at_5:>6.3f} {bm25_recall_at_10:>6.3f}")
     print(f"  {'Dense':<20} {dense_recall_at_1:>6.3f} {dense_recall_at_5:>6.3f} {dense_recall_at_10:>6.3f}")
     print(f"{'=' * 50}\n")
+
+    # ---------------------------------------------------------------------------
+    # Saving results to disk
+    # ---------------------------------------------------------------------------
+    import json
+
+    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    os.makedirs(results_dir, exist_ok=True)
+
+    #saving the Recall@k numbers (the Step 3 thesis result) -- small, human-readable
+    recall_summary = {
+        "dataset": dataset_name,
+        "corpus_size": len(corpus),
+        "num_claims": len(eval_claims),
+        "num_claims_with_evidence": len(claims_with_evidence),
+        "recall_at_k": {
+            "bm25":  {"1": bm25_recall_at_1,  "5": bm25_recall_at_5,  "10": bm25_recall_at_10},
+            "dense": {"1": dense_recall_at_1, "5": dense_recall_at_5, "10": dense_recall_at_10},
+        },
+    }
+    recall_path = os.path.join(results_dir, f"retrieval_recall_{dataset_name}.json")
+    with open(recall_path, "w") as f:
+        json.dump(recall_summary, f, indent=2)
+    print(f"Recall@k summary saved to {recall_path}")
+
+    #saving the retrieved candidates (the INPUT to Step 4's stance reranker) so the
+    #expensive retrieval never has to be re-run. We save doc_id + score per candidate.
+    def _slim(results):
+        #keeping only what Step 4 needs: for each claim, its ranked (doc_id, score) list
+        return {
+            claim_id: [{"doc_id": r["doc_id"], "score": float(r["score"])} for r in docs]
+            for claim_id, docs in results.items()
+        }
+
+    candidates = {
+        "dataset": dataset_name,
+        "bm25":  _slim(bm25_results),
+        "dense": _slim(dense_results),
+    }
+    candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
+    with open(candidates_path, "w") as f:
+        json.dump(candidates, f, indent=2)
+    print(f"Retrieved candidates saved to {candidates_path}")
 
     #returning results and Recall@k numbers for use in downstream steps and thesis tables
     return {
