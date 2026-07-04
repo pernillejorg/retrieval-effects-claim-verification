@@ -132,7 +132,7 @@ def set_seed(seed):
 def check_max_token_length(claims, tokenizer):
     """
     Checking the actual maximum token length across all claims.
-    This confirms that MAX_LENGTH = 128 does not truncate any claims,
+    This confirms that MAX_LENGTH_CLAIM_ONLY = 128 does not truncate any claims,
     which is important to document in the thesis.
     """
 
@@ -156,10 +156,10 @@ def check_max_token_length(claims, tokenizer):
 
     #printing the result so we can verify MAX_LENGTH is safe
     print(f"  Maximum claim token length in this split: {maximum_token_count}")
-    if maximum_token_count > MAX_LENGTH:
-        print(f"  WARNING: some claims exceed MAX_LENGTH={MAX_LENGTH} and will be truncated!")
+    if maximum_token_count > MAX_LENGTH_CLAIM_ONLY:
+        print(f"  WARNING: some claims exceed MAX_LENGTH_CLAIM_ONLY={MAX_LENGTH_CLAIM_ONLY} and will be truncated!")
     else:
-        print(f"  MAX_LENGTH={MAX_LENGTH} is safe -- no claims will be truncated.")
+        print(f"  MAX_LENGTH_CLAIM_ONLY={MAX_LENGTH_CLAIM_ONLY} is safe -- no claims will be truncated.")
 
     #returning the maximum for logging
     return maximum_token_count
@@ -237,10 +237,10 @@ class ClaimDataset(Dataset):
 
         #returning a dict of tensors -- squeezing removes the extra batch dimension added by return_tensors="pt"
         return {
-            #squeezing the input ids tensor from shape (1, MAX_LENGTH) to (MAX_LENGTH,)
+            #squeezing the input ids tensor from shape (1, MAX_LENGTH_CLAIM_ONLY) to (MAX_LENGTH_CLAIM_ONLY,)
             "input_ids": encoding["input_ids"].squeeze(),
 
-            #squeezing the attention mask tensor from shape (1, MAX_LENGTH) to (MAX_LENGTH,)
+            #squeezing the attention mask tensor from shape (1, MAX_LENGTH_CLAIM_ONLY) to (MAX_LENGTH_CLAIM_ONLY,)
             "attention_mask": encoding["attention_mask"].squeeze(),
 
             #converting the label integer to a long tensor as required by PyTorch loss functions
@@ -555,7 +555,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
     print(f"Loading tokenizer: {MODEL_NAME}")
     tokenizer = RobertaTokenizer.from_pretrained(MODEL_NAME)
 
-    #checking that MAX_LENGTH is safe for the actual claim lengths in this dataset
+    #checking that MAX_LENGTH_CLAIM_ONLY is safe for the actual claim lengths in this dataset
     print("\nChecking claim token lengths...")
     if input_mode == "claim_only":
         check_max_token_length(train_claims, tokenizer)
@@ -711,7 +711,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
         "precision": best_val_precision,
         "recall": best_val_recall,
         "model_name": MODEL_NAME,
-        "max_length": MAX_LENGTH,
+        "max_length": MAX_LENGTH_CLAIM_EVIDENCE if input_mode == "claim_evidence" else MAX_LENGTH_CLAIM_ONLY,
         "batch_size": BATCH_SIZE,
         "max_epochs": MAX_EPOCHS,
         "early_stopping_patience": EARLY_STOPPING_PATIENCE,
@@ -792,7 +792,7 @@ def evaluate_on_scifact_open():
         "precision": open_precision,
         "recall": open_recall,
         "model_name": MODEL_NAME,
-        "max_length": MAX_LENGTH,
+        "max_length": MAX_LENGTH_CLAIM_ONLY,
         "batch_size": BATCH_SIZE,
         "trained_on": "scifact",
         "seed": 42,
