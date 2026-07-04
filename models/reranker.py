@@ -159,9 +159,11 @@ class StanceReranker:
 
         Unlike hard filtering, soft reranking keeps all documents but reorders
         them so stance-bearing documents (high entailment or contradiction score)
-        appear first. The neutral_threshold parameter is kept for compatibility
-        but used only to compute how many documents would have been filtered,
-        not to actually remove any documents. This avoids the over-filtering
+        appear first. The neutral threshold is used to identify documents whose neutral 
+        probability exceeds the chosen threshold. Documents are marked using the would_be_filtered 
+        flag but are not removed inside this function. 
+        The final reranking mode is applied afterwards: soft mode keeps all documents, 
+        whereas hard mode removes those marked as would_be_filtered. This avoids the over-filtering
         failure mode where genuine evidence documents are discarded because
         zero-shot NLI on scientific text tends to output high neutral scores.
         """
@@ -299,7 +301,8 @@ def compute_recall_at_k(claims, retrieved_results, k_values):
 # ---------------------------------------------------------------------------
 # Loading saved retrieval candidates from Step 3
 # ---------------------------------------------------------------------------
-
+'''
+#For MiniLM
 def load_saved_candidates(dataset_name, corpus, retriever="dense"):
     """
     Loading the retrieval candidates saved by Step 3 (retrieval.py) instead of
@@ -316,7 +319,24 @@ def load_saved_candidates(dataset_name, corpus, retriever="dense"):
     #locating the candidates file saved by Step 3
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
-
+'''
+#For MPNet
+def load_saved_candidates(dataset_name, corpus, retriever="dense", retriever_name="mpnet"):
+    """
+    ...
+    dataset_name: str -- part of the candidates filename
+    retriever_name: str -- which retriever's candidates to load ("mpnet" or "minilm").
+        "mpnet" loads retrieval_candidates_mpnet_<dataset>.json (the primary retriever).
+        "minilm" loads retrieval_candidates_<dataset>.json (the lighter comparison model).
+    ...
+    """
+    #locating the candidates file saved by Step 3, choosing the retriever's file
+    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    if retriever_name == "mpnet":
+        candidates_filename = f"retrieval_candidates_mpnet_{dataset_name}.json"
+    else:
+        candidates_filename = f"retrieval_candidates_{dataset_name}.json"
+    candidates_path = os.path.join(results_dir, candidates_filename)
     if not os.path.exists(candidates_path):
         raise FileNotFoundError(
             f"No saved candidates at {candidates_path}. "
@@ -430,7 +450,11 @@ def run_reranking_evaluation(dataset_name="scifact", mode="soft"):
     print("--- Loading saved dense retrieval candidates from Step 3 ---")
     #loading candidates saved by retrieval.py instead of re-encoding 500K docs.
     #The corpus (loaded above) is used only to resolve doc_id -> document text.
-    dense_retrieved = load_saved_candidates(dataset_name, corpus, retriever="dense")
+    #For MiniLM
+    #dense_retrieved = load_saved_candidates(dataset_name, corpus, retriever="dense")
+    #using the mpnet retriever candidates (the primary retriever selected in Step 3)
+    #For MPNet
+    dense_retrieved = load_saved_candidates(dataset_name, corpus, retriever="dense", retriever_name="mpnet")
     print(f"Loaded candidates for {len(dense_retrieved)} claims.\n")
 
     k_values = [1, 5, 10]
@@ -544,7 +568,10 @@ def run_reranking_evaluation(dataset_name="scifact", mode="soft"):
     #saving reranking results to disk for the thesis and later analysis
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     os.makedirs(results_dir, exist_ok=True)
-    results_path = os.path.join(results_dir, f"reranking_{mode}_{dataset_name}.json")
+    #For MiniLM
+    #results_path = os.path.join(results_dir, f"reranking_{mode}_{dataset_name}.json")
+    #For MPNet
+    results_path = os.path.join(results_dir, f"reranking_mpnet_{mode}_{dataset_name}.json")
     with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"Reranking results saved to {results_path}")
@@ -574,7 +601,10 @@ def run_reranking_evaluation(dataset_name="scifact", mode="soft"):
         "loose": _slim_candidates(loose_reranked),
         "strict": _slim_candidates(strict_reranked),
     }
-    candidates_path = os.path.join(results_dir, f"reranked_candidates_{mode}_{dataset_name}.json")
+    #For MiniLM
+    #candidates_path = os.path.join(results_dir, f"reranked_candidates_{mode}_{dataset_name}.json")
+    #For MPNet
+    candidates_path = os.path.join(results_dir, f"reranked_candidates_mpnet_{mode}_{dataset_name}.json")
     with open(candidates_path, "w") as f:
         json.dump(candidates_out, f, indent=2)
     print(f"Reranked candidates saved to {candidates_path}")
