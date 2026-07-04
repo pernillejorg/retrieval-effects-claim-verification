@@ -56,9 +56,9 @@ from collections import Counter
 
 #defining the sentence-transformer model used for dense retrieval
 #all-MiniLM-L6-v2 is fast, lightweight, and strong for semantic similarity
-DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+#DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 #for later using a bigger model
-#DENSE_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
+DENSE_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
 
 #defining the default number of documents to retrieve per claim
 DEFAULT_K = 10
