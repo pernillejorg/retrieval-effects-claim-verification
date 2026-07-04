@@ -1,31 +1,79 @@
 """
-full RAG pipeline evaluation for scientific claim verification
+Full RAG pipeline evaluation for scientific claim verification (Step 5):
 
-
-This script connects all the components built in previous steps:
-retrieval (BM25 and dense), stance-aware reranking, and the fine-tuned
-RoBERTa classifier. We run four pipeline conditions and compare them.
-
+This script connects all components built in previous steps: retrieval (BM25 and
+dense/mpnet), soft stance-aware reranking, and the fine-tuned RoBERTa classifiers.
+Four pipeline conditions are run and compared.
 
 The four conditions are:
-1. No retrieval -- RoBERTa only, no context given
-2. BM25 + RoBERTa -- sparse retrieval then classify
-3. Dense + RoBERTa -- dense retrieval then classify
-4. Dense + stance reranking + RoBERTa -- retrieve, rerank, then classify
+1. No retrieval:                    Model 1 (claim-only), no evidence context
+2. BM25 + RoBERTa:                  sparse retrieval, then classify with Model 2
+3. Dense + RoBERTa:                 dense (mpnet) retrieval, then classify with Model 2
+4. Dense + soft rerank + RoBERTa:   retrieve, soft stance rerank, then classify with Model 2
 
+The key questions this step answers: does giving the classifier retrieved evidence help
+it verify claims better than no context at all, and does stance reranking that evidence
+help or hurt at the classification level (Step 4 showed it degrades retrieval recall,
+this step tests whether that damage propagates to final F1)?
 
-The key question this step answers: does giving the model retrieved
-evidence actually help it verify claims better than no context at all?
-And does reranking that evidence by stance make it even better?
+--- Design decisions and their justifications (for the thesis) ---
 
+Two classifiers (from Step 2, produced by baseline.py):
+- Model 1 (claim-only, saved as baseline_<dataset>) is used ONLY for the no-retrieval
+  condition, because that condition has no evidence and Model 1 was trained on claim
+  text alone.
+- Model 2 (claim+evidence, saved as evidence_<dataset>) is used for the three retrieval
+  conditions, because it was trained on claim+evidence pairs and can therefore read
+  evidence. Using each classifier for the input format it was trained on is the
+  methodologically correct RAG setup, and makes the comparison fair rather than feeding
+  evidence to a model that never learned to use it.
 
-Design decisions (document these in your thesis):
-- top_k=5 for classifier input: keeps the input under 512 tokens
-- rerank_top_k=10: retrieve a bigger pool first then rerank down to 5
-- truncate_and_concatenate: fair token budget split between claim and docs
-- claim and evidence passed as a text PAIR to the tokenizer, so RoBERTa inserts its
-  own correct segment boundary (</s></s>) rather than a hand-built separator
-- all four pipelines use the same fine-tuned checkpoint for fair comparison
+Retriever choice (mpnet): all-mpnet-base-v2 is used as the dense retriever. Both it and
+the lighter all-MiniLM-L6-v2 were evaluated in Step 3; mpnet was chosen empirically as it
+won 5 of 6 dense recall metrics and resolved MiniLM's anomalous top-rank underperformance.
+This choice is therefore evidenced, not assumed.
+
+Reranking mode (soft): soft reranking (reorder, keep all documents) is used rather than
+hard filtering. Both were evaluated in Step 4; hard filtering was shown to remove ~9 of 10
+documents and destroy recall, so soft is the only viable mode to carry into the pipeline.
+This choice is likewise evidenced.
+
+top_k = 5 (documents fed to the classifier): a standard choice in RAG claim-verification,
+and bounded by RoBERTa's 512-token input limit, where roughly five scientific abstracts fill
+that budget once the claim is included, so a larger top_k would force heavier truncation.
+
+rerank_pool_size = 10 (documents retrieved before reranking): the reranker is given a
+larger candidate pool than the top_k it ultimately selects from, following the standard
+"retrieve more, then select down" pattern, and reranking can only reorder documents it is
+shown, so a pool larger than top_k gives it room to promote a better document into the
+final set. Retrieving 10 and selecting 5 balances this against the cost of scoring more
+documents per claim.
+
+neutral_threshold = 0.5 (loose) by default: 0.5 is the "majority-neutral" cut-point (the
+NLI model considers a document stance-free if its neutral probability exceeds one half),
+and 0.8 is the "confidently-neutral" cut-point. Both were used in Step 4, where the
+threshold genuinely affects hard filtering. In THIS pipeline, however, soft reranking
+selects the top_k documents by stance score and never removes documents by threshold, so
+the threshold only governs a recorded diagnostic flag (used in Step 7) and does not change
+which documents reach the classifier or the resulting F1. The loose value 0.5 is therefore
+retained for consistency with Step 4 rather than swept here; sweeping it would produce
+identical pipeline results, as confirmed by the identical soft loose/strict rows in Step 4.
+
+max_length: the no-retrieval condition uses max_length=128, matching Model 1's training
+(the longest claim is 75 tokens, so 128 never truncates a claim). The retrieval conditions
+use max_length=512, RoBERTa's maximum, because claim+evidence pairs are long and need the
+full budget.
+
+Input construction (truncate_and_concatenate): the claim and the concatenated evidence are
+passed to the tokenizer as a text PAIR, so RoBERTa inserts its own segment boundary
+(</s></s>) rather than a hand-built separator string. The token budget is split so the
+claim is never truncated and the evidence fills the remainder.
+
+Per-claim records: for every condition, the pipeline saves per-claim outputs (claim, true
+and predicted label, confidence, retrieved document ids and snippets, and correctness) so
+the Step 7 failure taxonomy and Step 8 confidence analysis can be run without re-executing
+the pipeline. The reranked condition additionally saves the pre-rerank document order, so
+the effect of reranking on ordering can be inspected directly.
 """
 
 #importing os for file path handling and making directories
@@ -56,9 +104,6 @@ from data.utils import load_scifact, load_scifact_open, LABEL_SUPPORT, LABEL_CON
 # Label mappings
 # ---------------------------------------------------------------------------
 
-#defining how many documents to retrieve for reranking before cutting to top_k
-RERANK_POOL_SIZE = 10
-
 #defining the unified label to integer mapping used by both datasets
 LABEL_TO_ID = {
     LABEL_SUPPORT: 0,
@@ -66,8 +111,7 @@ LABEL_TO_ID = {
     LABEL_NEI: 2,
 }
 
-#defining the integer to label string mapping for SciFact display
-SCIFACT_INT_TO_LABEL = {0: "SUPPORT", 1: "CONTRADICT", 2: "NEI"}
+ID_TO_LABEL = {0: "SUPPORT", 1: "CONTRADICT", 2: "NEI"}
 
 # ---------------------------------------------------------------------------
 # Input preparation
@@ -93,6 +137,11 @@ def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_le
     #the evidence gets whatever budget remains after the claim
     document_token_budget = available_tokens - len(claim_tokens)
 
+    #guarding against an unusually long claim consuming the whole budget
+    if document_token_budget <= 0:
+        #no room left for evidence after the claim -- return claim with empty evidence
+        return claim_text, ""
+
     #accumulating evidence text within the remaining budget
     concatenated_documents = ""
     for document_text in document_texts:
@@ -113,207 +162,215 @@ def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_le
 # Pipeline conditions
 # ---------------------------------------------------------------------------
 
-def run_no_retrieval_pipeline(claims, labels, model, tokenizer, device, dataset_name):
-    #printing which pipeline condition we are now running
-    print("\nRunning pipeline: No Retrieval (RoBERTa only)")
-
-    #initialising an empty list to collect predicted class indices
-    predicted_labels = []
-
-    #setting the model to evaluation mode so dropout layers are turned off
+def run_no_retrieval_pipeline(claims_data, model, tokenizer, device, dataset_name):
+    print("\nRunning pipeline: No Retrieval (Model 1, claim-only)")
     model.eval()
+    predicted_labels, true_labels, records = [], [], []
 
-    #iterating over every claim and classifying it without any retrieved context
-    for claim_text in claims:
-        #tokenising just the claim text with truncation and padding enabled
+    for claim_dict in claims_data:
+        claim_text = claim_dict["claim"]
+        true_id = LABEL_TO_ID[claim_dict["label"]]
+
+        #classifying the claim with no evidence context
         encoded_input = tokenizer(
             claim_text,
-            return_tensors="pt",
-            truncation=True,
-            max_length=512,
-            padding=True,
+            return_tensors="pt", truncation=True, max_length=128, padding=True,
         )
+        encoded_input = {k: v.to(device) for k, v in encoded_input.items()}
 
-        #moving all input tensors to the device the model is on
-        encoded_input = {key: value.to(device) for key, value in encoded_input.items()}
-
-        #running the forward pass through the model without tracking gradients
         with torch.no_grad():
-            model_output = model(**encoded_input)
+            logits = model(**encoded_input).logits
 
-        #taking the class with the highest logit as the prediction
-        predicted_class = torch.argmax(model_output.logits, dim=1).item()
+        #softmax to get probabilities and the confidence (max prob) for Step 8
+        probabilities = torch.softmax(logits, dim=1).squeeze(0)
+        pred_id = int(torch.argmax(probabilities).item())
+        confidence = float(probabilities[pred_id].item())
 
-        #appending this prediction to the predictions list
-        predicted_labels.append(predicted_class)
+        predicted_labels.append(pred_id)
+        true_labels.append(true_id)
+        records.append({
+            "claim_id": claim_dict["id"],
+            "claim": claim_text,
+            "true_label": ID_TO_LABEL[true_id],
+            "predicted_label": ID_TO_LABEL[pred_id],
+            "confidence": confidence,
+            "probabilities": [float(p) for p in probabilities.tolist()],
+            "correct": pred_id == true_id,
+            "retrieved_doc_ids": [],
+            "condition": "no_retrieval",
+        })
 
-    #computing classification metrics and printing the results
-    metrics = compute_metrics(predicted_labels, labels, dataset_name)
-
-    #returning the metrics dictionary for saving later
-    return metrics
+    metrics = compute_metrics(predicted_labels, true_labels, dataset_name)
+    return metrics, records
 
 
-def run_bm25_pipeline(claims, labels, corpus, model, tokenizer, device, dataset_name, top_k=5):
-    #printing which pipeline condition we are now running
-    print("\nRunning pipeline: BM25 + RoBERTa")
-
-    #initialising the BM25 retriever with the full corpus
-    bm25_retriever = BM25Retriever(corpus)
-
-    #initialising an empty list to collect predicted class indices
-    predicted_labels = []
-
-    #setting the model to evaluation mode so dropout layers are turned off
+def run_bm25_pipeline(claims_data, bm25_retriever, model, tokenizer, device, dataset_name, top_k=5):
+    print("\nRunning pipeline: BM25 + RoBERTa (Model 2)")
     model.eval()
+    predicted_labels, true_labels, records = [], [], []
 
-    #iterating over every claim, retrieving with BM25, then classifying
-    for claim_text in claims:
+    for claim_dict in claims_data:
+        claim_text = claim_dict["claim"]
+        true_id = LABEL_TO_ID[claim_dict["label"]]
+
         retrieved_documents = bm25_retriever.retrieve(claim_text, k=top_k)
-
-        #collecting the actual text of each retrieved document from the retriever output
         retrieved_document_texts = [doc["text"] for doc in retrieved_documents]
+        retrieved_doc_ids = [doc["doc_id"] for doc in retrieved_documents]
+        #id + score + short snippet per doc, for Step 7 manual failure analysis
+        retrieved_docs = [
+            {"doc_id": doc["doc_id"], "score": float(doc["score"]), "text": doc["text"][:300]}
+            for doc in retrieved_documents
+        ]
 
-        #building the combined input string from the claim and retrieved docs
-        claim_part, evidence_part = truncate_and_concatenate(claim_text, top_reranked_document_texts, tokenizer)
-
-        #tokenising the combined input with truncation and padding enabled
+        claim_part, evidence_part = truncate_and_concatenate(claim_text, retrieved_document_texts, tokenizer)
         encoded_input = tokenizer(
-            claim_part,
-            #passing evidence as the second segment for proper pair
-            evidence_part,          
-            return_tensors="pt",
-            truncation=True,
-            max_length=512,
-            padding=True,
+            claim_part, evidence_part,
+            return_tensors="pt", truncation=True, max_length=512, padding=True,
         )
+        encoded_input = {k: v.to(device) for k, v in encoded_input.items()}
 
-        #moving all input tensors to the device the model is on
-        encoded_input = {key: value.to(device) for key, value in encoded_input.items()}
-
-        #running the forward pass through the model without tracking gradients
         with torch.no_grad():
-            model_output = model(**encoded_input)
+            logits = model(**encoded_input).logits
 
-        #taking the class with the highest logit as the prediction
-        predicted_class = torch.argmax(model_output.logits, dim=1).item()
+        probabilities = torch.softmax(logits, dim=1).squeeze(0)
+        pred_id = int(torch.argmax(probabilities).item())
+        confidence = float(probabilities[pred_id].item())
 
-        #appending this prediction to the predictions list
-        predicted_labels.append(predicted_class)
+        predicted_labels.append(pred_id)
+        true_labels.append(true_id)
+        records.append({
+            "claim_id": claim_dict["id"],
+            "claim": claim_text,
+            "true_label": ID_TO_LABEL[true_id],
+            "predicted_label": ID_TO_LABEL[pred_id],
+            "confidence": confidence,
+            "probabilities": [float(p) for p in probabilities.tolist()],
+            "correct": pred_id == true_id,
+            "retrieved_doc_ids": retrieved_doc_ids,
+            "retrieved_docs": retrieved_docs,
+            "condition": "bm25_roberta",
+        })
 
-    #computing classification metrics and printing the results
-    metrics = compute_metrics(predicted_labels, labels, dataset_name)
-
-    #returning the metrics dictionary for saving later
-    return metrics
+    metrics = compute_metrics(predicted_labels, true_labels, dataset_name)
+    return metrics, records
 
 #passing in the dense retriever as an argument to avoid re-encoding the corpus every time
-def run_dense_pipeline(claims, labels, dense_retriever, model, tokenizer, device, dataset_name, top_k=5):
-    #printing which pipeline condition we are now running
-    print("\nRunning pipeline: Dense + RoBERTa")
-
-    #initialising an empty list to collect predicted class indices
-    predicted_labels = []
-
-    #setting the model to evaluation mode so dropout layers are turned off
+def run_dense_pipeline(claims_data, dense_retriever, model, tokenizer, device, dataset_name, top_k=5):
+    print("\nRunning pipeline: Dense + RoBERTa (Model 2)")
     model.eval()
+    predicted_labels, true_labels, records = [], [], []
 
-    #iterating over every claim, retrieving with dense similarity, then classifying
-    for claim_text in claims:
-        #retrieving the top-k document dictionaries using dense embedding similarity
+    for claim_dict in claims_data:
+        claim_text = claim_dict["claim"]
+        true_id = LABEL_TO_ID[claim_dict["label"]]
+
         retrieved_documents = dense_retriever.retrieve(claim_text, k=top_k)
-
-        #collecting the actual text of each retrieved document from the corpus
         retrieved_document_texts = [doc["text"] for doc in retrieved_documents]
+        retrieved_doc_ids = [doc["doc_id"] for doc in retrieved_documents]
+        #saving id + score + short text snippet per doc, for Step 7 manual failure analysis
+        retrieved_docs = [
+            {"doc_id": doc["doc_id"], "score": float(doc["score"]), "text": doc["text"][:300]}
+            for doc in retrieved_documents
+        ]
 
-        #building the combined input string from the claim and retrieved docs
         claim_part, evidence_part = truncate_and_concatenate(claim_text, retrieved_document_texts, tokenizer)
-
-        #tokenising the combined input with truncation and padding enabled
         encoded_input = tokenizer(
-            claim_part,
-            #passing evidence as the second segment for proper pair
-            evidence_part,          
-            return_tensors="pt",
-            truncation=True,
-            max_length=512,
-            padding=True,
+            claim_part, evidence_part,
+            return_tensors="pt", truncation=True, max_length=512, padding=True,
         )
+        encoded_input = {k: v.to(device) for k, v in encoded_input.items()}
 
-        #moving all input tensors to the device the model is on
-        encoded_input = {key: value.to(device) for key, value in encoded_input.items()}
-
-        #running the forward pass through the model without tracking gradients
         with torch.no_grad():
-            model_output = model(**encoded_input)
+            logits = model(**encoded_input).logits
 
-        #taking the class with the highest logit as the prediction
-        predicted_class = torch.argmax(model_output.logits, dim=1).item()
+        probabilities = torch.softmax(logits, dim=1).squeeze(0)
+        pred_id = int(torch.argmax(probabilities).item())
+        confidence = float(probabilities[pred_id].item())
 
-        #appending this prediction to the predictions list
-        predicted_labels.append(predicted_class)
+        predicted_labels.append(pred_id)
+        true_labels.append(true_id)
+        records.append({
+            "claim_id": claim_dict["id"],
+            "claim": claim_text,
+            "true_label": ID_TO_LABEL[true_id],
+            "predicted_label": ID_TO_LABEL[pred_id],
+            "confidence": confidence,
+            "probabilities": [float(p) for p in probabilities.tolist()],
+            "correct": pred_id == true_id,
+            "retrieved_doc_ids": retrieved_doc_ids,
+            "retrieved_docs": retrieved_docs,
+            "condition": "dense_roberta",
+        })
 
-    #computing classification metrics and printing the results
-    metrics = compute_metrics(predicted_labels, labels, dataset_name)
-
-    #returning the metrics dictionary for saving later
-    return metrics
+    metrics = compute_metrics(predicted_labels, true_labels, dataset_name)
+    return metrics, records
 
 #passing in the dense retriever as an argument to avoid re-encoding the corpus every time
-def run_dense_reranked_pipeline(claims, labels, dense_retriever, stance_reranker, model, tokenizer, device, dataset_name, top_k=5):
-    #printing which pipeline condition we are now running
-    print("\nRunning pipeline: Dense + Stance Reranking + RoBERTa")
-
-    #initialising an empty list to collect predicted class indices
-    predicted_labels = []
-
-    #setting the model to evaluation mode so dropout layers are turned off
+def run_dense_reranked_pipeline(claims_data, dense_retriever, stance_reranker, model, tokenizer,
+                                device, dataset_name, top_k=5, rerank_pool_size=10, neutral_threshold=0.5):
+    print("\nRunning pipeline: Dense + Soft Stance Reranking + RoBERTa (Model 2)")
     model.eval()
+    predicted_labels, true_labels, records = [], [], []
 
-    #iterating over every claim, retrieving a bigger pool, reranking, then classifying
-    for claim_text in claims:
-        #retrieving a larger pool of documents to give the reranker more to work with
-        retrieved_documents = dense_retriever.retrieve(claim_text, k=RERANK_POOL_SIZE)
+    for claim_dict in claims_data:
+        claim_text = claim_dict["claim"]
+        true_id = LABEL_TO_ID[claim_dict["label"]]
 
-        #reranking all retrieved documents by their stance score using the NLI model
-        reranked_documents = stance_reranker.rerank(claim_text, retrieved_documents, neutral_threshold=0.5)
+        #retrieve a larger pool, soft-rerank by stance, then take top_k
+        retrieved_documents = dense_retriever.retrieve(claim_text, k=rerank_pool_size)
+        #capturing the ORIGINAL dense order (before reranking) so Step 7 can see what
+        #the reranker changed -- directly supports the Step 4 reranking-effect analysis
+        pre_rerank_doc_ids = [doc["doc_id"] for doc in retrieved_documents]
 
-        #taking only the top-k documents after reranking for the classifier input
-        #to match the reranker.py as it returns a list of dicts with keys
-        top_reranked_document_texts = [doc["text"] for doc in reranked_documents[:top_k]]
+        reranked_documents = stance_reranker.rerank(claim_text, retrieved_documents,
+                                                    neutral_threshold=neutral_threshold)
+        top_reranked = reranked_documents[:top_k]
 
-        #building the combined input string from the claim and reranked docs
-        claim_part, evidence_part = truncate_and_concatenate(claim_text, retrieved_document_texts, tokenizer)
+        top_reranked_document_texts = [doc["text"] for doc in top_reranked]
+        retrieved_doc_ids = [doc["doc_id"] for doc in top_reranked]
+        #id + stance score + snippet for the post-rerank top-k, for Step 7 analysis
+        retrieved_docs = [
+            {
+                "doc_id": doc["doc_id"],
+                "stance_score": float(doc.get("stance_score", 0.0)),
+                "neutral_score": float(doc.get("neutral_score", 0.0)),
+                "text": doc["text"][:300],
+            }
+            for doc in top_reranked
+        ]
 
-        #tokenising the combined input with truncation and padding enabled
+        claim_part, evidence_part = truncate_and_concatenate(claim_text, top_reranked_document_texts, tokenizer)
         encoded_input = tokenizer(
-            claim_part,
-            #passing evidence as the second segment for proper pair
-            evidence_part,          
-            return_tensors="pt",
-            truncation=True,
-            max_length=512,
-            padding=True,
+            claim_part, evidence_part,
+            return_tensors="pt", truncation=True, max_length=512, padding=True,
         )
+        encoded_input = {k: v.to(device) for k, v in encoded_input.items()}
 
-        #moving all input tensors to the device the model is on
-        encoded_input = {key: value.to(device) for key, value in encoded_input.items()}
-
-        #running the forward pass through the model without tracking gradients
         with torch.no_grad():
-            model_output = model(**encoded_input)
+            logits = model(**encoded_input).logits
 
-        #taking the class with the highest logit as the prediction
-        predicted_class = torch.argmax(model_output.logits, dim=1).item()
+        probabilities = torch.softmax(logits, dim=1).squeeze(0)
+        pred_id = int(torch.argmax(probabilities).item())
+        confidence = float(probabilities[pred_id].item())
 
-        #appending this prediction to the predictions list
-        predicted_labels.append(predicted_class)
+        predicted_labels.append(pred_id)
+        true_labels.append(true_id)
+        records.append({
+            "claim_id": claim_dict["id"],
+            "claim": claim_text,
+            "true_label": ID_TO_LABEL[true_id],
+            "predicted_label": ID_TO_LABEL[pred_id],
+            "confidence": confidence,
+            "probabilities": [float(p) for p in probabilities.tolist()],
+            "correct": pred_id == true_id,
+            "retrieved_doc_ids": retrieved_doc_ids,
+            "retrieved_docs": retrieved_docs,
+            "pre_rerank_doc_ids": pre_rerank_doc_ids,
+            "condition": "dense_reranked_roberta",
+        })
 
-    #computing classification metrics and printing the results
-    metrics = compute_metrics(predicted_labels, labels, dataset_name)
-
-    #returning the metrics dictionary for saving later
-    return metrics
+    metrics = compute_metrics(predicted_labels, true_labels, dataset_name)
+    return metrics, records
 
 
 # ---------------------------------------------------------------------------
@@ -376,120 +433,105 @@ def main():
         help="Selecting the dataset to run the pipeline evaluation on",
     )
 
-    #adding the model path argument pointing to the fine-tuned RoBERTa checkpoint
-    parser.add_argument(
-        "--model_path",
-        type=str,
-        required=True,
-        help="Providing the path to the saved fine-tuned RoBERTa model",
-    )
-
-    #adding the output path argument for saving the results JSON file
-    parser.add_argument(
-        "--output_path",
-        type=str,
-        default="results/step5_pipeline_results.json",
-        help="Specifying where to save the pipeline results JSON",
-    )
-
-    #adding the top-k argument to control how many documents go into the classifier
-    parser.add_argument(
-        "--top_k",
-        type=int,
-        default=5,
-        help="Setting how many retrieved documents to pass to the classifier",
-    )
-
-    #parsing all the command line arguments
+    #two model paths: Model 1 (claim-only) for no-retrieval, Model 2 (evidence) for RAG conditions
+    parser.add_argument("--model1_path", type=str, required=True,
+                        help="Model 1 (claim-only baseline) for the no-retrieval condition")
+    parser.add_argument("--model2_path", type=str, required=True,
+                        help="Model 2 (claim+evidence) for the retrieval conditions")
+    parser.add_argument("--output_path", type=str, default="results/step5_pipeline_scifact.json")
+    parser.add_argument("--records_path", type=str, default="results/step5_records_scifact.json")
+    parser.add_argument("--top_k", type=int, default=5)
+    parser.add_argument("--rerank_pool_size", type=int, default=10)
+    parser.add_argument("--neutral_threshold", type=float, default=0.5)
     parsed_arguments = parser.parse_args()
 
-    #detecting whether a GPU is available and setting the device
+    #detecting the best available device
     if torch.backends.mps.is_available():
         device = torch.device("mps")
     elif torch.cuda.is_available():
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
-
-    #printing which device will be used for all inference
     print(f"Using device: {device}")
 
-    #loading the tokenizer from the fine-tuned RoBERTa checkpoint
-    roberta_tokenizer = AutoTokenizer.from_pretrained(parsed_arguments.model_path)
+    #loading BOTH classifiers
+    print(f"Loading Model 1 (claim-only) from: {parsed_arguments.model1_path}")
+    model1_tokenizer = AutoTokenizer.from_pretrained(parsed_arguments.model1_path)
+    model1 = AutoModelForSequenceClassification.from_pretrained(parsed_arguments.model1_path).to(device)
 
-    #loading the fine-tuned RoBERTa model from the checkpoint
-    roberta_model = AutoModelForSequenceClassification.from_pretrained(parsed_arguments.model_path)
+    print(f"Loading Model 2 (claim+evidence) from: {parsed_arguments.model2_path}")
+    model2_tokenizer = AutoTokenizer.from_pretrained(parsed_arguments.model2_path)
+    model2 = AutoModelForSequenceClassification.from_pretrained(parsed_arguments.model2_path).to(device)
 
-    #moving the model to the selected device
-    roberta_model = roberta_model.to(device)
-
-    #loading claims and corpus using the shared data utils to keep one consistent loading path
+    #loading claims and corpus for the chosen dataset
     if parsed_arguments.dataset == "scifact":
         claims_data, corpus = load_scifact(split="validation")
-    elif parsed_arguments.dataset == "scifact_open":
-        claims_data, corpus = load_scifact_open(corpus_file="full")
     else:
-        raise ValueError(f"Unknown dataset: {parsed_arguments.dataset}")
+        claims_data, corpus = load_scifact_open(corpus_file="full")
+    print(f"Loaded {len(claims_data)} claims and corpus of {len(corpus)} documents")
 
-    #extracting just the claim texts from the claims dicts
-    claims = [claim_dict["claim"] for claim_dict in claims_data]
+    #building retrievers + reranker ONCE
+    print("\nBuilding BM25 retriever...")
+    bm25_retriever = BM25Retriever(corpus)
+    print("Building dense retriever (one-time encoding)...")
+    dense_retriever = DenseRetriever(corpus)
+    print("Building stance reranker...")
+    stance_reranker = StanceReranker(device=device)
 
-    #converting the string labels to integer ids using the unified label map
-    labels = [LABEL_TO_ID[claim_dict["label"]] for claim_dict in claims_data]
-
-    #printing how many claims were loaded so we can verify it looks right
-    print(f"Loaded {len(claims)} claims for evaluation")
-
-    #printing how many corpus documents were loaded
-    print(f"Loaded corpus with {len(corpus)} documents")
-
-    #building the dense retriever ONCE (encodes the corpus a single time) and the
-    #stance reranker ONCE, then reusing them across pipelines -- avoids re-encoding
-    #the 500K corpus multiple times
-    print("\nBuilding dense retriever (one-time corpus encoding)...")
-    shared_dense_retriever = DenseRetriever(corpus)
-    shared_stance_reranker = StanceReranker(device=device)
-
-    #initialising the results dictionary to hold all four pipeline outputs
     all_pipeline_results = {}
+    all_records = []
 
-    #running pipeline 1: no retrieval, RoBERTa only
-    no_retrieval_metrics = run_no_retrieval_pipeline(
-        claims, labels, roberta_model, roberta_tokenizer, device, parsed_arguments.dataset
-    )
-    all_pipeline_results["no_retrieval"] = no_retrieval_metrics
+    #1. no retrieval -> Model 1
+    m, r = run_no_retrieval_pipeline(claims_data, model1, model1_tokenizer, device, parsed_arguments.dataset)
+    all_pipeline_results["no_retrieval"] = m
+    all_records.extend(r)
 
-    #running pipeline 2: BM25 retrieval then RoBERTa
-    bm25_metrics = run_bm25_pipeline(
-        claims, labels, corpus, roberta_model, roberta_tokenizer, device,
-        parsed_arguments.dataset, top_k=parsed_arguments.top_k
-    )
-    all_pipeline_results["bm25_roberta"] = bm25_metrics
+    #2. BM25 -> Model 2
+    m, r = run_bm25_pipeline(claims_data, bm25_retriever, model2, model2_tokenizer, device,
+                             parsed_arguments.dataset, top_k=parsed_arguments.top_k)
+    all_pipeline_results["bm25_roberta"] = m
+    all_records.extend(r)
 
-    #running pipeline 3: dense retrieval then RoBERTa
-    dense_metrics = run_dense_pipeline(
-        claims, labels, shared_dense_retriever, roberta_model, roberta_tokenizer, device,
-        parsed_arguments.dataset, top_k=parsed_arguments.top_k
-    )
-    all_pipeline_results["dense_roberta"] = dense_metrics
+    #3. Dense -> Model 2
+    m, r = run_dense_pipeline(claims_data, dense_retriever, model2, model2_tokenizer, device,
+                              parsed_arguments.dataset, top_k=parsed_arguments.top_k)
+    all_pipeline_results["dense_roberta"] = m
+    all_records.extend(r)
 
-    #running pipeline 4: dense retrieval then stance reranking then RoBERTa
-    dense_reranked_metrics = run_dense_reranked_pipeline(
-        claims, labels, shared_dense_retriever, shared_stance_reranker,
-        roberta_model, roberta_tokenizer, device,
-        parsed_arguments.dataset, top_k=parsed_arguments.top_k
-    )
-    all_pipeline_results["dense_reranked_roberta"] = dense_reranked_metrics
+    #4. Dense + soft rerank -> Model 2
+    m, r = run_dense_reranked_pipeline(claims_data, dense_retriever, stance_reranker, model2, model2_tokenizer,
+                                       device, parsed_arguments.dataset, top_k=parsed_arguments.top_k,
+                                       rerank_pool_size=parsed_arguments.rerank_pool_size,
+                                       neutral_threshold=parsed_arguments.neutral_threshold)
+    all_pipeline_results["dense_reranked_roberta"] = m
+    all_records.extend(r)
 
-    #creating the results directory if it does not already exist
-    os.makedirs(os.path.dirname(parsed_arguments.output_path), exist_ok=True)
+    #saving aggregate metrics (safe dirname handling)
+    out_dir = os.path.dirname(parsed_arguments.output_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
+    #inserting the neutral threshold into the filename so loose/strict runs don't overwrite
+    thr_str = str(parsed_arguments.neutral_threshold).replace(".", "_")
+    base, ext = os.path.splitext(parsed_arguments.output_path)
+    output_path = f"{base}_thr{thr_str}{ext}"
+    with open(output_path, "w") as f:
+        json.dump({"dataset": parsed_arguments.dataset,
+                   "neutral_threshold": parsed_arguments.neutral_threshold,
+                   "metrics": all_pipeline_results}, f, indent=2)
+    print(f"\nAggregate metrics saved to {output_path}")
 
-    #saving all four pipeline results to a JSON file at the output path
-    with open(parsed_arguments.output_path, "w") as output_file:
-        json.dump(all_pipeline_results, output_file, indent=2)
-
-    #printing a confirmation message so we know the file was saved
-    print(f"\nAll pipeline results saved to {parsed_arguments.output_path}")
+    #saving per-claim records for Steps 7 and 8
+    rec_dir = os.path.dirname(parsed_arguments.records_path)
+    if rec_dir:
+        os.makedirs(rec_dir, exist_ok=True)
+    rbase, rext = os.path.splitext(parsed_arguments.records_path)
+    records_path = f"{rbase}_thr{thr_str}{rext}"
+    rec_dir = os.path.dirname(records_path)
+    if rec_dir:
+        os.makedirs(rec_dir, exist_ok=True)
+    with open(records_path, "w") as f:
+        json.dump(all_records, f, indent=2)
+    print(f"Per-claim records saved to {records_path}")
 
     #returning the results dictionary so Colab can capture it directly
     return all_pipeline_results
