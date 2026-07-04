@@ -176,12 +176,14 @@ class StanceReranker:
         claim_texts = [claim_text] * len(retrieved_documents)
         document_texts = [document["text"] for document in retrieved_documents]
 
-        #tokenising all pairs together in one batch
+        #tokenising all pairs together in one batch.
+        #truncation="only_second" truncates the DOCUMENT (second segment) rather than the
+        #claim, and applying it explicitly avoids the tokenizer's over-length warning
         tokenised_inputs = self.tokenizer(
             claim_texts,
             document_texts,
             return_tensors="pt",
-            truncation=True,
+            truncation="only_second",
             max_length=512,
             padding=True,
         ).to(self.device)
