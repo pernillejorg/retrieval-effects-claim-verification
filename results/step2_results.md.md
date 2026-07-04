@@ -1,15 +1,21 @@
-# Baseline Results: RoBERTa No-Retrieval Claim Verification
+# Step 2 Results: RoBERTa Claim Verification (Baseline + Evidence-Aware Classifier)
 
-This document records the Step 2 baseline: a RoBERTa model that classifies claims
-using **claim text only, with no retrieved evidence**. The model is trained on
-SciFact and additionally evaluated zero-shot on SciFact-Open. Every retrieval-augmented
-result in later steps is measured against these baseline numbers.
+This document records the Step 2 classifiers. Two RoBERTa models are trained, both on
+SciFact:
+
+- **Model 1 — the no-retrieval baseline** (Part 1): classifies claims from **claim text
+  only**, with no evidence. This is the reference every retrieval-augmented result in
+  later steps is measured against. It is also evaluated zero-shot on SciFact-Open (Part 2).
+- **Model 2 — the evidence-aware classifier** (Part 3): trained on **claim + gold-evidence
+  pairs**, so it can read evidence. This is the classifier used for the retrieval-augmented conditions in Step 5.
+
+Both models share the same training procedure and differ only in their input
+representation (claim only vs claim + evidence), so the comparison between them is
+controlled.
 
 **Important note on this version:** the SciFact validation set was found to contain
 duplicate claim rows and has been deduplicated (see "Data correction" below). This
-document therefore reports two sets of results: the **original** results computed over
-the raw 450-row validation set, and the **corrected** results computed over the 300
-unique claims. The corrected results are the ones used going forward.
+document therefore reports two sets of results for the baseline: the **original** results computed over the raw 450-row validation set, and the **corrected** results computed over the 300 unique claims. The corrected results are the ones used going forward.
 
 ## Experiment Overview
 
@@ -223,6 +229,67 @@ is stable.
 
 **Limitation.** These are single-run (single-seed) results. Reporting mean and standard
 deviation over multiple seeds is noted as future work to quantify run-to-run variance.
+
+
+---
+
+## Part 3 — Evidence-Aware Classifier (Model 2)
+
+The baseline above (Model 1) classifies claims from **claim text only**. For the
+retrieval-augmented conditions in Step 5, the classifier must be able to read
+evidence. A second model (Model 2) was therefore trained with the same procedure
+but on **claim + gold-evidence pairs** (`--input_mode claim_evidence`), using the
+tokenizer's text-pair format so RoBERTa receives claim and evidence as two segments.
+
+Both models train on SciFact only. Model 1 is used for the no-retrieval condition;
+Model 2 is used for the BM25/dense/reranked conditions in Step 5. This is the
+methodologically correct RAG setup: the evidence-using conditions use a model that
+was actually trained to read evidence, rather than reusing the claim-only baseline.
+
+### Model 2 results — SciFact validation (300 unique claims)
+
+Best learning rate: 2e-5. Best checkpoint: epoch 4. Reloaded-checkpoint F1 confirmed
+to reproduce the reported value (save/reload integrity verified).
+
+| Class | Precision | Recall | F1 | Support |
+|---|---|---|---|---|
+| SUPPORT | 0.58 | 0.61 | 0.60 | 124 |
+| CONTRADICT | 0.34 | 0.30 | 0.32 | 64 |
+| NEI | 0.83 | 0.84 | 0.84 | 112 |
+
+| Metric | Value |
+|---|---|
+| Macro F1 | **0.5828** |
+
+### Model 1 vs Model 2 comparison
+
+| Model | Input | Macro F1 | SUPPORT F1 | CONTRADICT F1 | NEI F1 |
+|---|---|---|---|---|---|
+| Model 1 (baseline) | claim only | 0.4570 | 0.47 | 0.30 | 0.60 |
+| Model 2 (evidence) | claim + gold evidence | 0.5828 | 0.60 | 0.32 | 0.84 |
+
+**Interpretation.** Adding gold evidence raises macro F1 by +0.126 (0.457 → 0.583),
+confirming the model genuinely uses the evidence rather than ignoring it. The largest
+gain is on NEI (0.60 → 0.84): with evidence present, the model can far better
+distinguish claims that have supporting/refuting evidence from those with none. SUPPORT
+also improves substantially (0.47 → 0.60). CONTRADICT remains the hardest class even
+with evidence (0.30 → 0.32), suggesting that detecting refutation is intrinsically
+difficult and not solved by evidence access alone — a point to revisit in the failure
+analysis (Step 7).
+
+**Important caveat (training vs test evidence).** Model 2 is trained and validated on
+**gold** evidence. In the Step 5 RAG pipeline it will be fed **retrieved** evidence,
+which is noisier. Its 0.5828 gold-evidence figure is therefore an optimistic ceiling;
+the realistic RAG performance is measured in Step 5 against retrieved evidence, and is
+expected to be lower. This gap between gold-evidence and retrieved-evidence performance
+is itself an informative result for the thesis.
+
+### SciFact-Open and Model 2
+
+Model 2 is **not** evaluated on SciFact-Open in this step, because doing so requires
+feeding it retrieved evidence from SciFact-Open's 500K corpus — which is the Step 5
+RAG pipeline's job. Model 2's SciFact-Open evaluation is therefore reported in Step 5,
+not here.
 
 ---
 
