@@ -443,6 +443,7 @@ def find_best_learning_rate(train_claims, eval_claims, tokenizer, device, input_
         #reseeding before each trial so every learning rate starts from the SAME
         #random initialisation and data-shuffle path -- so the only thing differing
         #between trials is the learning rate itself (fair, defensible comparison)
+        #seeding everything for reproducibility before any randomness happens
         set_seed(42)
 
         #printing which learning rate we are currently trying
@@ -500,7 +501,7 @@ def find_best_learning_rate(train_claims, eval_claims, tokenizer, device, input_
 # Main training and evaluation pipeline
 # ---------------------------------------------------------------------------
 
-def run_baseline(dataset_name="scifact", input_mode="claim_only"):
+def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
     """
     Loading SciFact, searching for the best learning rate, fine-tuning RoBERTa
     with early stopping on claim text only, evaluating on the validation split,
@@ -510,7 +511,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
     evaluate_on_scifact_open, because it has no training split).
     """
     #seeding everything for reproducibility before any randomness happens
-    set_seed(42)
+    set_seed(seed)
 
     #printing a clear header so output is easy to read in the terminal
     print(f"\n{'=' * 60}")
@@ -730,7 +731,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
         "batch_size": BATCH_SIZE,
         "max_epochs": MAX_EPOCHS,
         "early_stopping_patience": EARLY_STOPPING_PATIENCE,
-        "seed": 42,
+        "seed": seed,
         "input_mode": input_mode,
     }
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
@@ -758,6 +759,7 @@ def evaluate_on_scifact_open():
     actually present, so scores reflect SciFact-Open's two real classes.
     """
     #seeding for reproducibility (evaluation is deterministic, but kept for consistency)
+    #seeding everything for reproducibility before any randomness happens
     set_seed(42)
 
     #selecting the device the same way run_baseline does
@@ -811,7 +813,7 @@ def evaluate_on_scifact_open():
         "max_length": MAX_LENGTH_CLAIM_ONLY,
         "batch_size": BATCH_SIZE,
         "trained_on": "scifact",
-        "seed": 42,
+        "seed": seed,
     }
 
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
@@ -838,11 +840,13 @@ if __name__ == "__main__":
     parser.add_argument("--input_mode", default="claim_only",
                         choices=["claim_only", "claim_evidence"],
                         help="claim_only = Model 1 (baseline); claim_evidence = Model 2 (evidence-aware)")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Random seed for reproducibility / multi-seed variance check")
     args = parser.parse_args()
 
     if args.dataset == "scifact_open":
         #evaluation-only: uses the already-trained SciFact baseline
         evaluate_on_scifact_open()
     else:
-        run_baseline(dataset_name=args.dataset, input_mode=args.input_mode)
+        run_baseline(dataset_name=args.dataset, input_mode=args.input_mode, seed=args.seed)
 
