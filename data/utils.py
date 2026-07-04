@@ -97,7 +97,7 @@ def load_scifact(split="train"):
 # SciFact-Open
 # ---------------------------------------------------------------------------
 
-def load_scifact_open():
+def load_scifact_open(corpus_file="full"):
     """
     SciFact-Open (Wadden et al., 2022) -- TEST-ONLY collection, no train/val split.
     Distributed as .jsonl files (see data/scifact_open/download.py). We read the
@@ -120,12 +120,20 @@ def load_scifact_open():
             label           (str)   SUPPORT | CONTRADICT | NEI
             evidence_doc_ids(list)  doc ids with evidence (empty list for NEI)
         corpus: dict {doc_id (str): "title abstract"}
+
+    corpus_file: "full" -> corpus.jsonl (500K docs, for final thesis numbers)
+                 "candidates" -> corpus_candidates.jsonl (12K docs, fast for development)
     """
     import json
 
     cache_dir = os.path.join(os.path.dirname(__file__), "scifact_open", "cache")
     claims_path = os.path.join(cache_dir, "claims.jsonl")
-    corpus_path = os.path.join(cache_dir, "corpus.jsonl")
+
+    #choosing which corpus file to load: the small candidate subset (dev) or the full 500K (final)
+    if corpus_file == "candidates":
+        corpus_path = os.path.join(cache_dir, "corpus_candidates.jsonl")
+    else:
+        corpus_path = os.path.join(cache_dir, "corpus.jsonl")
 
     #helper: read a .jsonl file into a list of dicts
     def _read_jsonl(path):

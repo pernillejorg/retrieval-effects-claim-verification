@@ -45,11 +45,10 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 
 #importing our unified data loading functions
-from data.utils import load_scifact, load_sciclaimhunt
+from data.utils import load_scifact, load_scifact_open
 
 #importing Counter for corpus statistics
 from collections import Counter
-
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -334,7 +333,7 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     computing Recall@k for k in {1, 5, 10}, and printing a comparison table.
 
     This gives us the retrieval quality before any stance reranking is applied.
-    dataset_name: 'scifact' or 'sciclaimhunt'
+    dataset_name: 'scifact' or 'scifact_open'
     """
 
     #printing a header for the evaluation run
@@ -342,25 +341,26 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     print(f"  Retrieval Evaluation -- {dataset_name.upper()}")
     print(f"{'=' * 60}\n")
 
-    #loading the validation split and corpus for the chosen dataset
+    #loading the claims and retrieval corpus for the chosen dataset
     if dataset_name == "scifact":
-        #loading SciFact validation claims and the retrieval corpus
-        val_claims, corpus = load_scifact(split="validation")
-    elif dataset_name == "sciclaimhunt":
-        #loading SciClaimHunt validation claims and the retrieval corpus
-        val_claims, corpus = load_sciclaimhunt(split="val")
+        #SciFact: evaluate on the validation split, retrieve over its ~5K corpus
+        eval_claims, corpus = load_scifact(split="validation")
+    elif dataset_name == "scifact_open":
+        #SciFact-Open: test-only collection, no split argument.
+        #load_scifact_open returns (claims, corpus) where corpus is the full 500K set.
+        eval_claims, corpus = load_scifact_open(corpus_file="candidates")
     else:
         #raising an error for unrecognised dataset names
-        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'sciclaimhunt'.")
+        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'scifact_open'.")
 
     #printing basic corpus and claim statistics
-    print(f"Validation claims : {len(val_claims)}")
+    print(f"Validation claims : {len(eval_claims)}")
     print(f"Corpus size       : {len(corpus)} documents\n")
 
     #counting how many claims have annotated evidence (non-NEI)
-    claims_with_evidence = [c for c in val_claims if c["evidence_doc_ids"]]
+    claims_with_evidence = [c for c in eval_claims if c["evidence_doc_ids"]]
     print(f"Claims with evidence (non-NEI): {len(claims_with_evidence)}")
-    print(f"NEI claims (excluded from Recall@k): {len(val_claims) - len(claims_with_evidence)}\n")
+    print(f"NEI claims (excluded from Recall@k): {len(eval_claims) - len(claims_with_evidence)}\n")
 
     # ---------------------------------------------------------------------------
     # BM25 retrieval evaluation
@@ -372,12 +372,12 @@ def run_retrieval_evaluation(dataset_name="scifact"):
 
     #running BM25 retrieval for all validation claims at k=10
     print("\nRunning BM25 retrieval...")
-    bm25_results = run_retrieval_on_split(val_claims, bm25_retriever, k=10)
+    bm25_results = run_retrieval_on_split(eval_claims, bm25_retriever, k=10)
 
     #computing Recall@k for k in {1, 5, 10}
-    bm25_recall_at_1  = compute_recall_at_k(val_claims, bm25_results, k=1)
-    bm25_recall_at_5  = compute_recall_at_k(val_claims, bm25_results, k=5)
-    bm25_recall_at_10 = compute_recall_at_k(val_claims, bm25_results, k=10)
+    bm25_recall_at_1  = compute_recall_at_k(eval_claims, bm25_results, k=1)
+    bm25_recall_at_5  = compute_recall_at_k(eval_claims, bm25_results, k=5)
+    bm25_recall_at_10 = compute_recall_at_k(eval_claims, bm25_results, k=10)
 
     # ---------------------------------------------------------------------------
     # Dense retrieval evaluation
@@ -389,12 +389,12 @@ def run_retrieval_evaluation(dataset_name="scifact"):
 
     #running dense retrieval for all validation claims at k=10
     print("\nRunning dense retrieval...")
-    dense_results = run_retrieval_on_split(val_claims, dense_retriever, k=10)
+    dense_results = run_retrieval_on_split(eval_claims, dense_retriever, k=10)
 
     #computing Recall@k for k in {1, 5, 10}
-    dense_recall_at_1  = compute_recall_at_k(val_claims, dense_results, k=1)
-    dense_recall_at_5  = compute_recall_at_k(val_claims, dense_results, k=5)
-    dense_recall_at_10 = compute_recall_at_k(val_claims, dense_results, k=10)
+    dense_recall_at_1  = compute_recall_at_k(eval_claims, dense_results, k=1)
+    dense_recall_at_5  = compute_recall_at_k(eval_claims, dense_results, k=5)
+    dense_recall_at_10 = compute_recall_at_k(eval_claims, dense_results, k=10)
 
     # ---------------------------------------------------------------------------
     # Printing the comparison table
@@ -431,7 +431,7 @@ if __name__ == "__main__":
 
     #parsing command line arguments so we can specify the dataset without editing the file
     parser = argparse.ArgumentParser(description="BM25 and dense retrieval evaluation")
-    parser.add_argument("--dataset", default="scifact", choices=["scifact", "sciclaimhunt"],
+    parser.add_argument("--dataset", default="scifact", choices=["scifact", "scifact_open"],
                         help="Dataset to run retrieval on")
     args = parser.parse_args()
 
