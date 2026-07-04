@@ -326,18 +326,37 @@ def evaluate(model, dataloader, device):
             #collecting predicted labels as a Python list for metric computation
             all_predicted_labels.extend(predictions.cpu().numpy().tolist())
 
-    #computing macro-averaged F1 score across all three classes
-    macro_f1 = f1_score(all_true_labels, all_predicted_labels, average="macro", zero_division=0)
-
-    #computing macro-averaged precision score across all three classes
-    macro_precision = precision_score(all_true_labels, all_predicted_labels, average="macro", zero_division=0)
-
-    #computing macro-averaged recall score across all three classes
-    macro_recall = recall_score(all_true_labels, all_predicted_labels, average="macro", zero_division=0)
-
-    # Determining which label ids are actually present in this dataset split
+    #determining which label ids are actually present in this dataset split.
+    #comes before the metric calls so they can scope to these labels.
     present_label_ids = sorted(set(all_true_labels))
     present_label_names = [ID_TO_LABEL[label_id] for label_id in present_label_ids]
+
+    #computing macro-averaged F1 over only the classes present in the gold labels
+    macro_f1 = f1_score(
+        all_true_labels,
+        all_predicted_labels,
+        labels=present_label_ids,
+        average="macro",
+        zero_division=0,
+    )
+
+    #computing macro-averaged precision over only the classes present in the gold labels
+    macro_precision = precision_score(
+        all_true_labels,
+        all_predicted_labels,
+        labels=present_label_ids,
+        average="macro",
+        zero_division=0,
+    )
+
+    #computing macro-averaged recall over only the classes present in the gold labels
+    macro_recall = recall_score(
+        all_true_labels,
+        all_predicted_labels,
+        labels=present_label_ids,
+        average="macro",
+        zero_division=0,
+    )
 
     # Generating a full per-class breakdown report using only the labels present
     report = classification_report(
@@ -389,6 +408,11 @@ def find_best_learning_rate(train_claims, val_claims, tokenizer, device):
     #iterating over each candidate learning rate
     for candidate_lr in LEARNING_RATES_TO_TRY:
 
+        #reseeding before each trial so every learning rate starts from the SAME
+        #random initialisation and data-shuffle path -- so the only thing differing
+        #between trials is the learning rate itself (fair, defensible comparison)
+        set_seed(42)
+
         #printing which learning rate we are currently trying
         print(f"\n  Trying learning rate: {candidate_lr}")
 
@@ -396,6 +420,8 @@ def find_best_learning_rate(train_claims, val_claims, tokenizer, device):
         trial_model = RobertaForSequenceClassification.from_pretrained(
             MODEL_NAME,
             num_labels=len(LABEL_LIST),
+            id2label=ID_TO_LABEL,
+            label2id=LABEL_TO_ID,
         ).to(device)
 
         #setting up the AdamW optimiser with this candidate learning rate
@@ -509,6 +535,8 @@ def run_baseline(dataset_name="scifact"):
     model = RobertaForSequenceClassification.from_pretrained(
         MODEL_NAME,
         num_labels=len(LABEL_LIST),
+        id2label=ID_TO_LABEL,
+        label2id=LABEL_TO_ID,
     )
 
     #moving the model to the selected device
@@ -646,6 +674,12 @@ def run_baseline(dataset_name="scifact"):
         "macro_f1": best_val_f1,
         "precision": best_val_precision,
         "recall": best_val_recall,
+        "model_name": MODEL_NAME,
+        "max_length": MAX_LENGTH,
+        "batch_size": BATCH_SIZE,
+        "max_epochs": MAX_EPOCHS,
+        "early_stopping_patience": EARLY_STOPPING_PATIENCE,
+        "seed": 42,
     }
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     os.makedirs(results_dir, exist_ok=True)
@@ -721,7 +755,13 @@ def evaluate_on_scifact_open():
         "macro_f1": open_f1,
         "precision": open_precision,
         "recall": open_recall,
+        "model_name": MODEL_NAME,
+        "max_length": MAX_LENGTH,
+        "batch_size": BATCH_SIZE,
+        "trained_on": "scifact",
+        "seed": 42,
     }
+    
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     os.makedirs(results_dir, exist_ok=True)
     with open(os.path.join(results_dir, "baseline_scifact_open.json"), "w") as f:
