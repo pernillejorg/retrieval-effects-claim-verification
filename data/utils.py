@@ -77,18 +77,33 @@ def load_scifact(split="train"):
         title = row.get("title", "")
         corpus[doc_id] = f"{title} {abstract}".strip()
 
-    # Build claims list
-    claims = []
+    # Build claims list, deduplicating by claim id.
+    # SciFact's raw split has multiple rows per claim (one per cited doc / label),
+    # so 450 validation rows correspond to only ~300 unique claims. We merge rows
+    # with the same id, unioning their evidence_doc_ids, so every downstream step
+    # (retrieval, reranking, recall) operates on unique claims.
+    claims_by_id = {}
     for row in dataset[split]:
+        claim_id = str(row["id"])
         evidence_doc_ids = []
         if row.get("cited_doc_ids"):
             evidence_doc_ids = [str(d) for d in row["cited_doc_ids"]]
-        claims.append({
-            "id":               str(row["id"]),
-            "claim":            row["claim"],
-            "label":            SCIFACT_LABEL_MAP.get(row["evidence_label"], LABEL_NEI),
-            "evidence_doc_ids": evidence_doc_ids,
-        })
+
+        if claim_id not in claims_by_id:
+            claims_by_id[claim_id] = {
+                "id":               claim_id,
+                "claim":            row["claim"],
+                "label":            SCIFACT_LABEL_MAP.get(row["evidence_label"], LABEL_NEI),
+                "evidence_doc_ids": list(evidence_doc_ids),
+            }
+        else:
+            #merging evidence doc ids from additional rows for the same claim
+            existing = claims_by_id[claim_id]["evidence_doc_ids"]
+            for d in evidence_doc_ids:
+                if d not in existing:
+                    existing.append(d)
+
+    claims = list(claims_by_id.values())
 
     return claims, corpus
 
