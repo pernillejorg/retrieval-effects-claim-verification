@@ -430,7 +430,8 @@ def run_retrieval_evaluation(dataset_name="scifact"):
             "dense": {"1": dense_recall_at_1, "5": dense_recall_at_5, "10": dense_recall_at_10},
         },
     }
-    recall_path = os.path.join(results_dir, f"retrieval_recall_{dataset_name}.json")
+    #recall_path = os.path.join(results_dir, f"retrieval_recall_{dataset_name}.json")
+    recall_path = os.path.join(results_dir, f"retrieval_recall_mpnet_{dataset_name}.json")
     with open(recall_path, "w") as f:
         json.dump(recall_summary, f, indent=2)
     print(f"Recall@k summary saved to {recall_path}")
@@ -449,7 +450,8 @@ def run_retrieval_evaluation(dataset_name="scifact"):
         "bm25":  _slim(bm25_results),
         "dense": _slim(dense_results),
     }
-    candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
+    #candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
+    candidates_path = os.path.join(results_dir, f"retrieval_candidates_mpnet_{dataset_name}.json")
     with open(candidates_path, "w") as f:
         json.dump(candidates, f, indent=2)
     print(f"Retrieved candidates saved to {candidates_path}")
