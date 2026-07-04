@@ -45,10 +45,11 @@ from rank_bm25 import BM25Okapi
 from sentence_transformers import SentenceTransformer
 
 #importing our unified data loading functions
-from data.utils import load_scifact, load_scifact_open
+from data.utils import load_scifact, load_sciclaimhunt
 
 #importing Counter for corpus statistics
 from collections import Counter
+
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -56,9 +57,7 @@ from collections import Counter
 
 #defining the sentence-transformer model used for dense retrieval
 #all-MiniLM-L6-v2 is fast, lightweight, and strong for semantic similarity
-#DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
-#for later using a bigger model
-DENSE_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
+DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 #defining the default number of documents to retrieve per claim
 DEFAULT_K = 10
@@ -66,6 +65,7 @@ DEFAULT_K = 10
 #defining the batch size for encoding documents during dense retrieval
 #larger batches are faster but use more GPU memory
 ENCODING_BATCH_SIZE = 64
+
 
 # ---------------------------------------------------------------------------
 # BM25 Retriever
@@ -136,7 +136,7 @@ class BM25Retriever:
                 "rank":   rank,
             })
 
-        #returning the ranked list of retrieved documents
+        #teturning the ranked list of retrieved documents
         return results
 
 
@@ -334,7 +334,7 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     computing Recall@k for k in {1, 5, 10}, and printing a comparison table.
 
     This gives us the retrieval quality before any stance reranking is applied.
-    dataset_name: 'scifact' or 'scifact_open'
+    dataset_name: 'scifact' or 'sciclaimhunt'
     """
 
     #printing a header for the evaluation run
@@ -342,26 +342,25 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     print(f"  Retrieval Evaluation -- {dataset_name.upper()}")
     print(f"{'=' * 60}\n")
 
-    #loading the claims and retrieval corpus for the chosen dataset
+    #loading the validation split and corpus for the chosen dataset
     if dataset_name == "scifact":
-        #SciFact: evaluate on the validation split, retrieve over its ~5K corpus
-        eval_claims, corpus = load_scifact(split="validation")
-    elif dataset_name == "scifact_open":
-        #SciFact-Open: test-only collection, no split argument.
-        #load_scifact_open returns (claims, corpus) where corpus is the full 500K set.
-        eval_claims, corpus = load_scifact_open(corpus_file="full")
+        #loading SciFact validation claims and the retrieval corpus
+        val_claims, corpus = load_scifact(split="validation")
+    elif dataset_name == "sciclaimhunt":
+        #loading SciClaimHunt validation claims and the retrieval corpus
+        val_claims, corpus = load_sciclaimhunt(split="val")
     else:
         #raising an error for unrecognised dataset names
-        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'scifact_open'.")
+        raise ValueError(f"Unknown dataset: {dataset_name}. Use 'scifact' or 'sciclaimhunt'.")
 
     #printing basic corpus and claim statistics
-    print(f"Validation claims : {len(eval_claims)}")
+    print(f"Validation claims : {len(val_claims)}")
     print(f"Corpus size       : {len(corpus)} documents\n")
 
     #counting how many claims have annotated evidence (non-NEI)
-    claims_with_evidence = [c for c in eval_claims if c["evidence_doc_ids"]]
+    claims_with_evidence = [c for c in val_claims if c["evidence_doc_ids"]]
     print(f"Claims with evidence (non-NEI): {len(claims_with_evidence)}")
-    print(f"NEI claims (excluded from Recall@k): {len(eval_claims) - len(claims_with_evidence)}\n")
+    print(f"NEI claims (excluded from Recall@k): {len(val_claims) - len(claims_with_evidence)}\n")
 
     # ---------------------------------------------------------------------------
     # BM25 retrieval evaluation
@@ -373,12 +372,12 @@ def run_retrieval_evaluation(dataset_name="scifact"):
 
     #running BM25 retrieval for all validation claims at k=10
     print("\nRunning BM25 retrieval...")
-    bm25_results = run_retrieval_on_split(eval_claims, bm25_retriever, k=10)
+    bm25_results = run_retrieval_on_split(val_claims, bm25_retriever, k=10)
 
     #computing Recall@k for k in {1, 5, 10}
-    bm25_recall_at_1  = compute_recall_at_k(eval_claims, bm25_results, k=1)
-    bm25_recall_at_5  = compute_recall_at_k(eval_claims, bm25_results, k=5)
-    bm25_recall_at_10 = compute_recall_at_k(eval_claims, bm25_results, k=10)
+    bm25_recall_at_1  = compute_recall_at_k(val_claims, bm25_results, k=1)
+    bm25_recall_at_5  = compute_recall_at_k(val_claims, bm25_results, k=5)
+    bm25_recall_at_10 = compute_recall_at_k(val_claims, bm25_results, k=10)
 
     # ---------------------------------------------------------------------------
     # Dense retrieval evaluation
@@ -390,12 +389,12 @@ def run_retrieval_evaluation(dataset_name="scifact"):
 
     #running dense retrieval for all validation claims at k=10
     print("\nRunning dense retrieval...")
-    dense_results = run_retrieval_on_split(eval_claims, dense_retriever, k=10)
+    dense_results = run_retrieval_on_split(val_claims, dense_retriever, k=10)
 
     #computing Recall@k for k in {1, 5, 10}
-    dense_recall_at_1  = compute_recall_at_k(eval_claims, dense_results, k=1)
-    dense_recall_at_5  = compute_recall_at_k(eval_claims, dense_results, k=5)
-    dense_recall_at_10 = compute_recall_at_k(eval_claims, dense_results, k=10)
+    dense_recall_at_1  = compute_recall_at_k(val_claims, dense_results, k=1)
+    dense_recall_at_5  = compute_recall_at_k(val_claims, dense_results, k=5)
+    dense_recall_at_10 = compute_recall_at_k(val_claims, dense_results, k=10)
 
     # ---------------------------------------------------------------------------
     # Printing the comparison table
@@ -409,51 +408,6 @@ def run_retrieval_evaluation(dataset_name="scifact"):
     print(f"  {'BM25':<20} {bm25_recall_at_1:>6.3f} {bm25_recall_at_5:>6.3f} {bm25_recall_at_10:>6.3f}")
     print(f"  {'Dense':<20} {dense_recall_at_1:>6.3f} {dense_recall_at_5:>6.3f} {dense_recall_at_10:>6.3f}")
     print(f"{'=' * 50}\n")
-
-    # ---------------------------------------------------------------------------
-    # Saving results to disk
-    # ---------------------------------------------------------------------------
-    import json
-
-    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
-    os.makedirs(results_dir, exist_ok=True)
-
-    #saving the Recall@k numbers (the Step 3 thesis result) -- small, human-readable
-    recall_summary = {
-        "dataset": dataset_name,
-        "corpus_size": len(corpus),
-        "num_claims": len(eval_claims),
-        "num_claims_with_evidence": len(claims_with_evidence),
-        "recall_at_k": {
-            "bm25":  {"1": bm25_recall_at_1,  "5": bm25_recall_at_5,  "10": bm25_recall_at_10},
-            "dense": {"1": dense_recall_at_1, "5": dense_recall_at_5, "10": dense_recall_at_10},
-        },
-    }
-    #recall_path = os.path.join(results_dir, f"retrieval_recall_{dataset_name}.json")
-    recall_path = os.path.join(results_dir, f"retrieval_recall_mpnet_{dataset_name}.json")
-    with open(recall_path, "w") as f:
-        json.dump(recall_summary, f, indent=2)
-    print(f"Recall@k summary saved to {recall_path}")
-
-    #saving the retrieved candidates (the INPUT to Step 4's stance reranker) so the
-    #expensive retrieval never has to be re-run. We save doc_id + score per candidate.
-    def _slim(results):
-        #keeping only what Step 4 needs: for each claim, its ranked (doc_id, score) list
-        return {
-            claim_id: [{"doc_id": r["doc_id"], "score": float(r["score"])} for r in docs]
-            for claim_id, docs in results.items()
-        }
-
-    candidates = {
-        "dataset": dataset_name,
-        "bm25":  _slim(bm25_results),
-        "dense": _slim(dense_results),
-    }
-    #candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
-    candidates_path = os.path.join(results_dir, f"retrieval_candidates_mpnet_{dataset_name}.json")
-    with open(candidates_path, "w") as f:
-        json.dump(candidates, f, indent=2)
-    print(f"Retrieved candidates saved to {candidates_path}")
 
     #returning results and Recall@k numbers for use in downstream steps and thesis tables
     return {
@@ -477,7 +431,7 @@ if __name__ == "__main__":
 
     #parsing command line arguments so we can specify the dataset without editing the file
     parser = argparse.ArgumentParser(description="BM25 and dense retrieval evaluation")
-    parser.add_argument("--dataset", default="scifact", choices=["scifact", "scifact_open"],
+    parser.add_argument("--dataset", default="scifact", choices=["scifact", "sciclaimhunt"],
                         help="Dataset to run retrieval on")
     args = parser.parse_args()
 
