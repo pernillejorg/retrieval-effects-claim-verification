@@ -56,9 +56,9 @@ from collections import Counter
 
 #defining the sentence-transformer model used for dense retrieval
 #all-MiniLM-L6-v2 is fast, lightweight, and strong for semantic similarity
-#DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 #for later using a bigger model
-DENSE_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
+#DENSE_MODEL_NAME = "sentence-transformers/all-mpnet-base-v2"
 
 #defining the default number of documents to retrieve per claim
 DEFAULT_K = 10
@@ -430,7 +430,8 @@ def run_retrieval_evaluation(dataset_name="scifact"):
         },
     }
     #recall_path = os.path.join(results_dir, f"retrieval_recall_{dataset_name}.json")
-    recall_path = os.path.join(results_dir, f"retrieval_recall_mpnet_{dataset_name}.json")
+    #recall_path = os.path.join(results_dir, f"retrieval_recall_mpnet_{dataset_name}.json")
+    recall_path = os.path.join(results_dir, f"retrieval_recall_minilm_{dataset_name}.json")
     with open(recall_path, "w") as f:
         json.dump(recall_summary, f, indent=2)
     print(f"Recall@k summary saved to {recall_path}")
@@ -450,7 +451,8 @@ def run_retrieval_evaluation(dataset_name="scifact"):
         "dense": _slim(dense_results),
     }
     #candidates_path = os.path.join(results_dir, f"retrieval_candidates_{dataset_name}.json")
-    candidates_path = os.path.join(results_dir, f"retrieval_candidates_mpnet_{dataset_name}.json")
+    #candidates_path = os.path.join(results_dir, f"retrieval_candidates_mpnet_{dataset_name}.json")
+    candidates_path = os.path.join(results_dir, f"retrieval_candidates_minilm_{dataset_name}.json")
     with open(candidates_path, "w") as f:
         json.dump(candidates, f, indent=2)
     print(f"Retrieved candidates saved to {candidates_path}")
