@@ -88,6 +88,12 @@ import argparse
 #importing torch for running inference on GPU or CPU
 import torch
 
+#importing the system module so we can add the project root to the Python path
+import sys
+
+#adding the project root to the path so we can import from data/
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 #importing the tokenizer and model classes from transformers for RoBERTa
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
