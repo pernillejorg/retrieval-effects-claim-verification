@@ -76,8 +76,10 @@ import json
 MODEL_NAME = "roberta-base"
 
 #setting the maximum number of tokens RoBERTa processes per input claim
-# (verified against actual claim lengths before training -- see check_max_token_length)
-MAX_LENGTH = 128
+#claim-only inputs are short (max 75 tokens), but claim+evidence pairs are long,
+#so evidence mode uses a larger max length
+MAX_LENGTH_CLAIM_ONLY = 128
+MAX_LENGTH_CLAIM_EVIDENCE = 512
 
 #setting value of how many examples are processed together in one forward pass
 BATCH_SIZE = 16
@@ -176,12 +178,20 @@ class ClaimDataset(Dataset):
     PyTorch DataLoader can batch together for training and evaluation.
     """
 
-    def __init__(self, list_of_claim_dicts, tokenizer):
+    def __init__(self, list_of_claim_dicts, tokenizer, input_mode="claim_only", corpus=None):
         #storing the list of claim dicts so we can index into them
         self.claims = list_of_claim_dicts
-
         #storing the tokenizer so we can encode each claim at access time
         self.tokenizer = tokenizer
+        #input_mode: "claim_only" (baseline) or "claim_evidence" (evidence-aware RAG classifier)
+        self.input_mode = input_mode
+        #corpus {doc_id: text} -- required for claim_evidence mode to look up gold evidence
+        self.corpus = corpus
+        #choosing max length based on mode (evidence pairs need more room)
+        self.max_length = (MAX_LENGTH_CLAIM_EVIDENCE if input_mode == "claim_evidence"
+                           else MAX_LENGTH_CLAIM_ONLY)
+        if input_mode == "claim_evidence" and corpus is None:
+            raise ValueError("claim_evidence mode requires a corpus to look up evidence text.")
 
     def __len__(self):
         #returning the total number of claims in this dataset split
@@ -191,14 +201,36 @@ class ClaimDataset(Dataset):
         #retrieving the claim dict at the given index position
         claim_dict = self.claims[index]
 
-        #tokenising the claim text into input ids and attention mask tensors
-        encoding = self.tokenizer(
-            claim_dict["claim"],
-            max_length=MAX_LENGTH,
-            padding="max_length",
-            truncation=True,
-            return_tensors="pt",
-        )
+        if self.input_mode == "claim_evidence":
+            #looking up the gold evidence text for this claim from the corpus.
+            #a claim may cite multiple evidence docs; we concatenate their text.
+            evidence_texts = []
+            for doc_id in claim_dict["evidence_doc_ids"]:
+                doc_text = self.corpus.get(str(doc_id))
+                if doc_text:
+                    evidence_texts.append(doc_text)
+            evidence_text = " ".join(evidence_texts)
+
+            #tokenising claim + gold evidence as a PROPER PAIR (RoBERTa inserts </s></s>).
+            #NEI claims have no evidence_doc_ids, so evidence_text is "" -- the model
+            #then sees claim + empty evidence, which is the correct signal for "no evidence".
+            encoding = self.tokenizer(
+                claim_dict["claim"],
+                evidence_text,
+                max_length=self.max_length,
+                padding="max_length",
+                truncation=True,
+                return_tensors="pt",
+            )
+        else:
+            #claim-only tokenisation (the original baseline behaviour)
+            encoding = self.tokenizer(
+                claim_dict["claim"],
+                max_length=self.max_length,
+                padding="max_length",
+                truncation=True,
+                return_tensors="pt",
+            )
 
         #converting the label string to its corresponding integer id
         label_id = LABEL_TO_ID[claim_dict["label"]]
@@ -375,7 +407,7 @@ def evaluate(model, dataloader, device):
 # Learning rate search -- trains with each LR and picks the best on val F1
 # ---------------------------------------------------------------------------
 
-def find_best_learning_rate(train_claims, eval_claims, tokenizer, device):
+def find_best_learning_rate(train_claims, eval_claims, tokenizer, device, input_mode="claim_only", corpus=None):
     """
     Searching over LEARNING_RATES_TO_TRY by training for 3 epochs each
     and returning the learning rate that gives the highest validation F1.
@@ -400,8 +432,8 @@ def find_best_learning_rate(train_claims, eval_claims, tokenizer, device):
     best_val_f1_found = -1.0
 
     #wrapping search_claims (not all train_claims) in dataset and dataloader for this search
-    search_dataset = ClaimDataset(search_claims, tokenizer)
-    val_dataset = ClaimDataset(eval_claims, tokenizer)
+    search_dataset = ClaimDataset(search_claims, tokenizer, input_mode=input_mode, corpus=corpus)
+    val_dataset = ClaimDataset(eval_claims, tokenizer, input_mode=input_mode, corpus=corpus)
     search_dataloader = DataLoader(search_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
@@ -468,7 +500,7 @@ def find_best_learning_rate(train_claims, eval_claims, tokenizer, device):
 # Main training and evaluation pipeline
 # ---------------------------------------------------------------------------
 
-def run_baseline(dataset_name="scifact"):
+def run_baseline(dataset_name="scifact", input_mode="claim_only"):
     """
     Loading SciFact, searching for the best learning rate, fine-tuning RoBERTa
     with early stopping on claim text only, evaluating on the validation split,
@@ -498,8 +530,8 @@ def run_baseline(dataset_name="scifact"):
 
     #loading the correct dataset based on the dataset_name argument
     if dataset_name == "scifact":
-        #loading SciFact training claims
-        train_claims, _ = load_scifact(split="train")
+        #loading SciFact training claims with full corpus for evidence lookup in claim+evidence mode
+        train_claims, corpus = load_scifact(split="train")
 
         #loading SciFact validation claims for evaluation after each epoch
         eval_claims, _ = load_scifact(split="validation")
@@ -525,10 +557,11 @@ def run_baseline(dataset_name="scifact"):
 
     #checking that MAX_LENGTH is safe for the actual claim lengths in this dataset
     print("\nChecking claim token lengths...")
-    check_max_token_length(train_claims, tokenizer)
+    if input_mode == "claim_only":
+        check_max_token_length(train_claims, tokenizer)
 
     #searching for the best learning rate across our three candidates
-    best_lr = find_best_learning_rate(train_claims, eval_claims, tokenizer, device)
+    best_lr = find_best_learning_rate(train_claims, eval_claims, tokenizer, device, input_mode=input_mode, corpus=corpus)
 
     #loading a fresh model for the full training run with the best learning rate
     print(f"\n\nStarting full training run with best learning rate: {best_lr}\n")
@@ -543,8 +576,8 @@ def run_baseline(dataset_name="scifact"):
     model = model.to(device)
 
     #wrapping the train and validation claims in dataset and dataloader objects
-    train_dataset = ClaimDataset(train_claims, tokenizer)
-    val_dataset = ClaimDataset(eval_claims, tokenizer)
+    train_dataset = ClaimDataset(train_claims, tokenizer, input_mode=input_mode, corpus=corpus)
+    val_dataset = ClaimDataset(eval_claims, tokenizer, input_mode=input_mode, corpus=corpus)
     train_dataloader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_dataloader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
@@ -587,8 +620,11 @@ def run_baseline(dataset_name="scifact"):
     epochs_without_improvement = 0
 
     #constructing the save path for the best model checkpoint
+    #naming the checkpoint by mode so claim_only (Model 1) and claim_evidence (Model 2)
+    #to avoid overwriting each other
+    model_tag = "baseline" if input_mode == "claim_only" else "evidence"
     save_directory = os.path.join(
-        os.path.dirname(__file__), "saved_models", f"baseline_{dataset_name}"
+        os.path.dirname(__file__), "saved_models", f"{model_tag}_{dataset_name}"
     )
 
     #creating the save directory if it does not already exist
@@ -783,11 +819,14 @@ if __name__ == "__main__":
                         choices=["scifact", "scifact_open"],
                         help="'scifact' trains the baseline; 'scifact_open' evaluates "
                              "the trained SciFact baseline on SciFact-Open (no training)")
+    parser.add_argument("--input_mode", default="claim_only",
+                        choices=["claim_only", "claim_evidence"],
+                        help="claim_only = Model 1 (baseline); claim_evidence = Model 2 (evidence-aware)")
     args = parser.parse_args()
 
     if args.dataset == "scifact_open":
         #evaluation-only: uses the already-trained SciFact baseline
         evaluate_on_scifact_open()
     else:
-        run_baseline(dataset_name=args.dataset)
+        run_baseline(dataset_name=args.dataset, input_mode=args.input_mode)
 
