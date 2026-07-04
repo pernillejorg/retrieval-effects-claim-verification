@@ -1,4 +1,4 @@
-# Step 3 Results: Evidence Retrieval (BM25 & Dense)
+# Step 3 Results: Document Retrieval (BM25 & Dense)
 
 This document records the Step 3 retrieval evaluation. Two standard retrieval methods —
 BM25 (sparse keyword matching) and dense (semantic similarity) — are run over each
