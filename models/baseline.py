@@ -237,10 +237,10 @@ class ClaimDataset(Dataset):
 
         #returning a dict of tensors -- squeezing removes the extra batch dimension added by return_tensors="pt"
         return {
-            #squeezing the input ids tensor from shape (1, MAX_LENGTH_CLAIM_ONLY) to (MAX_LENGTH_CLAIM_ONLY,)
+            #squeezing the input ids tensor from shape (1, max_length) to (max_length,) to (MAX_LENGTH_CLAIM_ONLY,)
             "input_ids": encoding["input_ids"].squeeze(),
 
-            #squeezing the attention mask tensor from shape (1, MAX_LENGTH_CLAIM_ONLY) to (MAX_LENGTH_CLAIM_ONLY,)
+            #squeezing the attention mask tensor from shape (1, max_length) to (max_length,) to (MAX_LENGTH_CLAIM_ONLY,)
             "attention_mask": encoding["attention_mask"].squeeze(),
 
             #converting the label integer to a long tensor as required by PyTorch loss functions
@@ -514,7 +514,8 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
 
     #printing a clear header so output is easy to read in the terminal
     print(f"\n{'=' * 60}")
-    print(f"  RoBERTa No-Retrieval Baseline  --  {dataset_name.upper()}")
+    mode_label = "No-Retrieval Baseline" if input_mode == "claim_only" else "Claim+Evidence Classifier"
+    print(f"  RoBERTa {mode_label}  --  {dataset_name.upper()}")
     print(f"{'=' * 60}\n")
 
     #selecting MPS for Apple Silicon Macs, CUDA for NVIDIA GPUs, or CPU as fallback
@@ -686,14 +687,28 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
         #printing a blank line between epochs for readability
         print()
 
-    #reloading the best checkpoint from disk so we evaluate the best model, not the last epoch
+    #reloading the best checkpoint from disk so we evaluate the ACTUAL saved model,
+    #not the in-memory one -- this verifies the saved checkpoint reproduces the reported metric
     best_model = RobertaForSequenceClassification.from_pretrained(save_directory).to(device)
     best_tokenizer = RobertaTokenizer.from_pretrained(save_directory)
 
-    #reporting the validation result -- this split was used for model selection (LR + early stopping)
-    print("\nValidation classification report (best checkpoint, used for model selection):")
-    print(best_val_report)
-    print(f"Best validation macro F1 : {best_val_f1:.4f}")
+    #re-evaluating the reloaded checkpoint on the validation set as a correctness check
+    reloaded_f1, reloaded_precision, reloaded_recall, reloaded_report = evaluate(
+        best_model, val_dataloader, device
+    )
+
+    #reporting the reloaded checkpoint's validation result (this is the final reported result)
+    print("\nValidation classification report (reloaded best checkpoint):")
+    print(reloaded_report)
+    print(f"Reloaded checkpoint macro F1 : {reloaded_f1:.4f}")
+
+    #sanity check: the reloaded model should reproduce the best F1 seen during training.
+    #a mismatch would indicate a save/reload bug, so we warn if they differ noticeably.
+    if abs(reloaded_f1 - best_val_f1) > 1e-4:
+        print(f"  WARNING: reloaded F1 ({reloaded_f1:.4f}) differs from training-time "
+              f"best F1 ({best_val_f1:.4f}) -- possible save/reload issue.")
+    else:
+        print(f"  Confirmed: reloaded checkpoint reproduces the reported F1 ({best_val_f1:.4f}).")
 
     #SciFact has no public test labels, so the validation result above is the final reported result
     print("\n(No held-out test set for SciFact, as validation is the final reported result.)")
@@ -707,21 +722,22 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only"):
         "dataset": dataset_name,
         "split_reported": "validation",
         "best_learning_rate": best_lr,
-        "macro_f1": best_val_f1,
-        "precision": best_val_precision,
-        "recall": best_val_recall,
+        "macro_f1": reloaded_f1,
+        "precision": reloaded_precision,
+        "recall": reloaded_recall,
         "model_name": MODEL_NAME,
         "max_length": MAX_LENGTH_CLAIM_EVIDENCE if input_mode == "claim_evidence" else MAX_LENGTH_CLAIM_ONLY,
         "batch_size": BATCH_SIZE,
         "max_epochs": MAX_EPOCHS,
         "early_stopping_patience": EARLY_STOPPING_PATIENCE,
         "seed": 42,
+        "input_mode": input_mode,
     }
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     os.makedirs(results_dir, exist_ok=True)
-    with open(os.path.join(results_dir, f"baseline_{dataset_name}.json"), "w") as f:
+    with open(os.path.join(results_dir, f"baseline_{dataset_name}_{input_mode}.json"), "w") as f:
         json.dump(results, f, indent=2)
-    print(f"Results saved to results/baseline_{dataset_name}.json")
+    print(f"Results saved to results/baseline_{dataset_name}_{input_mode}.json")
 
     #returning the best model and tokenizer for optional further use
     return best_model, best_tokenizer
