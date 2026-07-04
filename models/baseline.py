@@ -67,6 +67,7 @@ import random
 #importing our unified data loading functions for both datasets
 from data.utils import load_scifact, load_scifact_open, LABEL_SUPPORT, LABEL_CONTRADICT, LABEL_NEI
 
+import json
 # ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
@@ -547,6 +548,10 @@ def run_baseline(dataset_name="scifact"):
     #initialising the best validation F1 seen so far for early stopping
     best_val_f1 = -1.0
 
+    #initialising best precision/recall so they can be saved to JSON at the end
+    best_val_precision = 0.0
+    best_val_recall = 0.0
+
     #initialising the best validation report as an empty string -- updated when best F1 improves
     best_val_report = ""
 
@@ -589,6 +594,10 @@ def run_baseline(dataset_name="scifact"):
             # Updating the best F1 score
             best_val_f1 = val_f1
 
+            #storing precision and recall from this best epoch too (for the JSON results)
+            best_val_precision = val_precision
+            best_val_recall = val_recall
+
             #storing the classification report from this best epoch
             best_val_report = val_report
 
@@ -628,6 +637,21 @@ def run_baseline(dataset_name="scifact"):
     #printing the remaining summary
     print(f"\nBest learning rate used  : {best_lr}")
     print(f"Model saved to           : {save_directory}")
+
+    #saving the SciFact baseline results as structured JSON for later comparison
+    results = {
+        "dataset": dataset_name,
+        "split_reported": "validation",
+        "best_learning_rate": best_lr,
+        "macro_f1": best_val_f1,
+        "precision": best_val_precision,
+        "recall": best_val_recall,
+    }
+    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    os.makedirs(results_dir, exist_ok=True)
+    with open(os.path.join(results_dir, f"baseline_{dataset_name}.json"), "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"Results saved to results/baseline_{dataset_name}.json")
 
     #returning the best model and tokenizer for optional further use
     return best_model, best_tokenizer
@@ -689,6 +713,20 @@ def evaluate_on_scifact_open():
     print(f"SciFact-Open macro F1     : {open_f1:.4f}")
     print(f"SciFact-Open precision    : {open_precision:.4f}")
     print(f"SciFact-Open recall       : {open_recall:.4f}")
+
+    #saving SciFact-Open results as JSON
+    results = {
+        "dataset": "scifact_open",
+        "evaluation": "zero_shot_from_scifact_baseline",
+        "macro_f1": open_f1,
+        "precision": open_precision,
+        "recall": open_recall,
+    }
+    results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
+    os.makedirs(results_dir, exist_ok=True)
+    with open(os.path.join(results_dir, "baseline_scifact_open.json"), "w") as f:
+        json.dump(results, f, indent=2)
+    print("Results saved to results/baseline_scifact_open.json")
 
     return open_f1, open_precision, open_recall, open_report
 
