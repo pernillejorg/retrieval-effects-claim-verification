@@ -446,7 +446,7 @@ def main():
                         help="Model 2 (claim+evidence) for the retrieval conditions")
     parser.add_argument("--output_path", type=str, default="results/step5_pipeline_scifact.json")
     parser.add_argument("--records_path", type=str, default="results/step5_records_scifact.json")
-    parser.add_argument("--top_k", type=int, default=5)
+    parser.add_argument("--top_k", type=int, default=3)
     parser.add_argument("--rerank_pool_size", type=int, default=10)
     parser.add_argument("--neutral_threshold", type=float, default=0.5)
     parsed_arguments = parser.parse_args()
