@@ -210,7 +210,7 @@ def run_no_retrieval_pipeline(claims_data, model, tokenizer, device, dataset_nam
     return metrics, records
 
 
-def run_bm25_pipeline(claims_data, bm25_retriever, model, tokenizer, device, dataset_name, top_k=5):
+def run_bm25_pipeline(claims_data, bm25_retriever, model, tokenizer, device, dataset_name, top_k=3):
     print("\nRunning pipeline: BM25 + RoBERTa (Model 2)")
     model.eval()
     predicted_labels, true_labels, records = [], [], []
@@ -261,7 +261,7 @@ def run_bm25_pipeline(claims_data, bm25_retriever, model, tokenizer, device, dat
     return metrics, records
 
 #passing in the dense retriever as an argument to avoid re-encoding the corpus every time
-def run_dense_pipeline(claims_data, dense_retriever, model, tokenizer, device, dataset_name, top_k=5):
+def run_dense_pipeline(claims_data, dense_retriever, model, tokenizer, device, dataset_name, top_k=3):
     print("\nRunning pipeline: Dense + RoBERTa (Model 2)")
     model.eval()
     predicted_labels, true_labels, records = [], [], []
@@ -313,7 +313,7 @@ def run_dense_pipeline(claims_data, dense_retriever, model, tokenizer, device, d
 
 #passing in the dense retriever as an argument to avoid re-encoding the corpus every time
 def run_dense_reranked_pipeline(claims_data, dense_retriever, stance_reranker, model, tokenizer,
-                                device, dataset_name, top_k=5, rerank_pool_size=10, neutral_threshold=0.5):
+                                device, dataset_name, top_k=3, rerank_pool_size=10, neutral_threshold=0.5):
     print("\nRunning pipeline: Dense + Soft Stance Reranking + RoBERTa (Model 2)")
     model.eval()
     predicted_labels, true_labels, records = [], [], []
