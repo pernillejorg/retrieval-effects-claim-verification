@@ -565,6 +565,10 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
     #searching for the best learning rate across our three candidates
     best_lr = find_best_learning_rate(train_claims, eval_claims, tokenizer, device, input_mode=input_mode, corpus=corpus)
 
+    #re-seeding AFTER the LR search, which internally reseeds to 42. Without this the full
+    #training run would always start from the seed-42 RNG state regardless of --seed.
+    set_seed(seed)
+    
     #loading a fresh model for the full training run with the best learning rate
     print(f"\n\nStarting full training run with best learning rate: {best_lr}\n")
     model = RobertaForSequenceClassification.from_pretrained(
