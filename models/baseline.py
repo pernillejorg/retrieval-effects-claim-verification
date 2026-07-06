@@ -568,7 +568,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
     #re-seeding AFTER the LR search, which internally reseeds to 42. Without this the full
     #training run would always start from the seed-42 RNG state regardless of --seed.
     set_seed(seed)
-    
+
     #loading a fresh model for the full training run with the best learning rate
     print(f"\n\nStarting full training run with best learning rate: {best_lr}\n")
     model = RobertaForSequenceClassification.from_pretrained(
@@ -628,9 +628,21 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
     #constructing the save path for the best model checkpoint
     #naming the checkpoint by mode so claim_only (Model 1) and claim_evidence (Model 2)
     #to avoid overwriting each other
+    '''
+    #used before experimenting with different seeds, now replaced by the seed_suffix logic below
     model_tag = "baseline" if input_mode == "claim_only" else "evidence"
     save_directory = os.path.join(
         os.path.dirname(__file__), "saved_models", f"{model_tag}_{dataset_name}"
+    )
+    '''
+
+    #to experiment with different seeds, so including the seed in the folder name
+    model_tag = "baseline" if input_mode == "claim_only" else "evidence"
+    #including the seed in the folder name so different-seed runs don't overwrite each other.
+    #seed 42 keeps the original folder name (no suffix) so existing paths still work.
+    seed_suffix = "" if seed == 42 else f"_seed{seed}"
+    save_directory = os.path.join(
+        os.path.dirname(__file__), "saved_models", f"{model_tag}_{dataset_name}{seed_suffix}"
     )
 
     #creating the save directory if it does not already exist
@@ -740,7 +752,9 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
     }
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     os.makedirs(results_dir, exist_ok=True)
-    with open(os.path.join(results_dir, f"baseline_{dataset_name}_{input_mode}.json"), "w") as f:
+    #used before experimenting with different seeds, now replaced to make the JSON filename seed-aware
+    #with open(os.path.join(results_dir, f"baseline_{dataset_name}_{input_mode}.json"), "w") as f:
+    with open(os.path.join(results_dir, f"baseline_{dataset_name}_{input_mode}{seed_suffix}.json"), "w") as f:
         json.dump(results, f, indent=2)
     print(f"Results saved to results/baseline_{dataset_name}_{input_mode}.json")
 
