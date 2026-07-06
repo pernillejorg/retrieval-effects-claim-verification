@@ -22,7 +22,7 @@ The retrieval depth k = 3 is taken from MAPLE (Zeng and Zubiaga, 2024), which re
 
 Step 5 established that with naive whole-document concatenation (Option A), the 512-token input saturates after roughly two abstracts, so k above ~2 had no effect. Step 6 therefore uses the Option B per-document budget, which divides the token budget equally across the k documents so every document contributes and k genuinely changes the input. The clear variation with k in the results below confirms Option B works as intended, it is the direct validation of the Step 5 design fix. The no-retrieval condition, which uses no documents, is by construction identical across all k and serves as a flat reference line.
 
-## Results — SciFact (macro F1 by k)
+## Results: SciFact (macro F1 by k)
 
 | Condition | k = 1 | k = 3 | k = 5 | k = 10 |
 |---|---|---|---|---|
@@ -31,7 +31,7 @@ Step 5 established that with naive whole-document concatenation (Option A), the 
 | Dense | **0.5947** | 0.5583 | 0.5179 | 0.4828 |
 | Dense + soft rerank | 0.3852 | 0.4879 | 0.5389 | 0.4824 |
 
-## Results — SciFact-Open (macro F1 by k)
+## Results: SciFact-Open (macro F1 by k)
 
 | Condition | k = 1 | k = 3 | k = 5 | k = 10 |
 |---|---|---|---|---|
@@ -42,13 +42,13 @@ Step 5 established that with naive whole-document concatenation (Option A), the 
 
 ## Key findings
 
-### 1. For plain retrieval, fewer documents are better — performance declines with k
+### 1. For plain retrieval, fewer documents are better (performance declines with k)
 
-The clearest result of the sweep: for the non-reranked retrieval conditions (BM25 and dense), macro F1 **peaks at k = 1 and declines as k grows**. On SciFact, dense falls from 0.5947 at k = 1 to 0.4828 at k = 10, and BM25 from 0.5727 to 0.4667 — both roughly monotone decreases of about 0.11 across the range. On SciFact-Open the same downward trend holds for BM25 (0.5378 to 0.5127) and for dense beyond its k = 3 peak (0.5560 to 0.5200). Supplying more retrieved documents dilutes rather than enriches the evidence: additional documents introduce more noise and, under the per-document budget, shorter fragments of each, and the classifier's performance suffers. This is a direct, empirical demonstration of the **"evidence overload"** failure mode — one of the four failure categories defined for Step 7, and it is a counterintuitive, decision-relevant finding: for scientific claim verification, one well-chosen document beats many.
+The clearest result of the sweep: for the non-reranked retrieval conditions (BM25 and dense), macro F1 **peaks at k = 1 and declines as k grows**. On SciFact, dense falls from 0.5947 at k = 1 to 0.4828 at k = 10, and BM25 from 0.5727 to 0.4667 both roughly monotone decreases of about 0.11 across the range. On SciFact-Open the same downward trend holds for BM25 (0.5378 to 0.5127) and for dense beyond its k = 3 peak (0.5560 to 0.5200). Supplying more retrieved documents dilutes rather than enriches the evidence: additional documents introduce more noise and, under the per-document budget, shorter fragments of each, and the classifier's performance suffers. This is a direct, empirical demonstration of the **"evidence overload"** failure mode, one of the four failure categories defined for Step 7, and it is a counterintuitive, decision-relevant finding: for scientific claim verification, one well-chosen document beats many.
 
 ### 2. At the optimal depth (k = 1), retrieval clearly helps on SciFact
 
-At k = 1, both retrieval conditions clearly beat the no-retrieval baseline on SciFact: dense 0.5947 and BM25 0.5727 versus 0.5263, gains of +0.068 and +0.046. This is the cleanest "retrieval helps" signal in the whole project. It qualifies the earlier Step 5 reading (at k = 3, where retrieval's benefit was within noise): retrieval *does* help on the tractable corpus, but only at shallow depth — by k = 3 the dilution has already eroded most of the benefit, and MAPLE's k = 3 is in fact already past the optimum. The reported Step 5 depth (k = 3) is therefore a conservative choice, not an optimal one, which the sweep makes explicit.
+At k = 1, both retrieval conditions clearly beat the no-retrieval baseline on SciFact: dense 0.5947 and BM25 0.5727 versus 0.5263, gains of +0.068 and +0.046. This is the cleanest "retrieval helps" signal in the whole project. It qualifies the earlier Step 5 reading (at k = 3, where retrieval's benefit was within noise): retrieval *does* help on the tractable corpus, but only at shallow depth, by k = 3 the dilution has already eroded most of the benefit, and MAPLE's k = 3 is in fact already past the optimum. The reported Step 5 depth (k = 3) is therefore a conservative choice, not an optimal one, which the sweep makes explicit.
 
 ### 3. Reranking behaves oppositely where it improves with k, but never leads
 
@@ -80,7 +80,7 @@ The sweep identifies **k = 1 as the empirically optimal depth** for the plain re
 
 ### Robustness caveat
 
-These matrix figures are single-seed (seed 42), as the seed axis is studied separately in the Step 5 variance study, which found the retrieval conditions to be seed-sensitive (standard deviations of 0.03–0.06). The **shape** of the k-curves — plain retrieval declining with k, reranking rising with k, no retrieval flat — is clear and consistent across both datasets and is the main result; the precise F1 at any single cell should be read with the seed-variancem noise floor in mind. The direction of the overload effect (roughly a 0.11 decline from k = 1 to k = 10 on SciFact) is larger than that floor and is treated as a real effect.
+These matrix figures are single-seed (seed 42), as the seed axis is studied separately in the Step 5 variance study, which found the retrieval conditions to be seed-sensitive (standard deviations of 0.03–0.06). The **shape** of the k-curves, plain retrieval declining with k, reranking rising with k, no retrieval flat is clear and consistent across both datasets and is the main result; the precise F1 at any single cell should be read with the seed-variancem noise floor in mind. The direction of the overload effect (roughly a 0.11 decline from k = 1 to k = 10 on SciFact) is larger than that floor and is treated as a real effect.
 
 ## Relevance to later steps
 
@@ -102,7 +102,4 @@ The overload finding motivates using a shallow retrieval depth (k = 1, the empir
 
 ## Note on run logs
 
-The tokenizer length warning ("Token indices sequence length is longer than 512") appears in
-the logs as in earlier steps. Truncation to 512 tokens is applied, so the model always
-receives a valid input; the warning is informational. Under Option B the per-document budget
-means each document is truncated to its share, so at larger k each document is shorter.
+The tokenizer length warning ("Token indices sequence length is longer than 512") appears in the logs as in earlier steps. Truncation to 512 tokens is applied, so the model always receives a valid input; the warning is informational. Under Option B the per-document budget means each document is truncated to its share, so at larger k each document is shorter.
