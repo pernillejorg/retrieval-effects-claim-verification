@@ -799,7 +799,7 @@ def evaluate_on_scifact_open(seed=42):
     )
     '''
     #loading the seed-specific Model 1 (seed 42 keeps the original folder name)
-    seed_suffix = "" if seed == 42 else f"_{seed}"
+    seed_suffix = "" if seed == 42 else f"_seed{seed}"
     checkpoint_dir = os.path.join(
         os.path.dirname(__file__), "saved_models", f"baseline_scifact{seed_suffix}"
     )
@@ -853,7 +853,7 @@ def evaluate_on_scifact_open(seed=42):
     print("Results saved to results/baseline_scifact_open.json")
     '''
     #making it seed-aware, so different-seed runs don't overwrite each other
-    seed_suffix = "" if seed == 42 else f"_{seed}"
+    seed_suffix = "" if seed == 42 else f"_seed{seed}"
     with open(os.path.join(results_dir, f"baseline_scifact_open{seed_suffix}.json"), "w") as f:
         json.dump(results, f, indent=2)
     print(f"Results saved to results/baseline_scifact_open{seed_suffix}.json")
