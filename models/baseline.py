@@ -765,7 +765,9 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
 # SciFact-Open evaluation -- zero-shot generalisation of the SciFact baseline
 # ---------------------------------------------------------------------------
 
-def evaluate_on_scifact_open():
+#def evaluate_on_scifact_open():
+#making evaluate_on_scifact_open seed-aware
+def evaluate_on_scifact_open(seed=42):
     """
     Evaluating the SciFact-trained baseline on SciFact-Open WITHOUT retraining.
     SciFact-Open is a test-only collection (no train/val split), so this is a
@@ -790,8 +792,16 @@ def evaluate_on_scifact_open():
     print(f"Using device: {device}\n")
 
     #locating the SciFact baseline checkpoint saved by run_baseline("scifact")
+    '''
+    #before making it seed-ware, this was hardcoded to the original folder name (baseline_scifact)
     checkpoint_dir = os.path.join(
         os.path.dirname(__file__), "saved_models", "baseline_scifact"
+    )
+    '''
+    #loading the seed-specific Model 1 (seed 42 keeps the original folder name)
+    seed_suffix = "" if seed == 42 else f"_{seed}"
+    checkpoint_dir = os.path.join(
+        os.path.dirname(__file__), "saved_models", f"baseline_scifact{seed_suffix}"
     )
     if not os.path.isdir(checkpoint_dir):
         raise FileNotFoundError(
@@ -836,10 +846,17 @@ def evaluate_on_scifact_open():
 
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
     os.makedirs(results_dir, exist_ok=True)
+    '''
+    #before making it seed-aware, this was hardcoded to the original filename (baseline_scifact_open.json)
     with open(os.path.join(results_dir, "baseline_scifact_open.json"), "w") as f:
         json.dump(results, f, indent=2)
     print("Results saved to results/baseline_scifact_open.json")
-
+    '''
+    #making it seed-aware, so different-seed runs don't overwrite each other
+    seed_suffix = "" if seed == 42 else f"_{seed}"
+    with open(os.path.join(results_dir, f"baseline_scifact_open{seed_suffix}.json"), "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"Results saved to results/baseline_scifact_open{seed_suffix}.json")
     return open_f1, open_precision, open_recall, open_report
 
 # ---------------------------------------------------------------------------
@@ -864,7 +881,9 @@ if __name__ == "__main__":
 
     if args.dataset == "scifact_open":
         #evaluation-only: uses the already-trained SciFact baseline
-        evaluate_on_scifact_open()
+        #evaluate_on_scifact_open()
+        #making evaluate_on_scifact_open seed-aware
+        evaluate_on_scifact_open(seed=args.seed)
     else:
         run_baseline(dataset_name=args.dataset, input_mode=args.input_mode, seed=args.seed)
 
