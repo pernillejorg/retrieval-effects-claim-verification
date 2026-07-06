@@ -122,7 +122,10 @@ ID_TO_LABEL = {0: "SUPPORT", 1: "CONTRADICT", 2: "NEI"}
 # ---------------------------------------------------------------------------
 # Input preparation
 # ---------------------------------------------------------------------------
-
+'''
+#This is the Part A done for RAG pipeline run, however as seen from the experiments, top-k 
+is not affecting the retrieval enough therefore doing Part B code (below) to equal token 
+budget per document so k becomes a real variable.
 def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_length=512):
     """
     Building the claim and the concatenated evidence as TWO separate strings, so the
@@ -162,7 +165,62 @@ def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_le
 
     #returning claim and evidence as a PAIR -- the tokenizer will join them correctly
     return claim_text, concatenated_documents.strip()
+'''
 
+'''
+Part B done to equal token budget per document so k becomes a real variable.
+'''
+def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_length=512):
+    """
+    Building the claim and the concatenated evidence as TWO separate strings, so the
+    tokenizer can join them as a proper text pair (claim, evidence). RoBERTa then inserts
+    its correct segment boundary (</s></s>) itself -- we do not hand-build a separator.
+
+    Option B (equal per-document budget): the evidence token budget is divided EQUALLY
+    across the k retrieved documents, so each document contributes a fair share and
+    increasing k genuinely changes the evidence the model sees. This avoids the
+    saturation of naive concatenation (Option A), where long scientific abstracts fill
+    the 512-token window after ~2 documents and any further documents are truncated away,
+    making k above ~2 have no effect.
+
+    Returns: (claim_text, evidence_text) tuple, ready for tokenizer(claim, evidence, ...)
+    """
+    #reserving tokens for the special tokens the tokenizer adds around a pair
+    special_tokens_count = tokenizer.num_special_tokens_to_add(pair=True)
+    available_tokens = max_total_length - special_tokens_count
+
+    #tokenising the claim to measure how many tokens it uses
+    claim_tokens = tokenizer.encode(claim_text, add_special_tokens=False)
+
+    #the evidence gets whatever budget remains after the claim
+    document_token_budget = available_tokens - len(claim_tokens)
+
+    #guarding against an unusually long claim consuming the whole budget,
+    #or against an empty document list
+    if document_token_budget <= 0 or len(document_texts) == 0:
+        return claim_text, ""
+
+    #dividing the evidence budget EQUALLY across the k documents (Option B).
+    #each document gets an equal per-document share so all k contribute.
+    num_documents = len(document_texts)
+    per_document_budget = document_token_budget // num_documents
+
+    #if there are so many documents that each share rounds down to zero,
+    #fall back to giving each at least 1 token so every document is represented
+    if per_document_budget < 1:
+        per_document_budget = 1
+
+    #accumulating evidence text, truncating each document to its equal share
+    concatenated_documents = ""
+    for document_text in document_texts:
+        document_tokens = tokenizer.encode(document_text, add_special_tokens=False)
+        #truncating this document to its per-document budget
+        document_tokens = document_tokens[:per_document_budget]
+        truncated_document = tokenizer.decode(document_tokens, skip_special_tokens=True)
+        concatenated_documents += " " + truncated_document
+
+    #returning claim and evidence as a PAIR -- the tokenizer will join them correctly
+    return claim_text, concatenated_documents.strip()
 
 # ---------------------------------------------------------------------------
 # Pipeline conditions
