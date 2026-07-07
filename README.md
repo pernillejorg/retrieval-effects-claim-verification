@@ -9,15 +9,17 @@
   Supervisor: Arkaitz Zubiaga (Senior Lecturer in NLP)
  ---
 
- ## Overview
+## Overview
 
- Most fact-checking research assumes oracle evidence, meaning clean, perfectly retrieved documents handed to the model. This project looks at what actually happens under realistic retrieval conditions: when the system has to find its own evidence and sometimes gets it wrong.
+Most fact-checking research assumes oracle evidence, meaning clean, perfectly retrieved documents handed to the model. This project looks at what actually happens under realistic retrieval conditions: when the system has to find its own evidence and sometimes gets it wrong.
 
- The goal is to systematically study how retrieval quality affects claim verification performance, understand why it fails, and check whether those findings hold across two datasets and a real-world domain. The main technical contribution is a stance-aware reranking step: after standard retrieval, a zero-shot NLI model scores whether each retrieved document actually takes a *stance* on the claim. Documents that are topically related but say nothing specific about the claim get filtered out before verification.
+The project is centred on the effect and failure behaviour side of RAG. The work is focused on characterising where and why RAG fails for scientific claim verification, and on the conditions under which retrieval helps versus the failure modes it can introduce (such as evidence overload, degradation at scale, and unstable predictions), rather than re-confirming that retrieval helps, which is already well established. Part of the motivation is practical: several companies interested in adopting RAG for fact-checking appear largely unaware of its failure modes and cost/benefit trade-offs. There is real value in evidence about when these components actually hurt, so that adopting RAG becomes an informed decision rather than an assumption.
 
- **The one-sentence version of the thesis:**
-  *Topical similarity is not enough for fact-checking evidence selection. Stance-aware reranking using zero-shot NLI reduces two of the four failure categories we identify, produces better-calibrated model confidence, and this pattern holds across two scientific claim datasets and out-of-domain real-world claims.*
- 
+A key component under investigation is a stance-aware reranking step: after standard retrieval, a zero-shot NLI model scores whether each retrieved document actually takes a *stance* on the claim, with the intention of filtering out documents that are topically related but say nothing specific about the claim. The project studies retrieval, reranking, retrieval depth, and confidence behaviour across two scientific claim datasets of very different corpus sizes, and examines whether the observed behaviour transfers to an out-of-domain real-world setting.
+
+**The thesis question:**
+*This project asks not whether retrieval improves automated fact-checking, which prior work largely assumes, but under what conditions it fails: it systematically characterises the failure behaviour of retrieval-augmented scientific claim verification across retrieval method, retrieval depth, and corpus scale, links each failure to a defined failure category, and tests whether the behaviour holds on out-of-domain real-world claims, so that the reliability of RAG for automated fact-checking can be assessed rather than assumed.*
+
   ---
  
   ## Project Timeline
@@ -100,63 +102,81 @@ rag-claim-verification/
  
   ## Methodology
  
-  ### Step 1: Datasets
-  The primary dataset is SciFact, which contains scientific claims verified against paper abstracts. Retrieval is genuinely hard here, which is exactly what makes it interesting. SciClaimHunt is used as a secondary dataset with a similar structure, so that results can be compared across corpora rather than just reported for one.
- 
-  Core experiments run on both datasets. Manual failure annotation is done on SciFact only.
- 
-  ### Step 2: Baseline Model
-  A RoBERTa model trained to verify claims without any retrieved evidence. Evaluated on both datasets, reporting F1, precision, and recall. This is the reference point that everything else is measured against.
- 
-  ### Step 3: Evidence Retrieval
-  Two retrieval methods are implemented:
-  - BM25: keyword-based sparse retrieval
-  - - Dense retrieval: semantic similarity via sentence-transformers
-   
-    - ### Step 4: Stance-Aware Reranking *(the novel bit)*
-    - After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked, where only documents that actually take a stance on the claim get passed to the verifier.
-   
-    - The idea is that topical similarity is not enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. The stance filter catches this.
-   
-    - | Retrieval condition | What it does |
-    - |---|---|
-    - | BM25 | keyword baseline, no filtering |
-    - | Dense | semantic similarity baseline, no filtering |
-    - | Dense + stance reranking | semantic retrieval filtered by NLI stance scores |
- 
-    - Two filter thresholds are tested: loose and strict.
- 
-    - ### Step 5: RAG Pipeline
-    - Four pipeline variants: no retrieval / BM25 + RoBERTa / Dense + RoBERTa / Dense + stance reranking + RoBERTa
- 
-    - ### Step 6: Controlled Experimental Matrix
- 
-    - | Variable | Values tested |
-    - |---|---|
-    - | Retrieval condition | BM25, dense, dense + stance |
-    - | k (number of docs retrieved) | 1, 5, 10 |
-    - | Stance filter threshold | loose, strict |
- 
-    - Metric: F1, precision, recall. Run on both datasets for the core conditions.
- 
-    - ### Step 7: Failure Taxonomy
-    - Four failure categories, defined before running any experiments:
- 
-    - 1. Irrelevant retrieval: retrieved documents are not really about the claim
-      2. 2. Contradictory retrieval: retrieved documents argue against the correct label
-         3. 3. Evidence overload: too many documents confuse the model
-            4. 4. Confident wrong prediction: model is wrong despite having reasonably relevant evidence
-              
-               5. 50–75 errors from SciFact are manually labelled into these categories. For SciClaimHunt, quantitative failure rates are compared across conditions without full annotation.
-              
-               6. ### Step 8: Retrieval-Aware Confidence Scoring
-               7. RoBERTa outputs a softmax probability distribution. The highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking produces better-calibrated confidence, and whether a simple flagging rule (mark predictions below a threshold as unreliable) actually catches more errors.
-              
-               8. ### Step 9: Cross-Dataset Comparison
-  Once results are in for both datasets, the key questions are: does stance reranking help on both? Are the dominant failure categories similar? Does the confidence-correctness pattern hold? Either consistent results or dataset-specific divergence is a valid and interesting outcome.
- 
-  ### Step 10: Real-World Application
-  20–30 real seafood and sustainability claims from social media, run through the best pipeline. The analysis is qualitative: which failure types come up, does the stance filter catch irrelevant evidence on out-of-domain claims, and does the confidence score flag uncertain predictions appropriately.
+### Step 1: Datasets
+
+The primary dataset is SciFact, which contains scientific claims verified against paper abstracts, with genuinely hard retrieval over a roughly 5,000-abstract corpus. This is the main experimental dataset: baseline training, the full matrix, and failure annotation all happen here.
+
+SciFact-Open is used as the secondary dataset. It provides a much larger open retrieval corpus (roughly 500,000 documents) in the same scientific domain, and because it is a test-only collection with no training split, the SciFact-trained pipeline is evaluated on it zero-shot. This contrasts retrieval on a small, tractable corpus (SciFact) with a large, hard one (SciFact-Open), testing whether the findings hold as retrieval difficulty scales up.
+
+Core experiments run on both datasets. Manual failure annotation is done on SciFact only.
+
+(An earlier version of the project used SciClaimHunt as the second dataset, but it was replaced by SciFact-Open because it does not provide the kind of large open retrieval corpus this analysis requires. The SciClaimHunt work is preserved on the `main-sciclaimhunt-archive` branch.)
+
+### Step 2: Baseline Model
+
+A RoBERTa model trained to verify claims without any retrieved evidence, and a second RoBERTa model trained on claim plus evidence pairs. Trained and evaluated on SciFact (F1, precision, recall), and additionally evaluated zero-shot on SciFact-Open. This is the reference point that everything else is measured against.
+
+### Step 3: Evidence Retrieval
+
+Two retrieval methods are implemented:
+
+- BM25: keyword-based sparse retrieval
+- Dense retrieval: semantic similarity via sentence-transformers (all-mpnet-base-v2)
+
+For each claim, a candidate pool of documents is retrieved from the evidence corpus using each method. These are the standard baselines the stance reranker is compared against.
+
+### Step 4: Stance-Aware Reranking
+
+After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked, so that documents which actually take a stance on the claim are prioritised before verification.
+
+The motivation is that topical similarity may not be enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. The stance filter is intended to catch this. Whether it actually improves evidence selection is one of the questions the project investigates.
+
+| Retrieval condition | What it does |
+|---|---|
+| BM25 | keyword baseline, no filtering |
+| Dense | semantic similarity baseline, no filtering |
+| Dense + stance reranking | semantic retrieval filtered by NLI stance scores |
+
+Two filter thresholds are tested: loose and strict.
+
+### Step 5: RAG Pipeline
+
+The retrieved evidence is integrated into the verification model. Four pipeline variants are compared: no retrieval, BM25 + RoBERTa, Dense + RoBERTa, and Dense + stance reranking + RoBERTa. This is where the effect of retrieved evidence on final verification is measured end to end.
+
+### Step 6: Controlled Experimental Matrix
+
+The pipeline variants are run under systematically varied retrieval depth:
+
+| Variable | Values tested |
+|---|---|
+| Retrieval condition | BM25, dense, dense + stance |
+| k (number of docs retrieved) | 1, 3, 5, 10 |
+| Stance filter threshold | loose, strict |
+
+Metric: F1, precision, recall. Run on both datasets for the core conditions. This isolates the effect of how many documents are supplied to the verifier.
+
+### Step 7: Failure Taxonomy
+
+Four failure categories, defined before running experiments:
+
+1. Irrelevant retrieval: retrieved documents are not really about the claim
+2. Contradictory retrieval: retrieved documents argue against the correct label
+3. Evidence overload: too many documents confuse or dilute the model
+4. Confident wrong prediction: model is wrong despite having reasonably relevant evidence
+
+50 to 75 errors from SciFact are manually labelled into these categories as the primary failure analysis. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The analysis examines which retrieval conditions produce which failure types, and whether stance reranking affects the first two categories in particular.
+
+### Step 8: Retrieval-Aware Confidence Scoring
+
+RoBERTa outputs a softmax probability distribution, and the highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking changes the confidence–correctness relationship, and whether a simple flagging rule (mark predictions below a threshold as unreliable) catches more errors.
+
+### Step 9: Cross-Dataset Comparison
+
+Once results are in for both datasets, the key questions are: does the behaviour of each component hold on both corpora, do the dominant failure categories shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. Either consistent behaviour or corpus-dependent divergence is a valid and interesting outcome.
+
+### Step 10: Real-World Application
+
+20 to 30 real seafood and sustainability claims from social media, run through the best pipeline. The analysis is qualitative: which failure types come up, whether the stance filter catches irrelevant evidence on out-of-domain claims, and whether the confidence score flags uncertain predictions appropriately. This tests whether the behaviour observed on scientific benchmarks transfers to a real-world domain.
  
   ---
  
