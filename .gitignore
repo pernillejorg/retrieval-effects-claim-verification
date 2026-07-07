@@ -215,3 +215,5 @@ data/sciclaimhunt/*.jsonl
 data/sciclaimhunt/*.csv
 .venv311/
 data/*/cache/
+.DS_Store
+**/.DS_Store
