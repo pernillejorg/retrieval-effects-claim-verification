@@ -38,30 +38,26 @@ hard filtering. Both were evaluated in Step 4; hard filtering was shown to remov
 documents and destroy recall, so soft is the only viable mode to carry into the pipeline.
 This choice is likewise evidenced.
 
-top_k = 3 (documents fed to the classifier, the default): anchored to MAPLE (Zeng and
-Zubiaga, 2024), which uses the top-3 retrieved abstracts, so Step 5 is reported at this
-depth for comparability with prior work. Step 6 sweeps k in {1, 3, 5, 10} via the
---top_k argument to analyse retrieval-depth sensitivity.
+top_k = 5 (documents fed to the classifier): a standard choice in RAG claim-verification,
+and bounded by RoBERTa's 512-token input limit, where roughly five scientific abstracts fill
+that budget once the claim is included, so a larger top_k would force heavier truncation.
 
 rerank_pool_size = 10 (documents retrieved before reranking): the reranker is given a
 larger candidate pool than the top_k it ultimately selects from, following the standard
 "retrieve more, then select down" pattern, and reranking can only reorder documents it is
 shown, so a pool larger than top_k gives it room to promote a better document into the
-final set. Retrieving 10 and selecting the top_k documents balances this against the cost of scoring more
+final set. Retrieving 10 and selecting 5 balances this against the cost of scoring more
 documents per claim.
 
 neutral_threshold = 0.5 (loose) by default: 0.5 is the "majority-neutral" cut-point (the
 NLI model considers a document stance-free if its neutral probability exceeds one half),
 and 0.8 is the "confidently-neutral" cut-point. Both were used in Step 4, where the
-threshold genuinely affects hard filtering. In THIS pipeline, however, soft reranking sorts
-documents by stance score and never removes any document by threshold: the reranker only
-computes a per-document `would_be_filtered` flag from neutral_threshold and logs it, without
-dropping the document (see reranker.rerank). The threshold therefore does not change which
-documents reach the classifier or the resulting F1, and the loose value 0.5 is retained for
-consistency with Step 4 rather than swept here; sweeping it would produce identical pipeline
-results, as confirmed by the identical soft loose/strict rows in Step 4. (Note: this is
-unrelated to the separate 0.5 strong-stance cut-point used inside the Step 7 analysis script,
-which is a different diagnostic on stance_score, not this neutral_threshold.)
+threshold genuinely affects hard filtering. In THIS pipeline, however, soft reranking
+selects the top_k documents by stance score and never removes documents by threshold, so
+the threshold only governs a recorded diagnostic flag (used in Step 7) and does not change
+which documents reach the classifier or the resulting F1. The loose value 0.5 is therefore
+retained for consistency with Step 4 rather than swept here; sweeping it would produce
+identical pipeline results, as confirmed by the identical soft loose/strict rows in Step 4.
 
 max_length: the no-retrieval condition uses max_length=128, matching Model 1's training
 (the longest claim is 75 tokens, so 128 never truncates a claim). The retrieval conditions
@@ -74,7 +70,7 @@ passed to the tokenizer as a text PAIR, so RoBERTa inserts its own segment bound
 claim is never truncated and the evidence fills the remainder.
 
 Per-claim records: for every condition, the pipeline saves per-claim outputs (claim, true
-and predicted label, confidence, retrieved document ids and full retrieved text, and correctness) so
+and predicted label, confidence, retrieved document ids and snippets, and correctness) so
 the Step 7 failure taxonomy and Step 8 confidence analysis can be run without re-executing
 the pipeline. The reranked condition additionally saves the pre-rerank document order, so
 the effect of reranking on ordering can be inspected directly.
@@ -226,41 +222,6 @@ def truncate_and_concatenate(claim_text, document_texts, tokenizer, max_total_le
     #returning claim and evidence as a PAIR -- the tokenizer will join them correctly
     return claim_text, concatenated_documents.strip()
 
-
-# ---------------------------------------------------------------------------
-# Optional: capture the EXACT classifier input (for the Step 7 taxonomy)
-# ---------------------------------------------------------------------------
-
-def capture_classifier_input(tokenizer, claim_part, evidence_part, max_length=512):
-    """
-    Reconstruct exactly what the classifier saw for this prediction, so Step 7 can distinguish
-    a genuine confident_wrong_prediction from an input-construction / truncation failure.
-
-    This is PURELY ADDITIVE metadata: it does not change which documents are retrieved, the
-    concatenation, the tokenisation used for inference, or the prediction. It only records the
-    final input string and how much truncation the 512-token limit applied.
-
-    Returns a dict with:
-      classifier_input_text                - the decoded final input actually classified
-      input_token_count_before_truncation  - token count after equal per-document
-                                            budgeting but before the tokenizer's
-                                            final max_length cap
-      input_token_count_after_truncation   - token count after the final max_length cap
-      was_truncated                        - True if that final cap removed additional tokens
-    """
-    #encoding without truncation to measure the full length the input would have had
-    full_ids = tokenizer(claim_part, evidence_part, truncation=False)["input_ids"]
-    #encoding with the same cap the inference call uses, to get what the model really saw
-    kept_ids = tokenizer(claim_part, evidence_part, truncation=True,
-                         max_length=max_length)["input_ids"]
-    return {
-        "classifier_input_text": tokenizer.decode(kept_ids),
-        "input_token_count_before_truncation": len(full_ids),
-        "input_token_count_after_truncation": len(kept_ids),
-        "was_truncated": len(full_ids) > len(kept_ids),
-    }
-
-
 # ---------------------------------------------------------------------------
 # Pipeline conditions
 # ---------------------------------------------------------------------------
@@ -319,9 +280,9 @@ def run_bm25_pipeline(claims_data, bm25_retriever, model, tokenizer, device, dat
         retrieved_documents = bm25_retriever.retrieve(claim_text, k=top_k)
         retrieved_document_texts = [doc["text"] for doc in retrieved_documents]
         retrieved_doc_ids = [doc["doc_id"] for doc in retrieved_documents]
-        #saving id, score, and full retrieved text for Step 7 manual failure analysis
+        #id + score + short snippet per doc, for Step 7 manual failure analysis
         retrieved_docs = [
-            {"doc_id": doc["doc_id"], "score": float(doc["score"]), "text": doc["text"]}
+            {"doc_id": doc["doc_id"], "score": float(doc["score"]), "text": doc["text"][:300]}
             for doc in retrieved_documents
         ]
 
@@ -351,8 +312,6 @@ def run_bm25_pipeline(claims_data, bm25_retriever, model, tokenizer, device, dat
             "correct": pred_id == true_id,
             "retrieved_doc_ids": retrieved_doc_ids,
             "retrieved_docs": retrieved_docs,
-            #additive: exact classifier input + truncation info for Step 7
-            **capture_classifier_input(tokenizer, claim_part, evidence_part),
             "condition": "bm25_roberta",
         })
 
@@ -372,9 +331,9 @@ def run_dense_pipeline(claims_data, dense_retriever, model, tokenizer, device, d
         retrieved_documents = dense_retriever.retrieve(claim_text, k=top_k)
         retrieved_document_texts = [doc["text"] for doc in retrieved_documents]
         retrieved_doc_ids = [doc["doc_id"] for doc in retrieved_documents]
-        #saving id, score, and full retrieved text for Step 7 manual failure analysis
+        #saving id + score + short text snippet per doc, for Step 7 manual failure analysis
         retrieved_docs = [
-            {"doc_id": doc["doc_id"], "score": float(doc["score"]), "text": doc["text"]}
+            {"doc_id": doc["doc_id"], "score": float(doc["score"]), "text": doc["text"][:300]}
             for doc in retrieved_documents
         ]
 
@@ -404,8 +363,6 @@ def run_dense_pipeline(claims_data, dense_retriever, model, tokenizer, device, d
             "correct": pred_id == true_id,
             "retrieved_doc_ids": retrieved_doc_ids,
             "retrieved_docs": retrieved_docs,
-            #additive: exact classifier input + truncation info for Step 7
-            **capture_classifier_input(tokenizer, claim_part, evidence_part),
             "condition": "dense_roberta",
         })
 
@@ -435,14 +392,13 @@ def run_dense_reranked_pipeline(claims_data, dense_retriever, stance_reranker, m
 
         top_reranked_document_texts = [doc["text"] for doc in top_reranked]
         retrieved_doc_ids = [doc["doc_id"] for doc in top_reranked]
-        #saving retrieval, stance, and neutral scores plus full text for Step 7 analysis
+        #id + stance score + snippet for the post-rerank top-k, for Step 7 analysis
         retrieved_docs = [
             {
                 "doc_id": doc["doc_id"],
-                "score": float(doc.get("score", 0.0)),
                 "stance_score": float(doc.get("stance_score", 0.0)),
                 "neutral_score": float(doc.get("neutral_score", 0.0)),
-                "text": doc["text"],
+                "text": doc["text"][:300],
             }
             for doc in top_reranked
         ]
@@ -474,8 +430,6 @@ def run_dense_reranked_pipeline(claims_data, dense_retriever, stance_reranker, m
             "retrieved_doc_ids": retrieved_doc_ids,
             "retrieved_docs": retrieved_docs,
             "pre_rerank_doc_ids": pre_rerank_doc_ids,
-            #additive: exact classifier input + truncation info for Step 7
-            **capture_classifier_input(tokenizer, claim_part, evidence_part),
             "condition": "dense_reranked_roberta",
         })
 
@@ -623,14 +577,11 @@ def main():
     #inserting the neutral threshold into the filename so loose/strict runs don't overwrite
     thr_str = str(parsed_arguments.neutral_threshold).replace(".", "_")
     base, ext = os.path.splitext(parsed_arguments.output_path)
-    output_path = f"{base}_k{parsed_arguments.top_k}_thr{thr_str}{ext}"
+    output_path = f"{base}_thr{thr_str}{ext}"
     with open(output_path, "w") as f:
-        json.dump({
-            "dataset": parsed_arguments.dataset,
-            "top_k": parsed_arguments.top_k,
-            "neutral_threshold": parsed_arguments.neutral_threshold,
-            "metrics": all_pipeline_results,
-        }, f, indent=2)
+        json.dump({"dataset": parsed_arguments.dataset,
+                   "neutral_threshold": parsed_arguments.neutral_threshold,
+                   "metrics": all_pipeline_results}, f, indent=2)
     print(f"\nAggregate metrics saved to {output_path}")
 
     #saving per-claim records for Steps 7 and 8
@@ -638,7 +589,7 @@ def main():
     if rec_dir:
         os.makedirs(rec_dir, exist_ok=True)
     rbase, rext = os.path.splitext(parsed_arguments.records_path)
-    records_path = f"{rbase}_k{parsed_arguments.top_k}_thr{thr_str}{rext}"
+    records_path = f"{rbase}_thr{thr_str}{rext}"
     rec_dir = os.path.dirname(records_path)
     if rec_dir:
         os.makedirs(rec_dir, exist_ok=True)
