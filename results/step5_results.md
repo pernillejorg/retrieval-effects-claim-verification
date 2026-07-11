@@ -171,7 +171,7 @@ Refuted, consistently and with a diagnosed mechanism, at both the retrieval leve
 Step 5 fixes k = 3. Because Part B makes 'k' a genuine variable, Step 6 sweeps k ∈ {1, 3, 5, 10} across the retrieval conditions to study sensitivity to retrieval depth, including the breadth-vs-depth trade-off introduced by per-document budgeting (more documents, each shorter, as k grows). The Part A saturation finding is precisely why this sweep uses the Part B design: under Part A the sweep would be uninformative above k ≈ 2.
 
 **Step 7 (failure taxonomy).** 
-The per-claim records saved by this pipeline (claim, true and predicted label, confidence, retrieved document ids and text snippets, and for the reranked condition, the pre-rerank order) are the direct input to the failure taxonomy. The
+The per-claim records saved by this pipeline (claim, true and predicted label, confidence, retrieved document ids and full retrieved text, the exact classifier input with its truncation flag, and for the reranked condition, the pre-rerank order and per-document stance scores) are the direct input to the failure taxonomy. These records were enriched and regenerated specifically to support Step 7 (see the record-enrichment section below). The
 SciFact-Open retrieval-does-not-help result and the reranking collapse are prime cases for the "irrelevant retrieval" and "contradictory retrieval" categories.
 
 **Step 8 (confidence analysis).** 
@@ -253,12 +253,57 @@ Step 5 contributes: (i) a documented context-window saturation finding, nominal 
 mechanism. These are exactly the kind of conditional, fragile, and negative findings a
 failure-focused empirical study is designed to surface, and the variance study is what allows them to be stated with calibrated confidence rather than as single-run point estimates.
 
+## Record enrichment for Step 7 (pipeline re-run, results unchanged)
+
+While building the Step 7 failure taxonomy it became clear that the per-claim records saved
+by the original Step 5 run did not contain everything the failure analysis needs. Two gaps
+in particular mattered. First, the saved document text was truncated to a 300-character
+snippet per document, which is too short for a human annotator to judge reliably whether a
+retrieved document is genuinely irrelevant, contradictory, or simply non-specific: the key
+sentence of a scientific abstract often lies beyond the first 300 characters. Second, the
+records did not store the exact text the classifier actually saw after concatenation and
+512-token truncation, so a confident wrong prediction could not be distinguished from an
+input-construction failure (a case where the relevant evidence was retrieved but truncated
+away before the classifier read it). Being able to make that distinction is what lets the
+`confident_wrong_prediction` category be assigned on the strong, verified reading rather than
+an assumed one.
+
+The pipeline (`pipeline.py`) was therefore extended with **purely additive** record fields,
+and Step 5 (and Step 6) were re-run to regenerate the records with them:
+
+- **Full retrieved document text** is now saved for every condition (the 300-character cap
+  was removed), so the manual annotation has the complete evidence available.
+- **`classifier_input_text`** stores the exact decoded input the classifier received, with
+  **`input_token_count_before_truncation`**, **`input_token_count_after_truncation`**, and
+  **`was_truncated`** recording how much the 512-token limit removed. (The token count
+  "before truncation" is measured after the equal per-document budgeting of Part B, so
+  `was_truncated` refers to the final tokenizer cap, not to the original untruncated
+  abstracts.)
+- In the reranked condition, each document's **original dense retrieval `score`** is now
+  saved alongside its stance and neutral scores, so both signals are available for analysis.
+
+These additions change only what is **recorded**, not what is computed: retrieval,
+concatenation, the tokenisation used for inference, and the prediction are all untouched. The
+re-run therefore reproduced the reported F1 scores exactly on both datasets (verified against
+the tables above, e.g. SciFact no-retrieval 0.5263, dense 0.5583, rerank 0.4879; SciFact-Open
+no-retrieval 0.6219), confirming the enrichment is non-behavioural. A verification cell in the
+Step 5 notebook checks each regenerated record for the new fields and confirms the saved
+document text is now the full abstract (for example, 938 characters for the first SciFact
+dense record and 1448 for the first SciFact-Open dense record, versus the previous 300-character
+cap). The reported numbers, findings, and multi-seed variance study above are unaffected; the
+seed-42 records simply now carry the richer per-claim information the later steps require.
+
+A consequence of the re-run is that the output filenames now embed the retrieval depth and
+threshold (for example `..._k3_thr0_5.json`), so runs at different depths cannot overwrite one
+another; the aggregate metrics file additionally records `top_k` inside it.
+
 ## Files
 
-- Aggregate metrics: `results/step5_pipeline_scifact_thr0_5.json`,
-  `results/step5_pipeline_scifact_open_thr0_5.json`
-- Per-claim records (input to Steps 7 and 8): `results/step5_records_scifact_thr0_5.json`,
-  `results/step5_records_scifact_open_thr0_5.json`
+- Aggregate metrics: `results/step5_pipeline_scifact_k3_thr0_5.json`,
+  `results/step5_pipeline_scifact_open_k3_thr0_5.json`
+- Per-claim records (input to Steps 7 and 8): `results/step5_records_scifact_k3_thr0_5.json`,
+  `results/step5_records_scifact_open_k3_thr0_5.json` (now including full document text and the
+  exact classifier input, see the record-enrichment section above)
 - Part A (naive concatenation) results are retained separately for the saturation finding.
 
 ## Note on run logs
