@@ -244,8 +244,6 @@ nonetheless sufficient to establish the scale of run-to-run variation, to distin
 retrieval-instability behaviour (Finding A). The pipeline variance was measured at the
 reported retrieval depth k = 3; propagating it across the full k-sweep (Step 6) was not done due to compute cost.
 
-
-
 ## Result for the thesis
 
 A project titled "Retrieval Effects and Failure Behaviour" is well served by these results.
