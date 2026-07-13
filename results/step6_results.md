@@ -86,13 +86,48 @@ These matrix figures are single-seed (seed 42), as the seed axis is studied sepa
 
 **Step 7 (failure taxonomy).** 
 Step 6 provides direct quantitative evidence for the "evidence overload" failure category: performance falls as k grows for plain retrieval. The per-claim
-records saved for each k (`records_*_k{1,3,5,10}_thr0_5.json`) allow the manual error analysis to examine, for specific claims, how predictions change as more documents are added.
+records saved for each k (`records_*_k{1,3,5,10}_thr0_5.json`), enriched with full document text and the exact classifier input (see the record-enrichment section below), allow the manual error analysis to examine, for specific claims, how predictions change as more documents are added.
 
 **Step 8 (confidence analysis).** 
 The per-claim records include confidence scores at each k, enabling analysis of whether confidence tracks the accuracy decline as k grows.
 
 **Step 10 (real-world case study).** 
 The overload finding motivates using a shallow retrieval depth (k = 1, the empirical optimum) for the best-configuration case study, rather than a larger k.
+
+## Record enrichment for Step 7 (matrix re-run, results unchanged)
+
+The Step 6 matrix was re-run after the pipeline (`pipeline.py`) was extended with additional
+per-claim record fields required by the Step 7 failure taxonomy. The motivation is the same as
+described in the Step 5 results: the original records saved only a 300-character snippet of
+each retrieved document (too short for a human annotator to judge relevance reliably) and did
+not store the exact text the classifier saw after concatenation and 512-token truncation
+(needed to tell a genuine confident wrong prediction from an input-construction/truncation
+failure). The Step 6 records matter here specifically because Step 7's evidence-overload
+analysis reads the records across all four depths (k = 1, 3, 5, 10) to trace how a claim's
+prediction changes as documents are added, so every depth's records need the richer fields.
+
+The added fields are **purely additive** and non-behavioural: full retrieved document text
+(the 300-character cap removed), `classifier_input_text` with its
+`input_token_count_before_truncation`, `input_token_count_after_truncation`, and
+`was_truncated` flag, and, for the reranked condition, each document's original dense
+retrieval `score` alongside its stance and neutral scores. Retrieval, concatenation, the
+tokenisation used for inference, and the predictions are unchanged.
+
+The re-run reproduced the entire matrix **exactly**: every macro-F1 cell in the SciFact and
+SciFact-Open tables above is identical to the original run (for example SciFact dense
+0.5947 at k = 1 falling to 0.4828 at k = 10; SciFact-Open no-retrieval 0.6219 flat across k),
+and the assembled matrix printed in the notebook matched cell for cell. This confirms the
+enrichment changed only what is recorded, not what is computed. A verification cell in the
+Step 6 notebook checks the regenerated k = 3 records for both datasets and confirms the new
+fields are present and the saved document text is now the full abstract (938 characters for
+the first SciFact dense record, 1448 for the first SciFact-Open dense record, versus the
+previous 300-character cap). All findings, the overload result, and the k-curves above are
+therefore unaffected; the records simply now carry the information Step 7 needs.
+
+A note on filenames: the pipeline now embeds the retrieval depth and threshold in the output
+filenames automatically (for example `records_scifact_k3_thr0_5.json`), so the per-k matrix
+files retain the naming used throughout this document, and runs at different depths cannot
+overwrite one another.
 
 ## Files
 
