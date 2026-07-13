@@ -19,14 +19,18 @@ precedence in results/step7_failure/annotation_guide.md. Automatic signals only 
 judgement. For SciFact-Open, only automatic diagnostic signals are reported (no manual
 annotation), and they are explicitly proxy signals, not taxonomy rates.
 
-ON WHAT THE CLASSIFIER ACTUALLY SAW. The saved records contain the full RETRIEVED documents, which is not necessarily the exact text that survived concatenation and
-the 512-token truncation in Step 5. A gold document can appear in the retrieved set while
-its label-consistent sentence was cut off by the token budget. Therefore this script does
-NOT claim that evidence was "visible to the classifier". If the pipeline was re-run with the
-optional input-capture patch, each record carries `classifier_input_text`, token counts, and
-`was_truncated`; those fields are exported here when present so the annotator can verify what
-the model saw. When they are absent, category 4 is defined in the weaker, accurate form
-below and the export flags that the exact classifier input is unavailable.
+ON WHAT THE CLASSIFIER ACTUALLY SAW. The saved records contain the full RETRIEVED
+documents, which are not necessarily identical to the exact text that survived equal
+per-document budgeting and the final 512-token input limit. A gold document may appear
+in the retrieved set while its label-consistent sentence was removed by per-document
+budgeting.
+
+When records were generated using the current pipeline, each retrieval-condition record
+contains `classifier_input_text`, token counts, and `was_truncated`, allowing the annotator
+to inspect the exact final classifier input. Older records may lack these fields; when they
+are absent, category 4 uses the weaker interpretation that sufficient evidence appeared in
+the retrieved context and was judged likely to have been available to the classifier. The 
+export explicitly reports when the exact classifier input is unavailable.
 
 Four failure categories (defined upfront; formal precedence is in annotation_guide.md):
     1. irrelevant_retrieval        - context unrelated, only broadly topical, or not
@@ -121,7 +125,6 @@ SAMPLE_SEED = 42
 # Record loading and gold-evidence join
 # ---------------------------------------------------------------------------
 
-
 def load_records(path):
     """Load a saved records file (a list of per-claim record dicts)."""
     #reading the saved records json from disk as utf-8
@@ -131,7 +134,6 @@ def load_records(path):
     if isinstance(data, dict) and "records" in data:
         return data["records"]
     return data
-
 
 def load_gold_evidence(dataset):
     """
@@ -164,12 +166,10 @@ def load_gold_evidence(dataset):
               f"diagnostics will be UNAVAILABLE (reported as null), not zero.")
     return gold
 
-
 def gold_has_any_doc_ids(gold):
     """True if at least one claim in the gold lookup carries any gold document id."""
     #checking whether gold-based diagnostics are meaningful for this dataset at all
     return any(len(v) > 0 for v in gold.values())
-
 
 def record_retrieved_ids(record):
     """
@@ -185,7 +185,6 @@ def record_retrieved_ids(record):
                if d.get("doc_id") is not None]
     return set(str(i) for i in ids)
 
-
 def records_by_condition(records):
     """Split a flat list of records into a dict keyed by condition."""
     #initialising an empty list per condition
@@ -197,12 +196,10 @@ def records_by_condition(records):
             by_cond[cond].append(r)
     return by_cond
 
-
 def is_error(record):
     """A record is an error when the predicted label differs from the true label."""
     #comparing predicted against true label
     return record.get("predicted_label") != record.get("true_label")
-
 
 def gold_doc_retrieved(record, gold):
     """
@@ -226,7 +223,6 @@ def gold_doc_retrieved(record, gold):
         return None
     #checking for any overlap between retrieved and gold, using robust id extraction
     return len(record_retrieved_ids(record) & gold_ids) > 0
-
 
 def validate_gold_against_records(records, gold, dataset):
     """
@@ -271,7 +267,6 @@ def validate_gold_against_records(records, gold, dataset):
         "gold_doc_ids_available": gold_has_any_doc_ids(gold),
     }
 
-
 def validate_confidence_definition(records):
     """
     Confirm the saved `confidence` really is the maximum softmax probability over the three
@@ -307,17 +302,14 @@ def validate_confidence_definition(records):
     if checked == 0:
         print("  (no probability vectors saved in these records; skipping the definition check)")
 
-
 # ---------------------------------------------------------------------------
 # Automatic diagnostic signals (aids, NOT taxonomy labels)
 # ---------------------------------------------------------------------------
-
 
 def signal_high_confidence_error(record, threshold=CONFIDENT_THRESHOLD):
     """An incorrect prediction made with confidence >= the threshold. Descriptive only."""
     #flagging errors made at or above the confidence threshold
     return is_error(record) and record.get("confidence", 0.0) >= threshold
-
 
 def signal_gold_evidence_missing(record, gold):
     """
@@ -332,7 +324,6 @@ def signal_gold_evidence_missing(record, gold):
         return None
     #flagging errors where the gold document was not retrieved
     return is_error(record) and (got_gold is False)
-
 
 def signal_high_confidence_error_with_gold_doc(record, gold):
     """
@@ -350,7 +341,6 @@ def signal_high_confidence_error_with_gold_doc(record, gold):
         return False
     return got_gold
 
-
 def signal_strong_stance_document(record):
     """
     The top retrieved document is strongly stance-bearing according to the reranker's stance
@@ -367,7 +357,6 @@ def signal_strong_stance_document(record):
         return None
     #flagging when the top document carries a strong stance (direction unknown)
     return is_error(record) and float(docs[0].get("stance_score", 0.0)) >= 0.5
-
 
 def check_stance_score_range(records):
     """
@@ -390,7 +379,6 @@ def check_stance_score_range(records):
         print("  WARNING: stance_score falls outside [0, 1]; the 0.5 strong-stance cut-point "
               "has no stable meaning. Treat sig_strong_stance_document as non-interpretable and "
               "document how the reranker computes stance_score.")
-
 
 def detect_overload_claims(by_k):
     """
@@ -431,7 +419,6 @@ def detect_overload_claims(by_k):
                 break
     return overload_claims, eligible_claims
 
-
 def harmful_transition_into_k(correct_by_k, target_k):
     """
     Return the first smaller-k correct -> target-k wrong transition.
@@ -444,11 +431,9 @@ def harmful_transition_into_k(correct_by_k, target_k):
             return f"k={smaller_k} correct -> k={target_k} wrong"
     return ""
 
-
 # ---------------------------------------------------------------------------
 # Cross-k context (full per-k prediction context for exported claims)
 # ---------------------------------------------------------------------------
-
 
 def cross_k_context(records_dir, dataset, condition, ks=MATRIX_K_VALUES):
     """
@@ -482,17 +467,14 @@ def cross_k_context(records_dir, dataset, condition, ks=MATRIX_K_VALUES):
             }
     return per_claim
 
-
 def correct_by_k_from_context(ctx):
     """Reduce a cross-k context map to {k: correct_bool} for transition detection."""
     #extracting just the correctness at each depth
     return {k: v["correct"] for k, v in ctx.items()}
 
-
 # ---------------------------------------------------------------------------
 # Confidence sensitivity of the high-confidence-error diagnostic
 # ---------------------------------------------------------------------------
-
 
 def high_confidence_error_rate(errs, threshold):
     """Percentage of the given error records made with confidence >= threshold."""
@@ -501,7 +483,6 @@ def high_confidence_error_rate(errs, threshold):
         return None
     n_hc = sum(1 for r in errs if r.get("confidence", 0.0) >= threshold)
     return round(100 * n_hc / len(errs), 1)
-
 
 def high_confidence_error_sensitivity(errs, thresholds=SENSITIVITY_THRESHOLDS):
     """
@@ -513,11 +494,9 @@ def high_confidence_error_sensitivity(errs, thresholds=SENSITIVITY_THRESHOLDS):
     #computing the rate at each threshold, keyed by a stable string form
     return {f"{t:.2f}": high_confidence_error_rate(errs, t) for t in thresholds}
 
-
 # ---------------------------------------------------------------------------
 # Small statistics helpers (Wilson confidence intervals)
 # ---------------------------------------------------------------------------
-
 
 def wilson_interval(count, total, z=1.96):
     """
@@ -535,11 +514,9 @@ def wilson_interval(count, total, z=1.96):
     hi = min(1.0, centre + half)
     return (round(100 * lo, 1), round(100 * hi, 1))
 
-
 # ---------------------------------------------------------------------------
 # Annotation keys (stable, include depth k)
 # ---------------------------------------------------------------------------
-
 
 def annotation_key_of(row):
     """
@@ -552,11 +529,9 @@ def annotation_key_of(row):
         return row["annotation_key"]
     return f"{row.get('condition')}::{row.get('claim_id')}"
 
-
 # ---------------------------------------------------------------------------
 # Mode: export a condition-balanced random sample for manual annotation (SciFact)
 # ---------------------------------------------------------------------------
-
 
 def allocate_caps(max_errors, n_conditions):
     """
@@ -724,13 +699,13 @@ def export_for_annotation(records_path, records_dir, dataset, out_csv, out_json,
 
     #warning clearly if the exact classifier input was not captured by the pipeline
     if not classifier_input_available:
-        print("\nNOTE: these records do NOT contain classifier_input_text. The exact text that "
-              "survived concatenation and 512-token truncation cannot be reconstructed, so "
-              "category 4 (confident_wrong_prediction) is defined in the weaker, accurate form: "
-              "evidence 'appeared in the retrieved context and was judged likely to have been "
-              "available to the classifier'. To assign the stronger 'verified visible' form, "
-              "re-run Step 5/6 with the optional input-capture patch (adds fields only; does not "
-              "change predictions or F1).")
+        print("\nNOTE: these records do NOT contain classifier_input_text. They were likely "
+            "generated by an older pipeline version. The exact final classifier input cannot "
+            "be verified, so category 4 (confident_wrong_prediction) uses the weaker form: "
+            "sufficient label-consistent evidence appeared in the retrieved context and was "
+            "judged likely to have been available to the classifier. Regenerate the Step 5/6 "
+            "records using the current pipeline to enable the stronger 'verified visible in "
+            "classifier_input_text' interpretation.")
 
     #wrapping the rows with reproducibility metadata
     output_obj = {
@@ -771,11 +746,9 @@ def export_for_annotation(records_path, records_dir, dataset, out_csv, out_json,
     for c in VALID_CATEGORIES:
         print(f"    {c}")
 
-
 # ---------------------------------------------------------------------------
 # Mode: analyse the completed manual annotation (SciFact, both conditions)
 # ---------------------------------------------------------------------------
-
 
 def read_annotation_rows(annotation_csv):
     """Read annotation rows from the completed csv."""
@@ -789,47 +762,103 @@ def read_annotation_rows(annotation_csv):
 
 def validate_annotation(rows):
     """
-    Report blank, invalid, or malformed annotation rows, and detect duplicate annotation keys.
-    A duplicate key would otherwise be counted twice here and silently overwritten in the kappa
-    calculation. Returns a problems dict; annotation_is_clean() decides whether analysis may run.
+    Validate category strings, required identifiers, duplicate annotation keys, and logical
+    consistency with the predefined taxonomy.
+
+    In particular:
+      - confident_wrong_prediction requires confidence >= CONFIDENT_THRESHOLD.
+      - evidence_overload requires a recorded smaller-k correct -> target-k wrong transition.
     """
-    #scanning for data-quality problems
-    problems = {"blank": 0, "invalid_category": [], "missing_condition": 0,
-                "missing_claim_id": 0, "duplicate_keys": []}
+    problems = {
+        "blank": 0,
+        "invalid_category": [],
+        "missing_condition": 0,
+        "missing_claim_id": 0,
+        "duplicate_keys": [],
+        "logical_inconsistencies": [],
+    }
+
     seen = {}
+
     for r in rows:
         cat = r.get("primary_category", "").strip()
+        key = annotation_key_of(r)
+
         if cat == "":
             problems["blank"] += 1
         elif cat not in VALID_CATEGORIES:
             problems["invalid_category"].append(cat)
+
         if not r.get("condition"):
             problems["missing_condition"] += 1
+
         if not r.get("claim_id"):
             problems["missing_claim_id"] += 1
-        key = annotation_key_of(r)
-        seen[key] = seen.get(key, 0) + 1
-    problems["duplicate_keys"] = sorted(k for k, c in seen.items() if c > 1)
 
-    #printing a clear data-quality report
+        seen[key] = seen.get(key, 0) + 1
+
+        #checking logical consistency only for recognised categories
+        if cat == CATEGORY_CONFIDENT_WRONG:
+            try:
+                confidence = float(r.get("confidence", ""))
+            except (TypeError, ValueError):
+                confidence = None
+
+            if confidence is None or confidence < CONFIDENT_THRESHOLD:
+                problems["logical_inconsistencies"].append(
+                    f"{key}: confident_wrong_prediction assigned with "
+                    f"confidence={r.get('confidence')}; requires >= "
+                    f"{CONFIDENT_THRESHOLD}."
+                )
+
+        if cat == CATEGORY_OVERLOAD:
+            transition = r.get(
+                "harmful_transition_into_target_k", ""
+            ).strip()
+
+            if not transition:
+                problems["logical_inconsistencies"].append(
+                    f"{key}: evidence_overload assigned without a smaller-k "
+                    f"correct -> target-k wrong transition."
+                )
+
+    problems["duplicate_keys"] = sorted(
+        key for key, count in seen.items() if count > 1
+    )
+
     print("Annotation validation:")
-    print(f"  blank categories:         {problems['blank']}")
-    print(f"  invalid category strings: {sorted(set(problems['invalid_category']))}")
-    print(f"  missing condition:        {problems['missing_condition']}")
-    print(f"  missing claim id:         {problems['missing_claim_id']}")
-    print(f"  duplicate annotation keys:{problems['duplicate_keys']}")
+    print(f"  blank categories:          {problems['blank']}")
+    print(
+        "  invalid category strings: "
+        f"{sorted(set(problems['invalid_category']))}"
+    )
+    print(f"  missing condition:         {problems['missing_condition']}")
+    print(f"  missing claim id:          {problems['missing_claim_id']}")
+    print(f"  duplicate annotation keys: {problems['duplicate_keys']}")
+    print(
+        "  logical inconsistencies:  "
+        f"{len(problems['logical_inconsistencies'])}"
+    )
+
+    for issue in problems["logical_inconsistencies"][:10]:
+        print(f"    - {issue}")
+
+    if len(problems["logical_inconsistencies"]) > 10:
+        remaining = len(problems["logical_inconsistencies"]) - 10
+        print(f"    ... and {remaining} more")
+
     return problems
 
-
 def annotation_is_clean(problems):
-    """True when there are no blank, invalid, missing, or duplicate-key problems."""
-    #a clean annotation has no outstanding data-quality problems
-    return (problems["blank"] == 0
-            and not problems["invalid_category"]
-            and problems["missing_condition"] == 0
-            and problems["missing_claim_id"] == 0
-            and not problems["duplicate_keys"])
-
+    """True when no annotation-data or taxonomy-consistency problems remain."""
+    return (
+        problems["blank"] == 0
+        and not problems["invalid_category"]
+        and problems["missing_condition"] == 0
+        and problems["missing_claim_id"] == 0
+        and not problems["duplicate_keys"]
+        and not problems["logical_inconsistencies"]
+    )
 
 def analyse_annotation(annotation_csv, out_json, allow_partial=False):
     """
@@ -923,6 +952,7 @@ def analyse_annotation(annotation_csv, out_json, allow_partial=False):
             "missing_condition": problems["missing_condition"],
             "missing_claim_id": problems["missing_claim_id"],
             "duplicate_keys": problems["duplicate_keys"],
+            "logical_inconsistencies": problems["logical_inconsistencies"],
         },
         "per_condition_manual_breakdown": per_condition,
         "reranking_effect_categories_1_2": comparison,
@@ -946,11 +976,9 @@ def analyse_annotation(annotation_csv, out_json, allow_partial=False):
     print(f"\nSaved analysis to {out_json}")
     return result
 
-
 # ---------------------------------------------------------------------------
 # Mode: automatic diagnostic signals across conditions (SciFact-Open, no annotation)
 # ---------------------------------------------------------------------------
-
 
 def quantitative_rates(records_path, records_dir, dataset, gold, out_json):
     """
@@ -1060,11 +1088,9 @@ def quantitative_rates(records_path, records_dir, dataset, gold, out_json):
     print(f"Saved diagnostic signals to {out_json}")
     return result
 
-
 # ---------------------------------------------------------------------------
 # Mode: intra-annotator agreement (Cohen's kappa) between two annotation passes
 # ---------------------------------------------------------------------------
-
 
 def compute_kappa(first_csv, second_csv, out_json):
     """
@@ -1128,11 +1154,9 @@ def compute_kappa(first_csv, second_csv, out_json):
         json.dump(result, f, indent=2)
     return result
 
-
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
-
 
 def resolve_records_path(records_dir, dataset, k, explicit=None):
     """
@@ -1168,8 +1192,9 @@ def main():
     parser.add_argument("--records_path", default=None,
                         help="Explicit records file; required if the Step 6 matrix naming is "
                              "not used. Overrides --records_dir/--k for locating the file.")
-    parser.add_argument("--k", type=int, default=3, help="Primary retrieval depth for the annotation sample (Step 6 matrix "
-                         "uses k in {1,3,5,10}; 3 is the default Step 5 depth).")
+    parser.add_argument("--k", type=int, default=3, choices=list(MATRIX_K_VALUES), 
+                        help="Primary retrieval depth for the annotation sample. "
+                            "Must be one of the Step 6 matrix depths: 1, 3, 5, or 10.",)
     parser.add_argument("--out_dir", default="results/step7_failure")
     parser.add_argument("--max_errors", type=int, default=70)
     parser.add_argument("--allow_partial", action="store_true",
