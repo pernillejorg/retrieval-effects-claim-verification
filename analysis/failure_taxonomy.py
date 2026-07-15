@@ -88,6 +88,7 @@ CATEGORY_IRRELEVANT = "irrelevant_retrieval"
 CATEGORY_CONTRADICTORY = "contradictory_retrieval"
 CATEGORY_OVERLOAD = "evidence_overload"
 CATEGORY_CONFIDENT_WRONG = "confident_wrong_prediction"
+ACCEPTED_NON_CATEGORY = [EXCLUDED_BELOW_THRESHOLD]
 
 #listing all valid categories for validation of the completed annotation
 VALID_CATEGORIES = [
@@ -786,7 +787,8 @@ def validate_annotation(rows):
 
         if cat == "":
             problems["blank"] += 1
-        elif cat not in VALID_CATEGORIES:
+        #elif cat not in VALID_CATEGORIES:
+        elif cat not in VALID_CATEGORIES and cat not in ACCEPTED_NON_CATEGORY:
             problems["invalid_category"].append(cat)
 
         if not r.get("condition"):
@@ -886,6 +888,8 @@ def analyse_annotation(annotation_csv, out_json, allow_partial=False):
 
     #keeping only rows with a valid manual category
     labelled = [r for r in rows if r.get("primary_category", "").strip() in VALID_CATEGORIES]
+    excluded = [r for r in rows if r.get("primary_category", "").strip() == EXCLUDED_BELOW_THRESHOLD]
+    print(f"  excluded_below_threshold (reported separately, not in 4-category denominator): {len(excluded)}")
     print(f"\nLoaded {len(rows)} rows; {len(labelled)} carry a valid category.")
     if not labelled:
         print("No valid categories found - fill in 'primary_category' first.")
@@ -949,6 +953,7 @@ def analyse_annotation(annotation_csv, out_json, allow_partial=False):
         "validation": {
             "blank": problems["blank"],
             "invalid_categories": sorted(set(problems["invalid_category"])),
+            "excluded_below_threshold_count": len(excluded),
             "missing_condition": problems["missing_condition"],
             "missing_claim_id": problems["missing_claim_id"],
             "duplicate_keys": problems["duplicate_keys"],
