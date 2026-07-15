@@ -88,6 +88,7 @@ CATEGORY_IRRELEVANT = "irrelevant_retrieval"
 CATEGORY_CONTRADICTORY = "contradictory_retrieval"
 CATEGORY_OVERLOAD = "evidence_overload"
 CATEGORY_CONFIDENT_WRONG = "confident_wrong_prediction"
+EXCLUDED_BELOW_THRESHOLD = "excluded_below_threshold"
 ACCEPTED_NON_CATEGORY = [EXCLUDED_BELOW_THRESHOLD]
 
 #listing all valid categories for validation of the completed annotation
