@@ -1,0 +1,112 @@
+{
+  "used_allow_partial": false,
+  "validation": {
+    "blank": 0,
+    "invalid_categories": [],
+    "excluded_below_threshold_count": 5,
+    "missing_condition": 0,
+    "missing_claim_id": 0,
+    "duplicate_keys": [],
+    "logical_inconsistencies": []
+  },
+  "per_condition_manual_breakdown": {
+    "dense_roberta": {
+      "n_annotated": 32,
+      "counts": {
+        "irrelevant_retrieval": 5,
+        "contradictory_retrieval": 3,
+        "evidence_overload": 14,
+        "confident_wrong_prediction": 10
+      },
+      "pct": {
+        "irrelevant_retrieval": 15.6,
+        "contradictory_retrieval": 9.4,
+        "evidence_overload": 43.8,
+        "confident_wrong_prediction": 31.2
+      },
+      "ci95": {
+        "irrelevant_retrieval": [
+          6.9,
+          31.8
+        ],
+        "contradictory_retrieval": [
+          3.2,
+          24.2
+        ],
+        "evidence_overload": [
+          28.2,
+          60.7
+        ],
+        "confident_wrong_prediction": [
+          18.0,
+          48.6
+        ]
+      }
+    },
+    "dense_reranked_roberta": {
+      "n_annotated": 33,
+      "counts": {
+        "irrelevant_retrieval": 10,
+        "contradictory_retrieval": 6,
+        "evidence_overload": 11,
+        "confident_wrong_prediction": 6
+      },
+      "pct": {
+        "irrelevant_retrieval": 30.3,
+        "contradictory_retrieval": 18.2,
+        "evidence_overload": 33.3,
+        "confident_wrong_prediction": 18.2
+      },
+      "ci95": {
+        "irrelevant_retrieval": [
+          17.4,
+          47.3
+        ],
+        "contradictory_retrieval": [
+          8.6,
+          34.4
+        ],
+        "evidence_overload": [
+          19.8,
+          50.4
+        ],
+        "confident_wrong_prediction": [
+          8.6,
+          34.4
+        ]
+      }
+    }
+  },
+  "reranking_effect_categories_1_2": {
+    "irrelevant_retrieval": {
+      "dense_pct": 15.6,
+      "dense_count": 5,
+      "dense_ci95": [
+        6.9,
+        31.8
+      ],
+      "reranked_pct": 30.3,
+      "reranked_count": 10,
+      "reranked_ci95": [
+        17.4,
+        47.3
+      ]
+    },
+    "contradictory_retrieval": {
+      "dense_pct": 9.4,
+      "dense_count": 3,
+      "dense_ci95": [
+        3.2,
+        24.2
+      ],
+      "reranked_pct": 18.2,
+      "reranked_count": 6,
+      "reranked_ci95": [
+        8.6,
+        34.4
+      ]
+    }
+  },
+  "statistics_note": "95% intervals are Wilson score intervals. The dense-versus-reranked comparison is descriptive, with no significance test, because the condition samples may overlap in claims and the annotation sample is primarily intended for qualitative failure analysis. With approximately 35 annotations per condition, the intervals should be interpreted as indicative rather than definitive.",
+  "note": "Percentages are of each condition's annotated errors. Reranking can change the total error count, so read counts and the Step 5/6 error rates alongside these: a lower proportion among fewer errors is not the same as lower absolute incidence. Paired other-condition fields are exported per row to let dense-wrong->reranked-correct (and the reverse) be inspected directly."
+}

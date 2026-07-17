@@ -1,0 +1,82 @@
+{
+  "dataset": "scifact_open",
+  "gold_doc_ids_available": true,
+  "confident_threshold_primary": 0.7,
+  "sensitivity_thresholds": [
+    0.6,
+    0.7,
+    0.8
+  ],
+  "note": "Automatic diagnostic signals for possible failure mechanisms, NOT manually-verified taxonomy labels. Gold-evidence-missing is an evidence recall signal, not proof of topical irrelevance. Do not report these as percentages of the four failure categories.",
+  "per_condition_signals": {
+    "no_retrieval": {
+      "n_claims": 279,
+      "n_errors": 105,
+      "error_rate_pct": 37.6,
+      "high_confidence_error_pct_of_errors": 86.7,
+      "high_confidence_error_pct_by_threshold": {
+        "0.60": 93.3,
+        "0.70": 86.7,
+        "0.80": 75.2
+      },
+      "gold_evidence_missing_pct_of_defined_errors": null,
+      "high_conf_error_with_gold_doc_pct_of_defined_errors": null
+    },
+    "bm25_roberta": {
+      "n_claims": 279,
+      "n_errors": 128,
+      "error_rate_pct": 45.9,
+      "high_confidence_error_pct_of_errors": 68.8,
+      "high_confidence_error_pct_by_threshold": {
+        "0.60": 81.2,
+        "0.70": 68.8,
+        "0.80": 49.2
+      },
+      "gold_evidence_missing_pct_of_defined_errors": 50.0,
+      "high_conf_error_with_gold_doc_pct_of_defined_errors": 31.0
+    },
+    "dense_roberta": {
+      "n_claims": 279,
+      "n_errors": 122,
+      "error_rate_pct": 43.7,
+      "high_confidence_error_pct_of_errors": 69.7,
+      "high_confidence_error_pct_by_threshold": {
+        "0.60": 87.7,
+        "0.70": 69.7,
+        "0.80": 50.8
+      },
+      "gold_evidence_missing_pct_of_defined_errors": 46.1,
+      "high_conf_error_with_gold_doc_pct_of_defined_errors": 34.8
+    },
+    "dense_reranked_roberta": {
+      "n_claims": 279,
+      "n_errors": 135,
+      "error_rate_pct": 48.4,
+      "high_confidence_error_pct_of_errors": 74.1,
+      "high_confidence_error_pct_by_threshold": {
+        "0.60": 81.5,
+        "0.70": 74.1,
+        "0.80": 53.3
+      },
+      "gold_evidence_missing_pct_of_defined_errors": 77.9,
+      "high_conf_error_with_gold_doc_pct_of_defined_errors": 16.3
+    }
+  },
+  "evidence_overload_across_k": {
+    "bm25_roberta": {
+      "overload_claims": 68,
+      "eligible_claims": 279,
+      "overload_pct_of_eligible": 24.4
+    },
+    "dense_roberta": {
+      "overload_claims": 64,
+      "eligible_claims": 279,
+      "overload_pct_of_eligible": 22.9
+    },
+    "dense_reranked_roberta": {
+      "overload_claims": 55,
+      "eligible_claims": 279,
+      "overload_pct_of_eligible": 19.7
+    }
+  }
+}
