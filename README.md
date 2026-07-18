@@ -213,7 +213,7 @@ Once results are in for both datasets, the key questions are: does the behaviour
   - [ x] Step 4: Stance-aware reranker
   - [ x] Step 5: Full RAG pipeline
   - [ x] Step 6: Experimental matrix
-  - [ ] Step 7: Failure taxonomy and annotation
+  - [ x] Step 7: Failure taxonomy and annotation
   - [ ] Step 8: Confidence scoring analysis
   - [ ] Step 9: Cross-dataset comparison
   - [ ] Step 10: Real-world case study
