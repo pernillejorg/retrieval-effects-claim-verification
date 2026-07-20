@@ -15,10 +15,10 @@ Design decisions (document these in your thesis):
 - Gradient clipping at 1.0: prevents exploding gradients, standard practice
 - 10% warmup steps: well-established heuristic for transformer schedulers
 - Macro F1 as primary metric: correct for imbalanced 3-class problems
-- Learning rate search over {1e-5, 2e-5, 3e-5}: we pick the best on val F1
+- Learning rate search over {1e-5, 2e-5, 3e-5}: picking the best on val F1
 - Early stopping with patience 2: saves best checkpoint, avoids overfitting on small data
 - Shared 3-class head (SUPPORT/CONTRADICT/NEI): SciFact is 3-class, but the secondary
-  evaluation dataset SciFact-Open is 2-class (SUPPORT/CONTRADICT, no NEI). We keep one
+  evaluation dataset SciFact-Open is 2-class (SUPPORT/CONTRADICT, no NEI). I keep one
   unified head so the same SciFact-trained classifier can be scored on both. Metrics are
   computed only over classes actually present in each split, so SciFact-Open's scores are
   not distorted by the unused NEI class. On SciFact-Open the model can still predict NEI,
@@ -28,7 +28,7 @@ Design decisions (document these in your thesis):
 #importing the operating system module for handling file paths
 import os
 
-#importing the system module so we can add the project root to the Python path
+#importing the system module so I can add the project root to the Python path
 import sys
 
 #adding the project root directory to the path so imports from data/ work correctly
@@ -58,10 +58,10 @@ from sklearn.metrics import f1_score, precision_score, recall_score, classificat
 #importing Counter to count label distributions in the training data
 from collections import Counter
 
-#importing numpy so we can seed it for reproducibility
+#importing numpy so I can seed it for reproducibility
 import numpy as np
 
-#importing random so we can seed Python's RNG (used by random.sample in the LR search)
+#importing random so I can seed Python's RNG (used by random.sample in the LR search)
 import random
 
 #importing our unified data loading functions for both datasets
@@ -72,7 +72,7 @@ import json
 # Configuration
 # ---------------------------------------------------------------------------
 
-#defining the name of the pre-trained RoBERTa model we are fine-tuning
+#defining the name of the pre-trained RoBERTa model that are fine-tuning
 MODEL_NAME = "roberta-base"
 
 #setting the maximum number of tokens RoBERTa processes per input claim
@@ -87,10 +87,10 @@ BATCH_SIZE = 16
 #setting the maximum number of epochs -- early stopping may end training earlier
 MAX_EPOCHS = 10
 
-#defining how many epochs without improvement before we stop training early
+#defining how many epochs without improvement before stopping training early
 EARLY_STOPPING_PATIENCE = 2
 
-#setting the learning rates we search over -- we pick the best on validation F1
+#setting the learning rates that's being searched over, picking the best on validation F1
 LEARNING_RATES_TO_TRY = [1e-5, 2e-5, 3e-5]
 
 #setting the ordered list of label names used consistently across the project
@@ -154,7 +154,7 @@ def check_max_token_length(claims, tokenizer):
         if token_count > maximum_token_count:
             maximum_token_count = token_count
 
-    #printing the result so we can verify MAX_LENGTH is safe
+    #printing the result to verify MAX_LENGTH is safe
     print(f"  Maximum claim token length in this split: {maximum_token_count}")
     if maximum_token_count > MAX_LENGTH_CLAIM_ONLY:
         print(f"  WARNING: some claims exceed MAX_LENGTH_CLAIM_ONLY={MAX_LENGTH_CLAIM_ONLY} and will be truncated!")
@@ -179,9 +179,9 @@ class ClaimDataset(Dataset):
     """
 
     def __init__(self, list_of_claim_dicts, tokenizer, input_mode="claim_only", corpus=None):
-        #storing the list of claim dicts so we can index into them
+        #storing the list of claim dicts to index into them
         self.claims = list_of_claim_dicts
-        #storing the tokenizer so we can encode each claim at access time
+        #storing the tokenizer so can encode each claim at access time
         self.tokenizer = tokenizer
         #input_mode: "claim_only" (baseline) or "claim_evidence" (evidence-aware RAG classifier)
         self.input_mode = input_mode
@@ -203,7 +203,7 @@ class ClaimDataset(Dataset):
 
         if self.input_mode == "claim_evidence":
             #looking up the gold evidence text for this claim from the corpus.
-            #a claim may cite multiple evidence docs; we concatenate their text.
+            #a claim may cite multiple evidence docs: concatenating their text.
             evidence_texts = []
             for doc_id in claim_dict["evidence_doc_ids"]:
                 doc_text = self.corpus.get(str(doc_id))
@@ -212,8 +212,13 @@ class ClaimDataset(Dataset):
             evidence_text = " ".join(evidence_texts)
 
             #tokenising claim + gold evidence as a PROPER PAIR (RoBERTa inserts </s></s>).
-            #NEI claims have no evidence_doc_ids, so evidence_text is "" -- the model
-            #then sees claim + empty evidence, which is the correct signal for "no evidence".
+            #on SciFact, NEI claims DO have evidence_doc_ids (their cited docs), so the model
+            #sees claim + a real abstract and must judge that it does not settle the claim.
+            #this is what is wanted: if NEI claims had empty evidence text the model could learn
+            #the shortcut "no evidence -> NEI", which would be label leakage.
+            #on SciFact-Open, NEI claims genuinely have no evidence docs, so evidence_text is
+            #"" there. Model 2 is therefore never gold-evaluated on SciFact-Open (Step 5 feeds
+            #it retrieved evidence instead), which avoids that leak.
             encoding = self.tokenizer(
                 claim_dict["claim"],
                 evidence_text,
@@ -446,7 +451,7 @@ def find_best_learning_rate(train_claims, eval_claims, tokenizer, device, input_
         #seeding everything for reproducibility before any randomness happens
         set_seed(42)
 
-        #printing which learning rate we are currently trying
+        #printing which learning rate that are currently being tried
         print(f"\n  Trying learning rate: {candidate_lr}")
 
         #loading a fresh copy of the model for each learning rate trial
@@ -704,7 +709,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
         #printing a blank line between epochs for readability
         print()
 
-    #reloading the best checkpoint from disk so we evaluate the ACTUAL saved model,
+    #reloading the best checkpoint from disk to evaluate the ACTUAL saved model,
     #not the in-memory one -- this verifies the saved checkpoint reproduces the reported metric
     best_model = RobertaForSequenceClassification.from_pretrained(save_directory).to(device)
     best_tokenizer = RobertaTokenizer.from_pretrained(save_directory)
@@ -720,7 +725,7 @@ def run_baseline(dataset_name="scifact", input_mode="claim_only", seed=42):
     print(f"Reloaded checkpoint macro F1 : {reloaded_f1:.4f}")
 
     #sanity check: the reloaded model should reproduce the best F1 seen during training.
-    #a mismatch would indicate a save/reload bug, so we warn if they differ noticeably.
+    #a mismatch would indicate a save/reload bug, to warn if they differ noticeably.
     if abs(reloaded_f1 - best_val_f1) > 1e-4:
         print(f"  WARNING: reloaded F1 ({reloaded_f1:.4f}) differs from training-time "
               f"best F1 ({best_val_f1:.4f}) -- possible save/reload issue.")
@@ -866,7 +871,7 @@ def evaluate_on_scifact_open(seed=42):
 if __name__ == "__main__":
     import argparse
 
-    #parsing command line arguments so we can specify the dataset without editing the file
+    #parsing command line arguments to specify the dataset without editing the file
     parser = argparse.ArgumentParser(description="RoBERTa no-retrieval baseline")
     parser.add_argument("--dataset", default="scifact",
                         choices=["scifact", "scifact_open"],

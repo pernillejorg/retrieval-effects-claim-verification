@@ -20,12 +20,10 @@ all-mpnet-base-v2 (a stronger, heavier 768-dimensional model).
 | Dense retrievers | all-MiniLM-L6-v2 (384-dim) and all-mpnet-base-v2 (768-dim) |
 | Candidates retrieved per claim | top 10 |
 | Metric | Recall@k (k = 1, 5, 10) |
-| NEI claims | excluded from Recall@k (no gold evidence document to retrieve) |
+| NEI claims | SciFact: retained (they carry cited doc ids). SciFact-Open: excluded (no evidence docs) |
 | Device | CUDA (Google Colab GPU) |
 
-Recall@k is computed only over claims that have annotated evidence documents. A claim
-labelled NEI has no gold evidence document to retrieve, so it cannot contribute to a
-retrieval recall measurement and is excluded from the denominator.
+Recall@k is computed over claims with a non-empty `evidence_doc_ids`. What that field contains differs by dataset, and this matters for reading the two tables together. For SciFact it holds the claim's cited doc ids, which every claim has, so all 300 validation claims are included, and the metric is best described as **cited-document recall**. For SciFact-Open it holds annotated evidence doc ids, so the 73 NEI claims have none and are excluded, and the metric is evidence recall over the 206 evidenced claims. The two figures are therefore not the same measurement, and the cross-corpus comparison below is read with that caveat.
 
 ## Data correction: deduplicating the SciFact validation set
 
@@ -45,7 +43,7 @@ Retained for transparency only; not the reported numbers.
 ## SciFact: corrected results (300 unique claims) = REPORTED
 
 - Corpus: 5,183 abstracts
-- Validation claims: 300 (all with evidence; 0 NEI in this split)
+- Validation claims: 300 (SUPPORT 124, CONTRADICT 64, NEI 112, per the Step 2 per-class support). All 300 carry cited doc ids, so none is excluded from the recall denominator.
 
 | Method | R@1 | R@5 | R@10 |
 |---|---|---|---|
@@ -82,6 +80,8 @@ this is not a regression but a correction: the 450-row figures were computed ove
 
 **Retrieval degrades as the corpus scales.** 
 For every method, Recall@k falls moving from SciFact's ~5,000-abstract corpus to SciFact-Open's 500,000-abstract corpus. For example, mpnet dense R@5 drops from 0.733 to 0.699, and BM25 R@10 from 0.703 to 0.650. Both sparse and dense retrievers lose ground as the search space grows ~100×, giving direct quantitative evidence for the project's central premise that retrieval becomes harder at scale. The degradation is meaningful but moderate, dense retrieval still recovers the gold document within the top 10 for around 75–80% of evidenced claims even against half a million documents, so this is a robust-but-degrading retriever, not a collapse.
+
+**Caveat on the cross-corpus comparison.** The SciFact figures are cited-document recall over all 300 claims, while the SciFact-Open figures are evidence recall over the 206 evidenced claims. The observed degradation is consistent across both retrievers and both dense models, so the direction is taken as real, but the two numbers are not strictly the same metric and the size of the gap should not be over-read.
 
 **A stronger dense model recovers top-rank precision at scale.** 
 The most interesting finding concerns R@1 on the large corpus. With MiniLM, dense retrieval *underperforms* BM25 at R@1 on SciFact-Open (0.369 vs 0.403) and suggesting dense top-rank precision suffers on large corpora. mpnet shows this was model-specific, not a general limitation: mpnet dense recovers R@1 to 0.408, edging past BM25, and improves R@5 substantially (0.641 to 0.699). This indicates embedding quality, not the dense paradigm itself, drives top-rank performance at scale. Evaluating both models was what let this distinction be drawn.

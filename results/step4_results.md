@@ -26,6 +26,8 @@ Two modes are evaluated so the choice between them is justified empirically:
 - **Soft reranking** reorders all documents by stance score but keeps them all.
 - **Hard filtering** removes documents whose neutral probability exceeds the threshold.
 
+**Note on the recall basis.** The dense-before-reranking row is Step 3's mpnet result and inherits its basis exactly: on SciFact this is cited-document recall over all 300 claims (including the 112 NEI claims, which carry cited doc ids), and on SciFact-Open it is evidence recall over the 206 evidenced claims. The reranking comparison is internally consistent because both sides use the same basis; only the cross-dataset comparison needs the caveat recorded in Step 3.
+
 ## SciFact: Soft reranking
 
 | Method | R@1 | R@5 | R@10 |

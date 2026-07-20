@@ -14,6 +14,16 @@ SciFact:
   gold_label values: SUPPORT, CONTRADICT, NOT_ENOUGH_INFO -> mapped directly
   corpus keyed by integer doc ids (stored as strings here for consistency)
 
+  IMPORTANT: for SciFact, evidence_doc_ids is populated from the claim's
+  cited_doc_ids, NOT from its annotated evidence. So NEI claims DO carry doc ids
+  here (the abstract the claim was written against, which simply does not settle
+  it). This is deliberate and must not be "fixed": Model 2 (claim + evidence) is
+  trained on this field, and giving NEI claims empty evidence would let the model
+  learn the shortcut "no evidence text => NEI", which is label leakage.
+  Consequence: SciFact and SciFact-Open define evidence_doc_ids differently
+  (cited docs vs annotated evidence docs), so recall figures computed from this
+  field are not the same measurement across the two datasets.
+
 SciFact-Open:
   Test-only collection (no train/val split). Evidence is a dict keyed by doc_id,
   each with a SUPPORT/CONTRADICT label (no NEI in raw data). We collapse to one
@@ -57,8 +67,11 @@ def load_scifact(split="train"):
             id              (str)   unique claim identifier
             claim           (str)   the claim text
             label           (str)   SUPPORT | CONTRADICT | NEI
-            evidence_doc_ids(list)  doc ids of annotated evidence abstracts
-                                    (empty list for NEI claims)
+            evidence_doc_ids(list)  the claim's CITED doc ids (not the annotated
+                                    evidence set). Non-empty for NEI claims too;
+                                    see the module docstring for why this is
+                                    deliberate and why it differs from
+                                    load_scifact_open.
         corpus: dict {doc_id (str): abstract_text (str)}
     """
     assert split in ("train", "validation"), f"SciFact has splits: train, validation. Got: {split}"

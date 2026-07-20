@@ -14,7 +14,7 @@ SciFact provides `train` and `validation` splits with public labels; the officia
 
 ### Label scheme
 
-Labels are normalised to three classes: **SUPPORT**, **CONTRADICT**, and **NEI** (not enough information). Claims with no cited evidence are treated as NEI. This 3-class scheme is used consistently across both datasets so that results are directly comparable.
+Labels are normalised to three classes: **SUPPORT**, **CONTRADICT**, and **NEI** (not enough information). SciFact's own `NOT_ENOUGH_INFO` label maps to NEI; a claim is NEI when its cited abstract carries no supporting or refuting evidence annotation, not when it cites nothing. Note that the two loaders populate `evidence_doc_ids` differently: for SciFact it holds the claim's cited doc ids (so NEI claims still have entries), while for SciFact-Open it holds annotated evidence doc ids (so NEI claims have none). This asymmetry is carried forward honestly in Steps 3, 4 and 9. This 3-class scheme is used consistently across both datasets so that results are directly comparable.
 
 ### Validation deduplication (a preprocessing correction)
 
