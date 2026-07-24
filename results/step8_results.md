@@ -97,10 +97,10 @@ The last two rows matter for the comparisons that follow. The paired reranking a
 |---|---|---|---|---|
 | No retrieval | 118/134 (88.1%) | 15/134 (11.2%) | 91/105 (86.7%) | 12/105 (11.4%) |
 | BM25 | 97/132 (73.5%) | 35/132 (26.5%) | 88/128 (68.8%) | 37/128 (28.9%) |
-| Dense | not in the printed excerpt | | 85/122 (69.7%) | 37/122 (30.3%) |
-| Dense + soft rerank | not in the printed excerpt | | 100/135 (74.1%) | 33/135 (24.4%) |
+| Dense | 91/122 (74.6%) | 29/122 (23.8%) | 85/122 (69.7%) | 37/122 (30.3%) |
+| Dense + soft rerank | 108/138 (78.3%) | 27/138 (19.6%) | 100/135 (74.1%) | 33/135 (24.4%) |
 
-The SciFact-Open column here reproduces the Step 7 diagnostic rates exactly (86.7, 68.8, 69.7 and 74.1 percent), which is a useful consistency check: two independently written analysis scripts, `failure_taxonomy.py` and `confidence_analysis.py`, computed the same quantity from the same records and agreed to the decimal. The full per-condition figures for both corpora are in `confidence_summary_*.csv`.
+The SciFact-Open column here reproduces the Step 7 diagnostic rates exactly (86.7, 68.8, 69.7 and 74.1 percent), which is a useful consistency check: two independently written analysis scripts, `failure_taxonomy.py` and `confidence_analysis.py`, computed the same quantity from the same records and agreed to the decimal. The SciFact error counts here (122 for dense, 138 for reranked) also match the counts `failure_taxonomy.py` reported when it drew the Step 7 annotation sample, which is a further check that the two scripts agree on what counts as an error. The full per-condition figures for both corpora are in `confidence_summary_*.csv`.
 
 ## The flagging rule at the primary 0.7 threshold
 
@@ -206,10 +206,10 @@ Mean per-claim confidence change (reranked minus dense):
 
 Mean confidence sits between 0.83 and 0.93 while accuracy sits between 51% and 62%. The gap between the two is 26 to 36 percentage points in every single condition on both corpora, and it is positive everywhere, meaning the model always claims more certainty in aggregate than its accuracy earns. The bluntest version of the same point is the error breakdown: between 69% and 88% of all errors were made at a confidence of at least 0.7.
 
-This is the population-level confirmation of Step 7's `confident_wrong_prediction` category. Step 7 found that category accounted for 31.2% of the 70 manually annotated dense errors. Step 8 shows that across all 300 claims, roughly seven in ten dense errors clear the same 0.7 bar. The manual sample was not unrepresentative.
+This is the population-level confirmation of Step 7's `confident_wrong_prediction` category. Step 7 found that category accounted for 31.2% of the 70 manually annotated dense errors. Step 8 shows that across all 300 claims, 74.6% of dense errors (91 of 122) clear the same 0.7 bar. The manual sample was not unrepresentative.
 
 It also puts Step 7's five excluded cases in context. Those were errors at 0.53 to 0.64
-confidence, set aside because they fell below the category's threshold. Step 8 shows the 0.5 to 0.7 band holds 24% to 30% of all errors in the retrieval conditions on SciFact-Open. So that band is a real and sizeable population, not a handful of awkward cases, and excluding those five from the four-category counts rather than forcing them in was the right call.
+confidence, set aside because they fell below the category's threshold. Step 8 shows that the 0.5 to 0.7 band holds 19.6% to 26.5% of errors in the SciFact retrieval conditions and 24.4% to 30.3% on SciFact-Open. So that band is a real and sizeable population, not a handful of awkward cases, and excluding those five from the four-category counts rather than forcing them in was the right call.
 
 ### 2. Confidence discriminates errors, but only weakly
 
@@ -230,6 +230,8 @@ This matters for the thesis because it qualifies the whole "confidence as an err
 ### 4. Stance reranking degrades confidence quality as well as accuracy
 
 The reranked condition has the worst confidence discrimination of any retrieval condition on both corpora. On SciFact its AUROC is 0.6061 against dense's 0.6947, with lower separation (0.0514 against 0.0794) and a wider gap (33.4 pp against 26.0 pp). On SciFact-Open it is worse still: AUROC 0.5658 against dense's 0.6169.
+
+The error-band table shows the same thing from another angle. On both corpora the reranked condition has the highest share of high-confidence errors of any retrieval condition: 78.3% of its SciFact errors were made at a confidence of at least 0.7, against dense's 74.6%, and 74.1% against dense's 69.7% on SciFact-Open. So reranking does not simply produce more errors, it produces errors the model is more sure of, which is the worse of the two failure modes for a system whose confidence a user might rely on.
 
 The flagging rule shows the same thing from a practical angle. On SciFact-Open, reranking has the lowest lift (1.13) and, uniquely, its kept predictions are still wrong 46.9% of the time, which is barely better than the 53.0% error rate among the predictions the rule flagged. In other words, under reranking the confidence filter can hardly separate reliable predictions from unreliable ones at all.
 
