@@ -132,47 +132,33 @@ def read_json(path, what):
 
 def find_macro_f1(matrix_obj, condition):
     """
-    Pull one condition's macro F1 out of a Step 6 matrix file.
-
-    The matrix files were written by an earlier step, so rather than assume one key layout this
-    walks the object looking for the condition and a macro-F1-like field. If it cannot find one
-    it raises with the keys it DID see, which turns a silent wrong number into a clear message.
+    Pull one condition's macro F1 out of a Step 6 matrix file, using the EXACT Step 6 schema:
+        matrix_obj["metrics"][condition]["macro_f1"]
+    (confirmed from matrix_scifact_k3_thr0_5.json). This is pinned rather than probed on
+    purpose: a transcription-safety script must never risk silently reading a different metric,
+    so if the schema is not exactly this it raises with the keys it did find instead of guessing.
     """
-    #the field names a macro F1 might plausibly have been saved under
-    #ONLY macro-F1-specific names. bare "f1" is deliberately excluded, because it could mean
-    #binary, micro or weighted F1, and silently reading the wrong metric is exactly the failure
-    #this script exists to prevent. once the real Step 6 schema is confirmed this should be
-    #pinned to that single exact path rather than probed
-    f1_keys = ("macro_f1", "f1_macro", "macro_F1", "macroF1")
+    #the metrics block that holds every condition
+    metrics = matrix_obj.get("metrics")
+    if not isinstance(metrics, dict):
+        raise KeyError(
+            f"Step 6 matrix file has no 'metrics' object; top-level keys were "
+            f"{sorted(matrix_obj.keys())}. Expected metrics[condition]['macro_f1'].")
 
-    #trying the layout {condition: {"macro_f1": value}} first, at the top level or one level in
-    candidates = [matrix_obj]
-    for key in ("results", "conditions", "per_condition", "metrics"):
-        if isinstance(matrix_obj.get(key), dict):
-            candidates.append(matrix_obj[key])
+    #this condition's block within metrics
+    entry = metrics.get(condition)
+    if not isinstance(entry, dict):
+        raise KeyError(
+            f"Step 6 matrix 'metrics' has no entry for condition '{condition}'; "
+            f"conditions present were {sorted(metrics.keys())}.")
 
-    for holder in candidates:
-        entry = holder.get(condition)
-        #the condition maps straight to a number
-        if isinstance(entry, (int, float)):
-            return float(entry)
-        #the condition maps to a dict containing a macro F1 field
-        if isinstance(entry, dict):
-            for fk in f1_keys:
-                if isinstance(entry.get(fk), (int, float)):
-                    return float(entry[fk])
-
-    #trying the transposed layout {"macro_f1": {condition: value}}
-    for fk in f1_keys:
-        holder = matrix_obj.get(fk)
-        if isinstance(holder, dict) and isinstance(holder.get(condition), (int, float)):
-            return float(holder[condition])
-
-    raise KeyError(
-        f"Could not find a macro F1 for condition '{condition}' in the matrix file. "
-        f"Top-level keys present: {sorted(matrix_obj.keys())}. "
-        f"Add the correct key name to find_macro_f1() rather than transcribing the value by "
-        f"hand, so the script stays the single source of truth.")
+    #the macro F1 itself, which must be numeric
+    value = entry.get("macro_f1")
+    if not isinstance(value, (int, float)):
+        raise TypeError(
+            f"macro_f1 for '{condition}' must be numeric, got {type(value).__name__}. "
+            f"Fields present were {sorted(entry.keys())}.")
+    return float(value)
 
 # ---------------------------------------------------------------------------
 # Q1: F1 across retrieval difficulty
