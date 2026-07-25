@@ -1,0 +1,5 @@
+condition,n_predictions,accuracy_pct,accuracy_ci95_low_pct,accuracy_ci95_high_pct,mean_confidence_all,mean_confidence_correct,mean_confidence_wrong,separation_correct_minus_wrong,auroc_confidence_detects_correct,global_confidence_accuracy_gap_pp,high_confidence_errors,high_confidence_error_pct_of_errors,moderate_band_errors,moderate_band_error_pct_of_errors
+no_retrieval,279,62.4,56.5,67.8,0.9098,0.9287,0.8784,0.0503,0.642,28.6,91,86.7,12,11.4
+bm25_roberta,279,54.1,48.3,59.9,0.8168,0.841,0.7883,0.0527,0.5964,27.6,88,68.8,37,28.9
+dense_roberta,279,56.3,50.4,62.0,0.8342,0.8581,0.8034,0.0547,0.6169,27.1,85,69.7,37,30.3
+dense_reranked_roberta,279,51.6,45.8,57.4,0.8294,0.8481,0.8095,0.0386,0.5658,31.3,100,74.1,33,24.4

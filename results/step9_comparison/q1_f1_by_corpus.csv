@@ -1,0 +1,5 @@
+condition,best_f1_scifact,best_k_scifact,margin_over_no_retrieval_scifact,best_f1_scifact_open,best_k_scifact_open,margin_over_no_retrieval_scifact_open
+no_retrieval,0.5263,,,0.6219,,
+bm25_roberta,0.5727,1,0.0464,0.5378,1,-0.084
+dense_roberta,0.5947,1,0.0684,0.556,3,-0.0659
+dense_reranked_roberta,0.5389,5,0.0126,0.5406,10,-0.0813

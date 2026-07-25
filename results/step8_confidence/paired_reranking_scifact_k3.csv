@@ -1,0 +1,6 @@
+subset,n,mean_paired_confidence_change
+all_claims,300,0.0213
+jointly_correct,138,-0.0036
+jointly_wrong,98,0.0111
+correct_to_wrong,40,0.0949
+wrong_to_correct,24,0.0833

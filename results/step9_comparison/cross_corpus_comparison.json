@@ -1,0 +1,1051 @@
+{
+  "comparison": "SciFact versus SciFact-Open",
+  "corpora": {
+    "scifact": "SciFact (about 5,000 abstracts)",
+    "scifact_open": "SciFact-Open (about 500,000 abstracts)"
+  },
+  "reported_k_for_signals_and_confidence": 3,
+  "records_seed": 42,
+  "seed_provenance": {
+    "seed_verified_sources": [
+      "Step 8 confidence scifact k=3",
+      "Step 8 depth sweep scifact",
+      "Step 8 confidence scifact_open k=3",
+      "Step 8 depth sweep scifact_open"
+    ],
+    "seed_unverified_sources": [
+      "Step 6 matrix scifact k=1",
+      "Step 6 matrix scifact k=3",
+      "Step 6 matrix scifact k=5",
+      "Step 6 matrix scifact k=10",
+      "Step 6 matrix scifact_open k=1",
+      "Step 6 matrix scifact_open k=3",
+      "Step 6 matrix scifact_open k=5",
+      "Step 6 matrix scifact_open k=10",
+      "Step 7 rates scifact",
+      "Step 7 rates scifact_open",
+      "Step 7 manual analysis scifact"
+    ]
+  },
+  "q1_f1": {
+    "by_k": {
+      "scifact": {
+        "no_retrieval": {
+          "f1_by_k": {
+            "1": 0.5263,
+            "3": 0.5263,
+            "5": 0.5263,
+            "10": 0.5263
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.5263006088280061,
+            "3": 0.5263006088280061,
+            "5": 0.5263006088280061,
+            "10": 0.5263006088280061
+          },
+          "best_f1": 0.5263,
+          "best_f1_unrounded": 0.5263006088280061,
+          "best_k": null
+        },
+        "bm25_roberta": {
+          "f1_by_k": {
+            "1": 0.5727,
+            "3": 0.5127,
+            "5": 0.4778,
+            "10": 0.4667
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.5727343714115107,
+            "3": 0.5126627429998217,
+            "5": 0.4778090126927337,
+            "10": 0.4667128690019413
+          },
+          "best_f1": 0.5727,
+          "best_f1_unrounded": 0.5727343714115107,
+          "best_k": 1
+        },
+        "dense_roberta": {
+          "f1_by_k": {
+            "1": 0.5947,
+            "3": 0.5583,
+            "5": 0.5179,
+            "10": 0.4828
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.594722607619619,
+            "3": 0.5582510423524248,
+            "5": 0.5178960343248566,
+            "10": 0.48276805320283583
+          },
+          "best_f1": 0.5947,
+          "best_f1_unrounded": 0.594722607619619,
+          "best_k": 1
+        },
+        "dense_reranked_roberta": {
+          "f1_by_k": {
+            "1": 0.3852,
+            "3": 0.4879,
+            "5": 0.5389,
+            "10": 0.4824
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.3851661552368039,
+            "3": 0.4878707067339927,
+            "5": 0.5388668034123679,
+            "10": 0.4823634161977348
+          },
+          "best_f1": 0.5389,
+          "best_f1_unrounded": 0.5388668034123679,
+          "best_k": 5
+        }
+      },
+      "scifact_open": {
+        "no_retrieval": {
+          "f1_by_k": {
+            "1": 0.6219,
+            "3": 0.6219,
+            "5": 0.6219,
+            "10": 0.6219
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.6218592643713418,
+            "3": 0.6218592643713418,
+            "5": 0.6218592643713418,
+            "10": 0.6218592643713418
+          },
+          "best_f1": 0.6219,
+          "best_f1_unrounded": 0.6218592643713418,
+          "best_k": null
+        },
+        "bm25_roberta": {
+          "f1_by_k": {
+            "1": 0.5378,
+            "3": 0.5229,
+            "5": 0.5176,
+            "10": 0.5127
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.5378270027961782,
+            "3": 0.5228921783242927,
+            "5": 0.5176014636012147,
+            "10": 0.5127312729515197
+          },
+          "best_f1": 0.5378,
+          "best_f1_unrounded": 0.5378270027961782,
+          "best_k": 1
+        },
+        "dense_roberta": {
+          "f1_by_k": {
+            "1": 0.5429,
+            "3": 0.556,
+            "5": 0.5454,
+            "10": 0.52
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.542922922922923,
+            "3": 0.5559888192985012,
+            "5": 0.5454378902405546,
+            "10": 0.5199782923518331
+          },
+          "best_f1": 0.556,
+          "best_f1_unrounded": 0.5559888192985012,
+          "best_k": 3
+        },
+        "dense_reranked_roberta": {
+          "f1_by_k": {
+            "1": 0.4102,
+            "3": 0.5075,
+            "5": 0.5238,
+            "10": 0.5406
+          },
+          "f1_by_k_unrounded": {
+            "1": 0.4102180006382155,
+            "3": 0.5075471698113208,
+            "5": 0.5237610525076871,
+            "10": 0.5406045098352791
+          },
+          "best_f1": 0.5406,
+          "best_f1_unrounded": 0.5406045098352791,
+          "best_k": 10
+        }
+      }
+    },
+    "summary": {
+      "scifact": {
+        "best_f1_by_condition": {
+          "no_retrieval": 0.5263,
+          "bm25_roberta": 0.5727,
+          "dense_roberta": 0.5947,
+          "dense_reranked_roberta": 0.5389
+        },
+        "best_k_by_condition": {
+          "no_retrieval": null,
+          "bm25_roberta": 1,
+          "dense_roberta": 1,
+          "dense_reranked_roberta": 5
+        },
+        "reranked_minus_dense_by_k": {
+          "1": -0.2096,
+          "3": -0.0704,
+          "5": 0.021,
+          "10": -0.0004
+        },
+        "reranking_beats_dense_at_all_k": false,
+        "n_k_where_reranking_beats_dense": 1,
+        "n_k_compared": 4,
+        "reranked_best_minus_dense_best": -0.0559,
+        "margin_over_no_retrieval_at_best_k": {
+          "bm25_roberta": 0.0464,
+          "dense_roberta": 0.0684,
+          "dense_reranked_roberta": 0.0126
+        },
+        "any_retrieval_beats_no_retrieval": true
+      },
+      "scifact_open": {
+        "best_f1_by_condition": {
+          "no_retrieval": 0.6219,
+          "bm25_roberta": 0.5378,
+          "dense_roberta": 0.556,
+          "dense_reranked_roberta": 0.5406
+        },
+        "best_k_by_condition": {
+          "no_retrieval": null,
+          "bm25_roberta": 1,
+          "dense_roberta": 3,
+          "dense_reranked_roberta": 10
+        },
+        "reranked_minus_dense_by_k": {
+          "1": -0.1327,
+          "3": -0.0484,
+          "5": -0.0217,
+          "10": 0.0206
+        },
+        "reranking_beats_dense_at_all_k": false,
+        "n_k_where_reranking_beats_dense": 1,
+        "n_k_compared": 4,
+        "reranked_best_minus_dense_best": -0.0154,
+        "margin_over_no_retrieval_at_best_k": {
+          "bm25_roberta": -0.084,
+          "dense_roberta": -0.0659,
+          "dense_reranked_roberta": -0.0813
+        },
+        "any_retrieval_beats_no_retrieval": false
+      },
+      "reranking_effect_change": {
+        "scifact": -0.0559,
+        "scifact_open": -0.0154,
+        "absolute_change_f1_points": 0.0405,
+        "direction_changed": false,
+        "note": "Signed as reranked minus dense, so positive means reranking helped. Reported in F1 points rather than as a percentage change, because a percentage is undefined or misleading when either quantity is negative or near zero."
+      },
+      "optimal_depth_shift": {
+        "no_retrieval": {
+          "scifact": null,
+          "scifact_open": null
+        },
+        "bm25_roberta": {
+          "scifact": 1,
+          "scifact_open": 1
+        },
+        "dense_roberta": {
+          "scifact": 1,
+          "scifact_open": 3
+        },
+        "dense_reranked_roberta": {
+          "scifact": 5,
+          "scifact_open": 10
+        }
+      }
+    }
+  },
+  "q2_signals": {
+    "scifact": {
+      "no_retrieval": {
+        "n_claims": 300,
+        "n_errors": 134,
+        "error_rate_pct": 44.7,
+        "high_confidence_error_pct_of_errors": 88.1,
+        "gold_evidence_missing_pct_of_defined_errors": null,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": null,
+        "overload_pct_of_eligible": null
+      },
+      "bm25_roberta": {
+        "n_claims": 300,
+        "n_errors": 132,
+        "error_rate_pct": 44.0,
+        "high_confidence_error_pct_of_errors": 73.5,
+        "gold_evidence_missing_pct_of_defined_errors": 50.0,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": 36.4,
+        "overload_pct_of_eligible": 31.3
+      },
+      "dense_roberta": {
+        "n_claims": 300,
+        "n_errors": 122,
+        "error_rate_pct": 40.7,
+        "high_confidence_error_pct_of_errors": 74.6,
+        "gold_evidence_missing_pct_of_defined_errors": 32.8,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": 48.4,
+        "overload_pct_of_eligible": 29.3
+      },
+      "dense_reranked_roberta": {
+        "n_claims": 300,
+        "n_errors": 138,
+        "error_rate_pct": 46.0,
+        "high_confidence_error_pct_of_errors": 78.3,
+        "gold_evidence_missing_pct_of_defined_errors": 66.7,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": 23.9,
+        "overload_pct_of_eligible": 29.0
+      }
+    },
+    "scifact_open": {
+      "no_retrieval": {
+        "n_claims": 279,
+        "n_errors": 105,
+        "error_rate_pct": 37.6,
+        "high_confidence_error_pct_of_errors": 86.7,
+        "gold_evidence_missing_pct_of_defined_errors": null,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": null,
+        "overload_pct_of_eligible": null
+      },
+      "bm25_roberta": {
+        "n_claims": 279,
+        "n_errors": 128,
+        "error_rate_pct": 45.9,
+        "high_confidence_error_pct_of_errors": 68.8,
+        "gold_evidence_missing_pct_of_defined_errors": 50.0,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": 31.0,
+        "overload_pct_of_eligible": 24.4
+      },
+      "dense_roberta": {
+        "n_claims": 279,
+        "n_errors": 122,
+        "error_rate_pct": 43.7,
+        "high_confidence_error_pct_of_errors": 69.7,
+        "gold_evidence_missing_pct_of_defined_errors": 46.1,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": 34.8,
+        "overload_pct_of_eligible": 22.9
+      },
+      "dense_reranked_roberta": {
+        "n_claims": 279,
+        "n_errors": 135,
+        "error_rate_pct": 48.4,
+        "high_confidence_error_pct_of_errors": 74.1,
+        "gold_evidence_missing_pct_of_defined_errors": 77.9,
+        "high_conf_error_with_gold_doc_pct_of_defined_errors": 16.3,
+        "overload_pct_of_eligible": 19.7
+      }
+    }
+  },
+  "q2_manual_categories_scifact_only": {
+    "dataset": "scifact",
+    "available_for": [
+      "scifact"
+    ],
+    "not_available_for": [
+      "scifact_open"
+    ],
+    "reason": "Full manual annotation was scoped to the primary dataset only. SciFact-Open is covered by the automatic signals above, which are proxies rather than taxonomy labels.",
+    "what_cannot_be_claimed": "Because manual taxonomy annotation was carried out on SciFact only, it CANNOT be established which manual failure category becomes dominant on SciFact-Open. The answerable question is narrower than the original Q2 wording: how do comparable AUTOMATIC failure indicators change as the candidate corpus grows roughly 100 times, and how do those shifts relate to the manually observed SciFact taxonomy. A rising gold-missing rate in particular shows that recognised annotated evidence was more often absent; it does NOT establish that the retrieved documents were topically irrelevant, since they may be relevant but non-gold, partially evidential, contradictory, or insufficient. The irrelevant_retrieval label needs document-level human judgement, which only SciFact received.",
+    "per_condition": {
+      "dense_roberta": {
+        "n_annotated": 32,
+        "counts": {
+          "irrelevant_retrieval": 5,
+          "contradictory_retrieval": 3,
+          "evidence_overload": 14,
+          "confident_wrong_prediction": 10
+        },
+        "pct": {
+          "irrelevant_retrieval": 15.6,
+          "contradictory_retrieval": 9.4,
+          "evidence_overload": 43.8,
+          "confident_wrong_prediction": 31.2
+        }
+      },
+      "dense_reranked_roberta": {
+        "n_annotated": 33,
+        "counts": {
+          "irrelevant_retrieval": 10,
+          "contradictory_retrieval": 6,
+          "evidence_overload": 11,
+          "confident_wrong_prediction": 6
+        },
+        "pct": {
+          "irrelevant_retrieval": 30.3,
+          "contradictory_retrieval": 18.2,
+          "evidence_overload": 33.3,
+          "confident_wrong_prediction": 18.2
+        }
+      }
+    },
+    "excluded_below_threshold_count": 5
+  },
+  "q3_confidence": {
+    "at_reported_k": {
+      "scifact": {
+        "no_retrieval": {
+          "accuracy_pct": 55.3,
+          "separation_correct_minus_wrong": 0.0407,
+          "auroc_confidence_detects_correct": 0.6469,
+          "global_confidence_accuracy_gap_pp": 35.7,
+          "high_confidence_error_pct_of_errors": 88.1
+        },
+        "bm25_roberta": {
+          "accuracy_pct": 56.0,
+          "separation_correct_minus_wrong": 0.068,
+          "auroc_confidence_detects_correct": 0.6531,
+          "global_confidence_accuracy_gap_pp": 27.9,
+          "high_confidence_error_pct_of_errors": 73.5
+        },
+        "dense_roberta": {
+          "accuracy_pct": 59.3,
+          "separation_correct_minus_wrong": 0.0794,
+          "auroc_confidence_detects_correct": 0.6947,
+          "global_confidence_accuracy_gap_pp": 26.0,
+          "high_confidence_error_pct_of_errors": 74.6
+        },
+        "dense_reranked_roberta": {
+          "accuracy_pct": 54.0,
+          "separation_correct_minus_wrong": 0.0514,
+          "auroc_confidence_detects_correct": 0.6061,
+          "global_confidence_accuracy_gap_pp": 33.4,
+          "high_confidence_error_pct_of_errors": 78.3
+        }
+      },
+      "scifact_open": {
+        "no_retrieval": {
+          "accuracy_pct": 62.4,
+          "separation_correct_minus_wrong": 0.0503,
+          "auroc_confidence_detects_correct": 0.642,
+          "global_confidence_accuracy_gap_pp": 28.6,
+          "high_confidence_error_pct_of_errors": 86.7
+        },
+        "bm25_roberta": {
+          "accuracy_pct": 54.1,
+          "separation_correct_minus_wrong": 0.0527,
+          "auroc_confidence_detects_correct": 0.5964,
+          "global_confidence_accuracy_gap_pp": 27.6,
+          "high_confidence_error_pct_of_errors": 68.8
+        },
+        "dense_roberta": {
+          "accuracy_pct": 56.3,
+          "separation_correct_minus_wrong": 0.0547,
+          "auroc_confidence_detects_correct": 0.6169,
+          "global_confidence_accuracy_gap_pp": 27.1,
+          "high_confidence_error_pct_of_errors": 69.7
+        },
+        "dense_reranked_roberta": {
+          "accuracy_pct": 51.6,
+          "separation_correct_minus_wrong": 0.0386,
+          "auroc_confidence_detects_correct": 0.5658,
+          "global_confidence_accuracy_gap_pp": 31.3,
+          "high_confidence_error_pct_of_errors": 74.1
+        }
+      }
+    },
+    "per_label_auroc": {
+      "scifact": {
+        "no_retrieval": {
+          "SUPPORT": 0.7081,
+          "CONTRADICT": 0.1326,
+          "NEI": 0.8303
+        },
+        "bm25_roberta": {
+          "SUPPORT": 0.7067,
+          "CONTRADICT": 0.1696,
+          "NEI": 0.8674
+        },
+        "dense_roberta": {
+          "SUPPORT": 0.7249,
+          "CONTRADICT": 0.1612,
+          "NEI": 0.9131
+        },
+        "dense_reranked_roberta": {
+          "SUPPORT": 0.3559,
+          "CONTRADICT": 0.16,
+          "NEI": 0.9354
+        }
+      },
+      "scifact_open": {
+        "no_retrieval": {
+          "SUPPORT": 0.7149,
+          "CONTRADICT": 0.3549,
+          "NEI": 0.8848
+        },
+        "bm25_roberta": {
+          "SUPPORT": 0.6804,
+          "CONTRADICT": 0.2535,
+          "NEI": 0.9067
+        },
+        "dense_roberta": {
+          "SUPPORT": 0.6275,
+          "CONTRADICT": 0.2695,
+          "NEI": 0.9258
+        },
+        "dense_reranked_roberta": {
+          "SUPPORT": 0.5386,
+          "CONTRADICT": 0.2216,
+          "NEI": 0.8955
+        }
+      }
+    },
+    "across_k": {
+      "scifact": {
+        "no_retrieval": [
+          {
+            "condition": "no_retrieval",
+            "k": 1,
+            "n": 300,
+            "accuracy_pct": 55.3,
+            "mean_confidence_all": 0.9101,
+            "mean_confidence_correct": 0.9283,
+            "mean_confidence_wrong": 0.8876,
+            "separation_correct_minus_wrong": 0.0407,
+            "auroc_confidence_detects_correct": 0.6469,
+            "global_confidence_accuracy_gap_pp": 35.7
+          },
+          {
+            "condition": "no_retrieval",
+            "k": 3,
+            "n": 300,
+            "accuracy_pct": 55.3,
+            "mean_confidence_all": 0.9101,
+            "mean_confidence_correct": 0.9283,
+            "mean_confidence_wrong": 0.8876,
+            "separation_correct_minus_wrong": 0.0407,
+            "auroc_confidence_detects_correct": 0.6469,
+            "global_confidence_accuracy_gap_pp": 35.7
+          },
+          {
+            "condition": "no_retrieval",
+            "k": 5,
+            "n": 300,
+            "accuracy_pct": 55.3,
+            "mean_confidence_all": 0.9101,
+            "mean_confidence_correct": 0.9283,
+            "mean_confidence_wrong": 0.8876,
+            "separation_correct_minus_wrong": 0.0407,
+            "auroc_confidence_detects_correct": 0.6469,
+            "global_confidence_accuracy_gap_pp": 35.7
+          },
+          {
+            "condition": "no_retrieval",
+            "k": 10,
+            "n": 300,
+            "accuracy_pct": 55.3,
+            "mean_confidence_all": 0.9101,
+            "mean_confidence_correct": 0.9283,
+            "mean_confidence_wrong": 0.8876,
+            "separation_correct_minus_wrong": 0.0407,
+            "auroc_confidence_detects_correct": 0.6469,
+            "global_confidence_accuracy_gap_pp": 35.7
+          }
+        ],
+        "bm25_roberta": [
+          {
+            "condition": "bm25_roberta",
+            "k": 1,
+            "n": 300,
+            "accuracy_pct": 62.7,
+            "mean_confidence_all": 0.8751,
+            "mean_confidence_correct": 0.9127,
+            "mean_confidence_wrong": 0.812,
+            "separation_correct_minus_wrong": 0.1007,
+            "auroc_confidence_detects_correct": 0.6864,
+            "global_confidence_accuracy_gap_pp": 24.8
+          },
+          {
+            "condition": "bm25_roberta",
+            "k": 3,
+            "n": 300,
+            "accuracy_pct": 56.0,
+            "mean_confidence_all": 0.8386,
+            "mean_confidence_correct": 0.8686,
+            "mean_confidence_wrong": 0.8006,
+            "separation_correct_minus_wrong": 0.068,
+            "auroc_confidence_detects_correct": 0.6531,
+            "global_confidence_accuracy_gap_pp": 27.9
+          },
+          {
+            "condition": "bm25_roberta",
+            "k": 5,
+            "n": 300,
+            "accuracy_pct": 52.7,
+            "mean_confidence_all": 0.8499,
+            "mean_confidence_correct": 0.8789,
+            "mean_confidence_wrong": 0.8175,
+            "separation_correct_minus_wrong": 0.0614,
+            "auroc_confidence_detects_correct": 0.6429,
+            "global_confidence_accuracy_gap_pp": 32.3
+          },
+          {
+            "condition": "bm25_roberta",
+            "k": 10,
+            "n": 300,
+            "accuracy_pct": 50.3,
+            "mean_confidence_all": 0.8339,
+            "mean_confidence_correct": 0.8643,
+            "mean_confidence_wrong": 0.8031,
+            "separation_correct_minus_wrong": 0.0612,
+            "auroc_confidence_detects_correct": 0.6282,
+            "global_confidence_accuracy_gap_pp": 33.1
+          }
+        ],
+        "dense_roberta": [
+          {
+            "condition": "dense_roberta",
+            "k": 1,
+            "n": 300,
+            "accuracy_pct": 64.0,
+            "mean_confidence_all": 0.8598,
+            "mean_confidence_correct": 0.8967,
+            "mean_confidence_wrong": 0.7943,
+            "separation_correct_minus_wrong": 0.1024,
+            "auroc_confidence_detects_correct": 0.7036,
+            "global_confidence_accuracy_gap_pp": 22.0
+          },
+          {
+            "condition": "dense_roberta",
+            "k": 3,
+            "n": 300,
+            "accuracy_pct": 59.3,
+            "mean_confidence_all": 0.8527,
+            "mean_confidence_correct": 0.885,
+            "mean_confidence_wrong": 0.8056,
+            "separation_correct_minus_wrong": 0.0794,
+            "auroc_confidence_detects_correct": 0.6947,
+            "global_confidence_accuracy_gap_pp": 26.0
+          },
+          {
+            "condition": "dense_roberta",
+            "k": 5,
+            "n": 300,
+            "accuracy_pct": 56.0,
+            "mean_confidence_all": 0.853,
+            "mean_confidence_correct": 0.8843,
+            "mean_confidence_wrong": 0.8132,
+            "separation_correct_minus_wrong": 0.0711,
+            "auroc_confidence_detects_correct": 0.6692,
+            "global_confidence_accuracy_gap_pp": 29.3
+          },
+          {
+            "condition": "dense_roberta",
+            "k": 10,
+            "n": 300,
+            "accuracy_pct": 52.7,
+            "mean_confidence_all": 0.8443,
+            "mean_confidence_correct": 0.8917,
+            "mean_confidence_wrong": 0.7915,
+            "separation_correct_minus_wrong": 0.1002,
+            "auroc_confidence_detects_correct": 0.6873,
+            "global_confidence_accuracy_gap_pp": 31.7
+          }
+        ],
+        "dense_reranked_roberta": [
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 1,
+            "n": 300,
+            "accuracy_pct": 48.0,
+            "mean_confidence_all": 0.9274,
+            "mean_confidence_correct": 0.9275,
+            "mean_confidence_wrong": 0.9272,
+            "separation_correct_minus_wrong": 0.0003,
+            "auroc_confidence_detects_correct": 0.5391,
+            "global_confidence_accuracy_gap_pp": 44.7
+          },
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 3,
+            "n": 300,
+            "accuracy_pct": 54.0,
+            "mean_confidence_all": 0.874,
+            "mean_confidence_correct": 0.8976,
+            "mean_confidence_wrong": 0.8462,
+            "separation_correct_minus_wrong": 0.0514,
+            "auroc_confidence_detects_correct": 0.6061,
+            "global_confidence_accuracy_gap_pp": 33.4
+          },
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 5,
+            "n": 300,
+            "accuracy_pct": 57.7,
+            "mean_confidence_all": 0.8624,
+            "mean_confidence_correct": 0.8807,
+            "mean_confidence_wrong": 0.8374,
+            "separation_correct_minus_wrong": 0.0433,
+            "auroc_confidence_detects_correct": 0.5982,
+            "global_confidence_accuracy_gap_pp": 28.5
+          },
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 10,
+            "n": 300,
+            "accuracy_pct": 52.0,
+            "mean_confidence_all": 0.8404,
+            "mean_confidence_correct": 0.8815,
+            "mean_confidence_wrong": 0.7958,
+            "separation_correct_minus_wrong": 0.0857,
+            "auroc_confidence_detects_correct": 0.6691,
+            "global_confidence_accuracy_gap_pp": 32.0
+          }
+        ]
+      },
+      "scifact_open": {
+        "no_retrieval": [
+          {
+            "condition": "no_retrieval",
+            "k": 1,
+            "n": 279,
+            "accuracy_pct": 62.4,
+            "mean_confidence_all": 0.9098,
+            "mean_confidence_correct": 0.9287,
+            "mean_confidence_wrong": 0.8784,
+            "separation_correct_minus_wrong": 0.0503,
+            "auroc_confidence_detects_correct": 0.642,
+            "global_confidence_accuracy_gap_pp": 28.6
+          },
+          {
+            "condition": "no_retrieval",
+            "k": 3,
+            "n": 279,
+            "accuracy_pct": 62.4,
+            "mean_confidence_all": 0.9098,
+            "mean_confidence_correct": 0.9287,
+            "mean_confidence_wrong": 0.8784,
+            "separation_correct_minus_wrong": 0.0503,
+            "auroc_confidence_detects_correct": 0.642,
+            "global_confidence_accuracy_gap_pp": 28.6
+          },
+          {
+            "condition": "no_retrieval",
+            "k": 5,
+            "n": 279,
+            "accuracy_pct": 62.4,
+            "mean_confidence_all": 0.9098,
+            "mean_confidence_correct": 0.9287,
+            "mean_confidence_wrong": 0.8784,
+            "separation_correct_minus_wrong": 0.0503,
+            "auroc_confidence_detects_correct": 0.642,
+            "global_confidence_accuracy_gap_pp": 28.6
+          },
+          {
+            "condition": "no_retrieval",
+            "k": 10,
+            "n": 279,
+            "accuracy_pct": 62.4,
+            "mean_confidence_all": 0.9098,
+            "mean_confidence_correct": 0.9287,
+            "mean_confidence_wrong": 0.8784,
+            "separation_correct_minus_wrong": 0.0503,
+            "auroc_confidence_detects_correct": 0.642,
+            "global_confidence_accuracy_gap_pp": 28.6
+          }
+        ],
+        "bm25_roberta": [
+          {
+            "condition": "bm25_roberta",
+            "k": 1,
+            "n": 279,
+            "accuracy_pct": 54.5,
+            "mean_confidence_all": 0.8594,
+            "mean_confidence_correct": 0.8693,
+            "mean_confidence_wrong": 0.8474,
+            "separation_correct_minus_wrong": 0.0219,
+            "auroc_confidence_detects_correct": 0.5411,
+            "global_confidence_accuracy_gap_pp": 31.4
+          },
+          {
+            "condition": "bm25_roberta",
+            "k": 3,
+            "n": 279,
+            "accuracy_pct": 54.1,
+            "mean_confidence_all": 0.8168,
+            "mean_confidence_correct": 0.841,
+            "mean_confidence_wrong": 0.7883,
+            "separation_correct_minus_wrong": 0.0527,
+            "auroc_confidence_detects_correct": 0.5964,
+            "global_confidence_accuracy_gap_pp": 27.6
+          },
+          {
+            "condition": "bm25_roberta",
+            "k": 5,
+            "n": 279,
+            "accuracy_pct": 54.1,
+            "mean_confidence_all": 0.8186,
+            "mean_confidence_correct": 0.8374,
+            "mean_confidence_wrong": 0.7965,
+            "separation_correct_minus_wrong": 0.0409,
+            "auroc_confidence_detects_correct": 0.5902,
+            "global_confidence_accuracy_gap_pp": 27.8
+          },
+          {
+            "condition": "bm25_roberta",
+            "k": 10,
+            "n": 279,
+            "accuracy_pct": 52.3,
+            "mean_confidence_all": 0.809,
+            "mean_confidence_correct": 0.8411,
+            "mean_confidence_wrong": 0.7738,
+            "separation_correct_minus_wrong": 0.0673,
+            "auroc_confidence_detects_correct": 0.6232,
+            "global_confidence_accuracy_gap_pp": 28.6
+          }
+        ],
+        "dense_roberta": [
+          {
+            "condition": "dense_roberta",
+            "k": 1,
+            "n": 279,
+            "accuracy_pct": 55.6,
+            "mean_confidence_all": 0.8689,
+            "mean_confidence_correct": 0.8786,
+            "mean_confidence_wrong": 0.8569,
+            "separation_correct_minus_wrong": 0.0217,
+            "auroc_confidence_detects_correct": 0.5281,
+            "global_confidence_accuracy_gap_pp": 31.3
+          },
+          {
+            "condition": "dense_roberta",
+            "k": 3,
+            "n": 279,
+            "accuracy_pct": 56.3,
+            "mean_confidence_all": 0.8342,
+            "mean_confidence_correct": 0.8581,
+            "mean_confidence_wrong": 0.8034,
+            "separation_correct_minus_wrong": 0.0547,
+            "auroc_confidence_detects_correct": 0.6169,
+            "global_confidence_accuracy_gap_pp": 27.1
+          },
+          {
+            "condition": "dense_roberta",
+            "k": 5,
+            "n": 279,
+            "accuracy_pct": 55.2,
+            "mean_confidence_all": 0.8247,
+            "mean_confidence_correct": 0.8512,
+            "mean_confidence_wrong": 0.792,
+            "separation_correct_minus_wrong": 0.0592,
+            "auroc_confidence_detects_correct": 0.6136,
+            "global_confidence_accuracy_gap_pp": 27.3
+          },
+          {
+            "condition": "dense_roberta",
+            "k": 10,
+            "n": 279,
+            "accuracy_pct": 52.7,
+            "mean_confidence_all": 0.81,
+            "mean_confidence_correct": 0.844,
+            "mean_confidence_wrong": 0.7721,
+            "separation_correct_minus_wrong": 0.0719,
+            "auroc_confidence_detects_correct": 0.6335,
+            "global_confidence_accuracy_gap_pp": 28.3
+          }
+        ],
+        "dense_reranked_roberta": [
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 1,
+            "n": 279,
+            "accuracy_pct": 43.0,
+            "mean_confidence_all": 0.9004,
+            "mean_confidence_correct": 0.8972,
+            "mean_confidence_wrong": 0.9029,
+            "separation_correct_minus_wrong": -0.0057,
+            "auroc_confidence_detects_correct": 0.4647,
+            "global_confidence_accuracy_gap_pp": 47.0
+          },
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 3,
+            "n": 279,
+            "accuracy_pct": 51.6,
+            "mean_confidence_all": 0.8294,
+            "mean_confidence_correct": 0.8481,
+            "mean_confidence_wrong": 0.8095,
+            "separation_correct_minus_wrong": 0.0386,
+            "auroc_confidence_detects_correct": 0.5658,
+            "global_confidence_accuracy_gap_pp": 31.3
+          },
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 5,
+            "n": 279,
+            "accuracy_pct": 53.0,
+            "mean_confidence_all": 0.8181,
+            "mean_confidence_correct": 0.8335,
+            "mean_confidence_wrong": 0.8007,
+            "separation_correct_minus_wrong": 0.0328,
+            "auroc_confidence_detects_correct": 0.5689,
+            "global_confidence_accuracy_gap_pp": 28.8
+          },
+          {
+            "condition": "dense_reranked_roberta",
+            "k": 10,
+            "n": 279,
+            "accuracy_pct": 54.8,
+            "mean_confidence_all": 0.8124,
+            "mean_confidence_correct": 0.8359,
+            "mean_confidence_wrong": 0.7839,
+            "separation_correct_minus_wrong": 0.052,
+            "auroc_confidence_detects_correct": 0.606,
+            "global_confidence_accuracy_gap_pp": 26.4
+          }
+        ]
+      }
+    }
+  },
+  "q3_summary": {
+    "auroc_change_by_condition": {
+      "no_retrieval": {
+        "scifact": 0.6469,
+        "scifact_open": 0.642,
+        "change": -0.0049
+      },
+      "bm25_roberta": {
+        "scifact": 0.6531,
+        "scifact_open": 0.5964,
+        "change": -0.0567
+      },
+      "dense_roberta": {
+        "scifact": 0.6947,
+        "scifact_open": 0.6169,
+        "change": -0.0778
+      },
+      "dense_reranked_roberta": {
+        "scifact": 0.6061,
+        "scifact_open": 0.5658,
+        "change": -0.0403
+      }
+    },
+    "per_label_discrimination": {
+      "SUPPORT": {
+        "scifact": {
+          "min_auroc": 0.3559,
+          "max_auroc": 0.7249,
+          "all_below_chance": false,
+          "n_conditions": 4,
+          "all_expected_conditions_present": true
+        },
+        "scifact_open": {
+          "min_auroc": 0.5386,
+          "max_auroc": 0.7149,
+          "all_below_chance": false,
+          "n_conditions": 4,
+          "all_expected_conditions_present": true
+        },
+        "inverted_on_both_corpora": false
+      },
+      "CONTRADICT": {
+        "scifact": {
+          "min_auroc": 0.1326,
+          "max_auroc": 0.1696,
+          "all_below_chance": true,
+          "n_conditions": 4,
+          "all_expected_conditions_present": true
+        },
+        "scifact_open": {
+          "min_auroc": 0.2216,
+          "max_auroc": 0.3549,
+          "all_below_chance": true,
+          "n_conditions": 4,
+          "all_expected_conditions_present": true
+        },
+        "inverted_on_both_corpora": true
+      },
+      "NEI": {
+        "scifact": {
+          "min_auroc": 0.8303,
+          "max_auroc": 0.9354,
+          "all_below_chance": false,
+          "n_conditions": 4,
+          "all_expected_conditions_present": true
+        },
+        "scifact_open": {
+          "min_auroc": 0.8848,
+          "max_auroc": 0.9258,
+          "all_below_chance": false,
+          "n_conditions": 4,
+          "all_expected_conditions_present": true
+        },
+        "inverted_on_both_corpora": false
+      }
+    },
+    "overload_response": {
+      "scifact": {
+        "bm25_roberta": {
+          "k_low": 1,
+          "k_high": 10,
+          "accuracy_change_pp": -12.4,
+          "mean_confidence_change_pp": -4.12,
+          "confidence_accuracy_gap_change_pp": 8.3,
+          "confidence_response": "aggregate_confidence_did_not_track_the_decline"
+        },
+        "dense_roberta": {
+          "k_low": 1,
+          "k_high": 10,
+          "accuracy_change_pp": -11.3,
+          "mean_confidence_change_pp": -1.55,
+          "confidence_accuracy_gap_change_pp": 9.7,
+          "confidence_response": "aggregate_confidence_did_not_track_the_decline"
+        },
+        "dense_reranked_roberta": {
+          "k_low": 1,
+          "k_high": 10,
+          "accuracy_change_pp": 4.0,
+          "mean_confidence_change_pp": -8.7,
+          "confidence_accuracy_gap_change_pp": -12.7,
+          "confidence_response": "accuracy_improved_so_no_degradation_to_track"
+        }
+      },
+      "scifact_open": {
+        "bm25_roberta": {
+          "k_low": 1,
+          "k_high": 10,
+          "accuracy_change_pp": -2.2,
+          "mean_confidence_change_pp": -5.04,
+          "confidence_accuracy_gap_change_pp": -2.8,
+          "confidence_response": "aggregate_confidence_tracked_the_decline"
+        },
+        "dense_roberta": {
+          "k_low": 1,
+          "k_high": 10,
+          "accuracy_change_pp": -2.9,
+          "mean_confidence_change_pp": -5.89,
+          "confidence_accuracy_gap_change_pp": -3.0,
+          "confidence_response": "aggregate_confidence_tracked_the_decline"
+        },
+        "dense_reranked_roberta": {
+          "k_low": 1,
+          "k_high": 10,
+          "accuracy_change_pp": 11.8,
+          "mean_confidence_change_pp": -8.8,
+          "confidence_accuracy_gap_change_pp": -20.6,
+          "confidence_response": "accuracy_improved_so_no_degradation_to_track"
+        }
+      }
+    }
+  },
+  "retrieval_worth_it": {
+    "scifact": {
+      "best_retrieval_condition_across_k": "dense_roberta",
+      "best_margin_over_no_retrieval_f1_across_k": 0.0684,
+      "best_retrieval_condition_status": "outperforms_baseline",
+      "retrieval_beats_no_retrieval_on_f1_across_k": true,
+      "accuracy_no_retrieval_at_reported_k_pct": 55.3,
+      "best_retrieval_accuracy_at_reported_k_pct": 59.3,
+      "retrieval_beats_no_retrieval_on_accuracy_at_reported_k": true
+    },
+    "scifact_open": {
+      "best_retrieval_condition_across_k": "dense_roberta",
+      "best_margin_over_no_retrieval_f1_across_k": -0.0659,
+      "best_retrieval_condition_status": "least_harmful_but_still_below_baseline",
+      "retrieval_beats_no_retrieval_on_f1_across_k": false,
+      "accuracy_no_retrieval_at_reported_k_pct": 62.4,
+      "best_retrieval_accuracy_at_reported_k_pct": 56.3,
+      "retrieval_beats_no_retrieval_on_accuracy_at_reported_k": false
+    }
+  },
+  "note": "All analyses use records intended to derive from seed 42. Where a source file carries records_seed metadata that value was checked (seed_verified_sources); older files without the field are listed under seed_unverified_sources, so their provenance is externally supplied rather than verified from the JSON. Cross-corpus differences were not tested across multiple training seeds. Step 3 retrieval recall is deliberately excluded from these tables: on SciFact it is cited-document recall over all 300 claims, on SciFact-Open it is evidence recall over the 206 evidenced claims, so the two are not the same measurement. The Q2 layers are kept separate because the automatic signals are proxies, not taxonomy labels, and only SciFact carries manual category labels. The comparison therefore describes the seed-42 run and does not establish stability across training seeds."
+}

@@ -1,0 +1,9 @@
+dataset,condition,accuracy_pct,separation_correct_minus_wrong,auroc_confidence_detects_correct,global_confidence_accuracy_gap_pp,high_confidence_error_pct_of_errors
+scifact,no_retrieval,55.3,0.0407,0.6469,35.7,88.1
+scifact,bm25_roberta,56.0,0.068,0.6531,27.9,73.5
+scifact,dense_roberta,59.3,0.0794,0.6947,26.0,74.6
+scifact,dense_reranked_roberta,54.0,0.0514,0.6061,33.4,78.3
+scifact_open,no_retrieval,62.4,0.0503,0.642,28.6,86.7
+scifact_open,bm25_roberta,54.1,0.0527,0.5964,27.6,68.8
+scifact_open,dense_roberta,56.3,0.0547,0.6169,27.1,69.7
+scifact_open,dense_reranked_roberta,51.6,0.0386,0.5658,31.3,74.1

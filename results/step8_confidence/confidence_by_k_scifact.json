@@ -1,0 +1,221 @@
+{
+  "dataset": "scifact",
+  "records_seed": 42,
+  "per_condition": {
+    "no_retrieval": [
+      {
+        "condition": "no_retrieval",
+        "k": 1,
+        "n": 300,
+        "accuracy_pct": 55.3,
+        "mean_confidence_all": 0.9101,
+        "mean_confidence_correct": 0.9283,
+        "mean_confidence_wrong": 0.8876,
+        "separation_correct_minus_wrong": 0.0407,
+        "auroc_confidence_detects_correct": 0.6469,
+        "global_confidence_accuracy_gap_pp": 35.7
+      },
+      {
+        "condition": "no_retrieval",
+        "k": 3,
+        "n": 300,
+        "accuracy_pct": 55.3,
+        "mean_confidence_all": 0.9101,
+        "mean_confidence_correct": 0.9283,
+        "mean_confidence_wrong": 0.8876,
+        "separation_correct_minus_wrong": 0.0407,
+        "auroc_confidence_detects_correct": 0.6469,
+        "global_confidence_accuracy_gap_pp": 35.7
+      },
+      {
+        "condition": "no_retrieval",
+        "k": 5,
+        "n": 300,
+        "accuracy_pct": 55.3,
+        "mean_confidence_all": 0.9101,
+        "mean_confidence_correct": 0.9283,
+        "mean_confidence_wrong": 0.8876,
+        "separation_correct_minus_wrong": 0.0407,
+        "auroc_confidence_detects_correct": 0.6469,
+        "global_confidence_accuracy_gap_pp": 35.7
+      },
+      {
+        "condition": "no_retrieval",
+        "k": 10,
+        "n": 300,
+        "accuracy_pct": 55.3,
+        "mean_confidence_all": 0.9101,
+        "mean_confidence_correct": 0.9283,
+        "mean_confidence_wrong": 0.8876,
+        "separation_correct_minus_wrong": 0.0407,
+        "auroc_confidence_detects_correct": 0.6469,
+        "global_confidence_accuracy_gap_pp": 35.7
+      }
+    ],
+    "bm25_roberta": [
+      {
+        "condition": "bm25_roberta",
+        "k": 1,
+        "n": 300,
+        "accuracy_pct": 62.7,
+        "mean_confidence_all": 0.8751,
+        "mean_confidence_correct": 0.9127,
+        "mean_confidence_wrong": 0.812,
+        "separation_correct_minus_wrong": 0.1007,
+        "auroc_confidence_detects_correct": 0.6864,
+        "global_confidence_accuracy_gap_pp": 24.8
+      },
+      {
+        "condition": "bm25_roberta",
+        "k": 3,
+        "n": 300,
+        "accuracy_pct": 56.0,
+        "mean_confidence_all": 0.8386,
+        "mean_confidence_correct": 0.8686,
+        "mean_confidence_wrong": 0.8006,
+        "separation_correct_minus_wrong": 0.068,
+        "auroc_confidence_detects_correct": 0.6531,
+        "global_confidence_accuracy_gap_pp": 27.9
+      },
+      {
+        "condition": "bm25_roberta",
+        "k": 5,
+        "n": 300,
+        "accuracy_pct": 52.7,
+        "mean_confidence_all": 0.8499,
+        "mean_confidence_correct": 0.8789,
+        "mean_confidence_wrong": 0.8175,
+        "separation_correct_minus_wrong": 0.0614,
+        "auroc_confidence_detects_correct": 0.6429,
+        "global_confidence_accuracy_gap_pp": 32.3
+      },
+      {
+        "condition": "bm25_roberta",
+        "k": 10,
+        "n": 300,
+        "accuracy_pct": 50.3,
+        "mean_confidence_all": 0.8339,
+        "mean_confidence_correct": 0.8643,
+        "mean_confidence_wrong": 0.8031,
+        "separation_correct_minus_wrong": 0.0612,
+        "auroc_confidence_detects_correct": 0.6282,
+        "global_confidence_accuracy_gap_pp": 33.1
+      }
+    ],
+    "dense_roberta": [
+      {
+        "condition": "dense_roberta",
+        "k": 1,
+        "n": 300,
+        "accuracy_pct": 64.0,
+        "mean_confidence_all": 0.8598,
+        "mean_confidence_correct": 0.8967,
+        "mean_confidence_wrong": 0.7943,
+        "separation_correct_minus_wrong": 0.1024,
+        "auroc_confidence_detects_correct": 0.7036,
+        "global_confidence_accuracy_gap_pp": 22.0
+      },
+      {
+        "condition": "dense_roberta",
+        "k": 3,
+        "n": 300,
+        "accuracy_pct": 59.3,
+        "mean_confidence_all": 0.8527,
+        "mean_confidence_correct": 0.885,
+        "mean_confidence_wrong": 0.8056,
+        "separation_correct_minus_wrong": 0.0794,
+        "auroc_confidence_detects_correct": 0.6947,
+        "global_confidence_accuracy_gap_pp": 26.0
+      },
+      {
+        "condition": "dense_roberta",
+        "k": 5,
+        "n": 300,
+        "accuracy_pct": 56.0,
+        "mean_confidence_all": 0.853,
+        "mean_confidence_correct": 0.8843,
+        "mean_confidence_wrong": 0.8132,
+        "separation_correct_minus_wrong": 0.0711,
+        "auroc_confidence_detects_correct": 0.6692,
+        "global_confidence_accuracy_gap_pp": 29.3
+      },
+      {
+        "condition": "dense_roberta",
+        "k": 10,
+        "n": 300,
+        "accuracy_pct": 52.7,
+        "mean_confidence_all": 0.8443,
+        "mean_confidence_correct": 0.8917,
+        "mean_confidence_wrong": 0.7915,
+        "separation_correct_minus_wrong": 0.1002,
+        "auroc_confidence_detects_correct": 0.6873,
+        "global_confidence_accuracy_gap_pp": 31.7
+      }
+    ],
+    "dense_reranked_roberta": [
+      {
+        "condition": "dense_reranked_roberta",
+        "k": 1,
+        "n": 300,
+        "accuracy_pct": 48.0,
+        "mean_confidence_all": 0.9274,
+        "mean_confidence_correct": 0.9275,
+        "mean_confidence_wrong": 0.9272,
+        "separation_correct_minus_wrong": 0.0003,
+        "auroc_confidence_detects_correct": 0.5391,
+        "global_confidence_accuracy_gap_pp": 44.7
+      },
+      {
+        "condition": "dense_reranked_roberta",
+        "k": 3,
+        "n": 300,
+        "accuracy_pct": 54.0,
+        "mean_confidence_all": 0.874,
+        "mean_confidence_correct": 0.8976,
+        "mean_confidence_wrong": 0.8462,
+        "separation_correct_minus_wrong": 0.0514,
+        "auroc_confidence_detects_correct": 0.6061,
+        "global_confidence_accuracy_gap_pp": 33.4
+      },
+      {
+        "condition": "dense_reranked_roberta",
+        "k": 5,
+        "n": 300,
+        "accuracy_pct": 57.7,
+        "mean_confidence_all": 0.8624,
+        "mean_confidence_correct": 0.8807,
+        "mean_confidence_wrong": 0.8374,
+        "separation_correct_minus_wrong": 0.0433,
+        "auroc_confidence_detects_correct": 0.5982,
+        "global_confidence_accuracy_gap_pp": 28.5
+      },
+      {
+        "condition": "dense_reranked_roberta",
+        "k": 10,
+        "n": 300,
+        "accuracy_pct": 52.0,
+        "mean_confidence_all": 0.8404,
+        "mean_confidence_correct": 0.8815,
+        "mean_confidence_wrong": 0.7958,
+        "separation_correct_minus_wrong": 0.0857,
+        "auroc_confidence_detects_correct": 0.6691,
+        "global_confidence_accuracy_gap_pp": 32.0
+      }
+    ]
+  },
+  "k_values_requested": [
+    1,
+    3,
+    5,
+    10
+  ],
+  "k_values_analysed": [
+    1,
+    3,
+    5,
+    10
+  ],
+  "k_values_missing": [],
+  "note": "Read the accuracy, mean-confidence, separation and AUROC columns together, and do not reduce the interpretation to the two aggregate columns. Several patterns are possible and each means something different: accuracy falling while mean confidence stays flat means the model does not register the degradation; accuracy and confidence falling together means it partly does; a falling AUROC with flat mean confidence means the correct and wrong distributions are converging, so confidence is becoming a worse error signal regardless of its average. The no_retrieval condition uses no documents, so it is identical at every k by construction and acts as the flat control.",
+  "seed_note": "Seed-42 records (the Step 6 matrix is seed 42, per step6_results.md); not verified across training seeds."
+}

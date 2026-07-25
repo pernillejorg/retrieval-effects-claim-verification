@@ -1,0 +1,9 @@
+dataset,k,dense_macro_f1,reranked_macro_f1,reranked_minus_dense,reranking_helped
+scifact,1,0.5947,0.3852,-0.2096,False
+scifact,3,0.5583,0.4879,-0.0704,False
+scifact,5,0.5179,0.5389,0.021,True
+scifact,10,0.4828,0.4824,-0.0004,False
+scifact_open,1,0.5429,0.4102,-0.1327,False
+scifact_open,3,0.556,0.5075,-0.0484,False
+scifact_open,5,0.5454,0.5238,-0.0217,False
+scifact_open,10,0.52,0.5406,0.0206,True

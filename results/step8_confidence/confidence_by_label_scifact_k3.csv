@@ -1,0 +1,13 @@
+condition,true_label,n,n_correct,accuracy_pct,accuracy_ci95_low_pct,accuracy_ci95_high_pct,mean_confidence_all,mean_confidence_correct,mean_confidence_wrong,auroc_confidence_detects_correct
+no_retrieval,SUPPORT,124,72,58.1,49.3,66.4,0.9117,0.9354,0.879,0.7081
+no_retrieval,CONTRADICT,64,23,35.9,25.3,48.2,0.8892,0.8008,0.9389,0.1326
+no_retrieval,NEI,112,71,63.4,54.2,71.7,0.9203,0.9624,0.8474,0.8303
+bm25_roberta,SUPPORT,124,99,79.8,71.9,86.0,0.844,0.8711,0.7365,0.7067
+bm25_roberta,CONTRADICT,64,19,29.7,19.9,41.8,0.7709,0.6467,0.8233,0.1696
+bm25_roberta,NEI,112,50,44.6,35.8,53.9,0.8715,0.9478,0.8099,0.8674
+dense_roberta,SUPPORT,124,95,76.6,68.4,83.2,0.8526,0.8847,0.7472,0.7249
+dense_roberta,CONTRADICT,64,23,35.9,25.3,48.2,0.771,0.6571,0.835,0.1612
+dense_roberta,NEI,112,60,53.6,44.4,62.5,0.8995,0.9728,0.8149,0.9131
+dense_reranked_roberta,SUPPORT,124,78,62.9,54.1,70.9,0.8759,0.8729,0.8809,0.3559
+dense_reranked_roberta,CONTRADICT,64,14,21.9,13.5,33.4,0.8235,0.6685,0.8669,0.16
+dense_reranked_roberta,NEI,112,70,62.5,53.3,70.9,0.9007,0.9709,0.7837,0.9354
