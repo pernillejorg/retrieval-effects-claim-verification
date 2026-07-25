@@ -355,7 +355,9 @@ def collect_manual_categories(failure_dir, verified, unverified):
     path = os.path.join(failure_dir, "analysis_scifact.json")
     analysis = read_json(path, "Step 7 manual annotation analysis for SciFact")
     verify_seed(analysis, "Step 7 manual analysis scifact", verified, unverified)
-    breakdown = analysis.get("per_condition_manual_breakdown", {})
+    breakdown = analysis.get("per_condition_manual_breakdown")
+    if not isinstance(breakdown, dict):
+        raise KeyError(f"{path} is missing the per_condition_manual_breakdown object.")
     return {
         "dataset": "scifact",
         "available_for": ["scifact"],
@@ -439,6 +441,14 @@ def collect_confidence(confidence_dir, verified, unverified):
             raise KeyError(f"{sweep_path} is missing the per_condition object.")
         #confirming each retrieval condition covers exactly the expected depths, so a cross-k
         #trend cannot be drawn from a condition that is missing a depth
+        #confirming the sweep contains exactly the expected conditions, so a missing one cannot
+        #slip through the depth check below just because it was never iterated
+        miss = set(CONDITIONS) - set(sweep_block)
+        extra = set(sweep_block) - set(CONDITIONS)
+        if miss:
+            raise KeyError(f"{sweep_path} is missing expected conditions: {sorted(miss)}")
+        if extra:
+            raise KeyError(f"{sweep_path} contains unexpected conditions: {sorted(extra)}")
         expected_k = set(MATRIX_K_VALUES)
         for cond, rows in sweep_block.items():
             if cond == "no_retrieval":
