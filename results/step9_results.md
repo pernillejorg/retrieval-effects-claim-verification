@@ -121,11 +121,11 @@ counterproductive-retrieval result means the case study should report the no-ret
 ## Reproduction
 
 ```bash
-# close the symmetry gap: automatic signals for SciFact (SciFact-Open already had them)
+#closing the symmetry gap: automatic signals for SciFact (SciFact-Open already had them)
 python analysis/failure_taxonomy.py --mode rates --dataset scifact --k 3 \
   --records_dir results/step6_matrix --out_dir results/step7_failure
 
-# assemble the cross-corpus comparison from the saved Step 6, 7 and 8 results
+#assembling the cross-corpus comparison from the saved Step 6, 7 and 8 results
 python analysis/cross_corpus.py \
   --matrix_dir results/step6_matrix \
   --failure_dir results/step7_failure \

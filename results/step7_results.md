@@ -189,19 +189,19 @@ the kind of conditional and negative findings a failure-focused study is meant t
 ## Reproduction
 
 ```bash
-# export the balanced 70-error sample (seed 42, k=3)
+#exporting the balanced 70-error sample (seed 42, k=3)
 python analysis/failure_taxonomy.py --mode export --dataset scifact --k 3 \
   --records_dir results/step6_matrix --out_dir results/step7_failure --max_errors 70
 
-# automatic diagnostic signals on SciFact-Open (no manual annotation)
+#automatic diagnostic signals on SciFact-Open (no manual annotation)
 python analysis/failure_taxonomy.py --mode rates --dataset scifact_open --k 3 \
   --records_dir results/step6_matrix --out_dir results/step7_failure
 
-# after filling primary_category, analyse (validates first, then breaks down per condition)
+#after filling primary_category, analyse (validates first, then breaks down per condition)
 python analysis/failure_taxonomy.py --mode analyse --dataset scifact \
   --out_dir results/step7_failure
 
-# optional reliability check, once a blind second pass exists:
+#extra option reliability check, once a blind second pass exists:
 python analysis/failure_taxonomy.py --mode kappa --dataset scifact \
   --first_csv  results/step7_failure/annotation_scifact.csv \
   --second_csv results/step7_failure/annotation_scifact_pass2.csv \
