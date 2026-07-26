@@ -179,6 +179,8 @@ Two filter thresholds are tested: loose and strict.
 
 The retrieved evidence is integrated into the verification model. Four pipeline variants are compared: no retrieval, BM25 + RoBERTa, Dense + RoBERTa, and Dense + stance reranking + RoBERTa. This is where the effect of retrieved evidence on final verification is measured end to end.
 
+An initial version used naive concatenation, which revealed that retrieval depth stopped mattering above roughly two documents because the context window saturated. That saturation was itself a finding, and it was addressed with per-document token budgeting so that k genuinely varies the evidence the model sees. The pipeline was also run across three seeds (42, 123, 7) to give the pipeline numbers a variance band rather than a single run.
+
 ### Step 6: Controlled Experimental Matrix
 
 The pipeline variants are run under systematically varied retrieval depth:
@@ -200,7 +202,7 @@ Four failure categories, defined before running experiments:
 3. Evidence overload: too many documents confuse or dilute the model
 4. Confident wrong prediction: model is wrong despite having reasonably relevant evidence
 
-50 to 75 errors from SciFact are manually labelled into these categories as the primary failure analysis. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The analysis examines which retrieval conditions produce which failure types, and whether stance reranking affects the first two categories in particular.
+70 errors from SciFact (35 each from the dense and dense-plus-rerank conditions) are manually labelled into these categories as the primary failure analysis, with a second blind annotation pass giving an intra-annotator agreement of Cohen's kappa 0.914. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The analysis examines which retrieval conditions produce which failure types, and whether stance reranking affects the first two categories in particular.
 
 ### Step 8: Retrieval-Aware Confidence Scoring
 
@@ -208,7 +210,7 @@ RoBERTa outputs a softmax probability distribution, and the highest probability 
 
 ### Step 9: Cross-Dataset Comparison
 
-Once results are in for both datasets, the key questions are: does the behaviour of each component hold on both corpora, do the dominant failure categories shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. Either consistent behaviour or corpus-dependent divergence is a valid and interesting outcome.
+Once results are in for both datasets, the key questions are: does reranking help consistently as retrieval difficulty scales, do the failure indicators shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. The main finding is that on the large corpus no retrieval configuration beats the no-retrieval baseline, so retrieval becomes counterproductive at scale rather than merely harder, and the confidence inversion on refutation claims holds on both corpora. Framing is retrieval-difficulty generalisation; domain generalisation is handled by Step 10.
 
 ### Step 10: Real-World Application
 
@@ -231,13 +233,14 @@ Once results are in for both datasets, the key questions are: does the behaviour
  
   | | MAPLE | Stammbach & Neumann (2019) | This project |
   |---|---|---|---|
-  | Datasets | SciFact only | Health claims only | SciFact + SciClaimHunt |
+  | Datasets | SciFact only | Health claims only | SciFact + SciFact-Open |
   | Retrieval analysis | Performance drop noted | Not systematic | Controlled matrix: k, method, threshold |
   | Stance-aware retrieval | Not done | NLI filtering for health claims | NLI filtering for scientific claims + full evaluation |
   | Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
   | Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
   | Cross-dataset | Not possible | Not possible | Core findings compared across both |
   | Real-world domain | Not done | Not done | Seafood/sustainability social media claims |
+  | Retrieval value at scale | Not studied | Not studied | Shown counterproductive on the large corpus |
  
   ---
  
