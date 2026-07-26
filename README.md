@@ -69,35 +69,71 @@ A key component under investigation is a stance-aware reranking step: after stan
  
   ---
  
-  ##Final Project Structure
-  ```
+## Final Project Structure
+
+```
 rag-claim-verification/
-├── data/                        #dataset loading and preprocessing
-│   ├── README.md                #dataset setup and loading instructions
-│   ├── scifact/                 #SciFact (primary dataset, trained)
-│   └── scifact_open/            #SciFact-Open (secondary dataset, zero-shot)
+├── data/                           #dataset loading and preprocessing
+│   ├── README.md                   #dataset setup and loading instructions
+│   ├── utils.py                    #load_scifact / load_scifact_open loaders
+│   ├── scifact/                    #SciFact (primary dataset, trained)
+│   └── scifact_open/               #SciFact-Open (secondary dataset, zero-shot)
 ├── models/
-│   ├── baseline.py              #RoBERTa classifiers (claim-only + claim+evidence)
-│   ├── retrieval.py             #BM25 + dense (mpnet) retrieval
-│   ├── reranker.py              #stance-aware reranking via NLI
-│   └── pipeline.py              #full RAG pipeline (also used for the k-sweep)
+│   ├── baseline.py                 #RoBERTa classifiers (claim-only + claim+evidence)
+│   ├── retrieval.py                #BM25 + dense (mpnet) retrieval
+│   ├── reranker.py                 #stance-aware reranking via NLI
+│   ├── pipeline.py                 #full RAG pipeline (also used for the Step 6 k-sweep)
+│   └── pipeline1.py                #earlier pipeline variant (retained)
 ├── analysis/
-│   ├── failure_taxonomy.py      #failure category annotation and analysis
-│   ├── confidence.py            #retrieval-aware confidence scoring
-│   └── cross_dataset.py         #cross-dataset comparison
-├── realworld/
-│   └── seafood_claims.py        #real-world seafood/sustainability case study
-├── results/                     #result write-ups, output tables and figures
+│   ├── annotation_guide.md         #failure category annotation rules
+│   ├── tools/                      #annotation and analysis helper scripts
+│   ├── failure_taxonomy.py         #failure category annotation and automatic signals
+│   ├── confidence_analysis.py      #retrieval-aware confidence scoring
+│   └── cross_corpus.py             #cross-dataset (SciFact vs SciFact-Open) comparison
+├── notebooks/                      #Colab notebooks, one per step
+│   ├── README.md                   #maps each Step 2 notebook to its role
+│   ├── step2/
+│   │   ├── Step2_reported_baseline.ipynb
+│   │   ├── Step2_variance_study.ipynb
+│   │   ├── additional_checks/
+│   │   │   └── Step2_variance_evidence_model.ipynb
+│   │   └── earlier_versions/
+│   │       ├── Step2_stage1_raw_450rows.ipynb
+│   │       ├── Step2_stage2_deduplicated_model1.ipynb
+│   │       └── Step2_stage2_deduplicated_with_evidence.ipynb
+│   ├── Step3_retrieval_Mini.ipynb
+│   ├── Step3_retrieval_mpnet.ipynb
+│   ├── Step4_reranker.ipynb
+│   ├── Step5_pipeline_multipleseeds.ipynb
+│   ├── Step5_pipeline.ipynb
+│   ├── Step6_experiments.ipynb
+│   ├── Step7_FailureTaxonomy.ipynb
+│   ├── Step8_ConfidenceScoring.ipynb
+│   └── Step9_CrossCorpus.ipynb
+├── realworld/                      #Step 10 real-world case study (in progress)
+│   └── seafood_claims.py           #seafood/sustainability social-media claims
+├── results/                        #result write-ups and output tables
+│   ├── step2_baseline/             #Step 2 output JSONs
+│   ├── step3_retrieval/            #Step 3 recall JSONs
+│   ├── step4_reranker/             #Step 4 output tables
+│   ├── step5_pipeline/             #Step 5 pipeline records
+│   ├── step6_matrix/               #Step 6 k-sweep matrix and records
+│   ├── step7_failure/              #annotations, rates, analysis JSONs
+│   ├── step8_confidence/           #confidence JSONs and CSV tables
+│   ├── step9_comparison/           #cross-corpus comparison JSON and CSVs
 │   ├── step1_results.md
 │   ├── step2_results.md
 │   ├── step3_results.md
 │   ├── step4_results.md
 │   ├── step5_results.md
-│   └── step6_results.md
-├── notebooks/                   #Colab notebooks (training, pipeline, k-sweep)
-├── requirements.txt
-└── README.md
-  ```
+│   ├── step6_results.md
+│   ├── step7_results.md
+│   ├── step8_results.md
+│   └── step9_results.md
+├── .gitignore
+├── README.md
+└── requirements.txt
+```
   ---
  
   ## Methodology
