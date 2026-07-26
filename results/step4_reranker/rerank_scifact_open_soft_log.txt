@@ -1,0 +1,54 @@
+
+============================================================
+  Stance-Aware Reranking Evaluation -- SCIFACT_OPEN
+============================================================
+
+Using device: cuda
+
+[load_scifact_open] 279 claims loaded (15 had conflicting SUPPORT/CONTRADICT evidence, resolved to SUPPORT).
+Validation claims : 279
+Corpus size       : 500000 documents
+
+Claims with evidence (non-NEI): 206
+NEI claims (excluded from Recall@k): 73
+
+--- Loading saved dense retrieval candidates from Step 3 ---
+Loaded candidates for 279 claims.
+
+
+--- Stance-Aware Reranking ---
+Loading stance reranker: cross-encoder/nli-deberta-v3-small
+Using device: cuda
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 5312.23it/s]
+Model label order: {0: 'contradiction', 1: 'entailment', 2: 'neutral'}
+Stance reranker loaded successfully.
+
+Applying loose threshold (neutral <= 0.5)...
+  Reranking claim 1 / 279...
+  Reranking claim 101 / 279...
+  Reranking claim 201 / 279...
+
+Applying strict threshold (neutral <= 0.8)...
+  Reranking claim 1 / 279...
+  Reranking claim 101 / 279...
+  Reranking claim 201 / 279...
+
+============================================================
+  Reranking Recall@k -- SCIFACT_OPEN -- MODE: SOFT
+============================================================
+
+  Method                                 R@1    R@5   R@10
+  -------------------------------------------------------
+  Dense (before reranking)             0.408  0.699  0.752
+  Dense + stance rerank soft (loose)   0.126  0.490  0.752
+  Dense + stance rerank soft (strict)  0.126  0.490  0.752
+============================================================
+
+  Avg docs retrieved            : 10.0
+  Avg docs would filter loose   : 9.1
+  Avg docs would filter strict  : 8.8
+  Avg docs SURVIVING loose (soft): 10.0
+  Avg docs SURVIVING strict (soft): 10.0
+
+Reranking results saved to /content/rag-claim-verification/models/../results/reranking_mpnet_soft_scifact_open.json
+Reranked candidates saved to /content/rag-claim-verification/models/../results/reranked_candidates_mpnet_soft_scifact_open.json

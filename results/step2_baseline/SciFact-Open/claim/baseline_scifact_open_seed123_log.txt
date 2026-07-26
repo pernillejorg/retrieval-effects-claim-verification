@@ -1,0 +1,23 @@
+Using device: cuda
+
+Loading SciFact-trained baseline from: /content/rag-claim-verification/models/saved_models/baseline_scifact_seed123
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 4647.90it/s]
+[load_scifact_open] 279 claims loaded (15 had conflicting SUPPORT/CONTRADICT evidence, resolved to SUPPORT).
+SciFact-Open claims: 279
+Label distribution: {'CONTRADICT': 90, 'NEI': 73, 'SUPPORT': 116}
+
+SciFact-Open zero-shot classification report (SciFact-trained baseline):
+              precision    recall  f1-score   support
+
+     SUPPORT       0.58      0.47      0.52       116
+  CONTRADICT       0.52      0.53      0.52        90
+         NEI       0.63      0.78      0.70        73
+
+    accuracy                           0.57       279
+   macro avg       0.57      0.60      0.58       279
+weighted avg       0.57      0.57      0.57       279
+
+SciFact-Open macro F1     : 0.5803
+SciFact-Open precision    : 0.5738
+SciFact-Open recall       : 0.5961
+Results saved to results/baseline_scifact_open_seed123.json

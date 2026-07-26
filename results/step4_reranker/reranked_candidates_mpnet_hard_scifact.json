@@ -1,0 +1,5261 @@
+{
+  "dataset": "scifact",
+  "mode": "hard",
+  "loose": {
+    "1": [
+      {
+        "doc_id": "2121272",
+        "stance_score": 0.9766392111778259,
+        "entailment_score": 0.0005581721779890358,
+        "contradiction_score": 0.9766392111778259,
+        "neutral_score": 0.022802645340561867,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "3": [
+      {
+        "doc_id": "1544804",
+        "stance_score": 0.6686344742774963,
+        "entailment_score": 0.6686344742774963,
+        "contradiction_score": 0.005686718504875898,
+        "neutral_score": 0.3256787657737732,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "5": [],
+    "13": [
+      {
+        "doc_id": "70455704",
+        "stance_score": 0.8236744403839111,
+        "entailment_score": 0.8236744403839111,
+        "contradiction_score": 0.0029806725215166807,
+        "neutral_score": 0.17334485054016113,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "36": [
+      {
+        "doc_id": "18256197",
+        "stance_score": 0.43178701400756836,
+        "entailment_score": 0.43178701400756836,
+        "contradiction_score": 0.17116907238960266,
+        "neutral_score": 0.3970438838005066,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "42": [],
+    "48": [
+      {
+        "doc_id": "11349166",
+        "stance_score": 0.9702274799346924,
+        "entailment_score": 0.0013673027278855443,
+        "contradiction_score": 0.9702274799346924,
+        "neutral_score": 0.028405210003256798,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "49": [],
+    "50": [],
+    "51": [],
+    "53": [
+      {
+        "doc_id": "4418878",
+        "stance_score": 0.7667006850242615,
+        "entailment_score": 0.7667006850242615,
+        "contradiction_score": 0.0001768559159245342,
+        "neutral_score": 0.23312242329120636,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "54": [],
+    "56": [
+      {
+        "doc_id": "4709641",
+        "stance_score": 0.8465031385421753,
+        "entailment_score": 0.024643773213028908,
+        "contradiction_score": 0.8465031385421753,
+        "neutral_score": 0.12885311245918274,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4459491",
+        "stance_score": 0.7825466990470886,
+        "entailment_score": 0.002243152353912592,
+        "contradiction_score": 0.7825466990470886,
+        "neutral_score": 0.21521009504795074,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "57": [
+      {
+        "doc_id": "4709641",
+        "stance_score": 0.8558413982391357,
+        "entailment_score": 0.024387463927268982,
+        "contradiction_score": 0.8558413982391357,
+        "neutral_score": 0.11977113038301468,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4459491",
+        "stance_score": 0.801483690738678,
+        "entailment_score": 0.0019829042721539736,
+        "contradiction_score": 0.801483690738678,
+        "neutral_score": 0.19653335213661194,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "70": [
+      {
+        "doc_id": "21557055",
+        "stance_score": 0.9947235584259033,
+        "entailment_score": 0.0010822234908118844,
+        "contradiction_score": 0.9947235584259033,
+        "neutral_score": 0.004194137640297413,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "21521236",
+        "stance_score": 0.9333544373512268,
+        "entailment_score": 0.0041656093671917915,
+        "contradiction_score": 0.9333544373512268,
+        "neutral_score": 0.062479909509420395,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "72": [
+      {
+        "doc_id": "6076903",
+        "stance_score": 0.9848398566246033,
+        "entailment_score": 0.00019754801178351045,
+        "contradiction_score": 0.9848398566246033,
+        "neutral_score": 0.01496259868144989,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "75": [],
+    "94": [],
+    "99": [],
+    "100": [],
+    "113": [
+      {
+        "doc_id": "44030361",
+        "stance_score": 0.9458614587783813,
+        "entailment_score": 0.9458614587783813,
+        "contradiction_score": 0.000730565981939435,
+        "neutral_score": 0.05340798944234848,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "115": [],
+    "118": [],
+    "124": [
+      {
+        "doc_id": "21479231",
+        "stance_score": 0.9345242381095886,
+        "entailment_score": 0.001462449668906629,
+        "contradiction_score": 0.9345242381095886,
+        "neutral_score": 0.06401336938142776,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "127": [
+      {
+        "doc_id": "3748310",
+        "stance_score": 0.9777845144271851,
+        "entailment_score": 0.004120233468711376,
+        "contradiction_score": 0.9777845144271851,
+        "neutral_score": 0.018095320090651512,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "128": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7451967000961304,
+        "entailment_score": 0.0009368514292873442,
+        "contradiction_score": 0.7451967000961304,
+        "neutral_score": 0.2538664638996124,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "2593298",
+        "stance_score": 0.43322333693504333,
+        "entailment_score": 0.08455408364534378,
+        "contradiction_score": 0.43322333693504333,
+        "neutral_score": 0.48222264647483826,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "129": [
+      {
+        "doc_id": "22711954",
+        "stance_score": 0.9318680167198181,
+        "entailment_score": 0.002492368221282959,
+        "contradiction_score": 0.9318680167198181,
+        "neutral_score": 0.06563964486122131,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "130": [
+      {
+        "doc_id": "22711954",
+        "stance_score": 0.929370641708374,
+        "entailment_score": 0.002438815776258707,
+        "contradiction_score": 0.929370641708374,
+        "neutral_score": 0.0681905448436737,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "132": [
+      {
+        "doc_id": "37619697",
+        "stance_score": 0.8145716786384583,
+        "entailment_score": 0.0026034279726445675,
+        "contradiction_score": 0.8145716786384583,
+        "neutral_score": 0.18282489478588104,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "133": [
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.5025267004966736,
+        "entailment_score": 0.5025267004966736,
+        "contradiction_score": 0.006924162153154612,
+        "neutral_score": 0.4905491769313812,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "137": [],
+    "141": [],
+    "142": [
+      {
+        "doc_id": "10582939",
+        "stance_score": 0.6645255088806152,
+        "entailment_score": 0.0044473921880126,
+        "contradiction_score": 0.6645255088806152,
+        "neutral_score": 0.33102715015411377,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "143": [],
+    "146": [],
+    "148": [
+      {
+        "doc_id": "1084345",
+        "stance_score": 0.6208296418190002,
+        "entailment_score": 0.6208296418190002,
+        "contradiction_score": 0.012383893132209778,
+        "neutral_score": 0.36678647994995117,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "163": [
+      {
+        "doc_id": "5824985",
+        "stance_score": 0.987097442150116,
+        "entailment_score": 0.0014818658819422126,
+        "contradiction_score": 0.987097442150116,
+        "neutral_score": 0.011420642025768757,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "20130904",
+        "stance_score": 0.8842136263847351,
+        "entailment_score": 0.8842136263847351,
+        "contradiction_score": 0.0013972277520224452,
+        "neutral_score": 0.11438915133476257,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "171": [
+      {
+        "doc_id": "14938990",
+        "stance_score": 0.9970563650131226,
+        "entailment_score": 0.00036272534634917974,
+        "contradiction_score": 0.9970563650131226,
+        "neutral_score": 0.0025808820500969887,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "179": [],
+    "180": [],
+    "183": [
+      {
+        "doc_id": "3495456",
+        "stance_score": 0.7420578002929688,
+        "entailment_score": 0.7420578002929688,
+        "contradiction_score": 0.00238009518943727,
+        "neutral_score": 0.2555621266365051,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "185": [],
+    "198": [],
+    "208": [],
+    "212": [],
+    "213": [],
+    "216": [],
+    "217": [],
+    "218": [
+      {
+        "doc_id": "26030079",
+        "stance_score": 0.7980100512504578,
+        "entailment_score": 0.12446549534797668,
+        "contradiction_score": 0.7980100512504578,
+        "neutral_score": 0.07752444595098495,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "219": [
+      {
+        "doc_id": "26030079",
+        "stance_score": 0.807863175868988,
+        "entailment_score": 0.1169295385479927,
+        "contradiction_score": 0.807863175868988,
+        "neutral_score": 0.07520730793476105,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "230": [],
+    "232": [],
+    "233": [],
+    "236": [],
+    "237": [],
+    "238": [],
+    "239": [
+      {
+        "doc_id": "40349336",
+        "stance_score": 0.5244851112365723,
+        "entailment_score": 0.5244851112365723,
+        "contradiction_score": 0.0019543590024113655,
+        "neutral_score": 0.47356054186820984,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "248": [],
+    "249": [],
+    "261": [],
+    "268": [],
+    "269": [],
+    "274": [],
+    "275": [],
+    "279": [
+      {
+        "doc_id": "25737507",
+        "stance_score": 0.962738037109375,
+        "entailment_score": 0.962738037109375,
+        "contradiction_score": 0.00027445549494586885,
+        "neutral_score": 0.03698756545782089,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "294": [
+      {
+        "doc_id": "41811327",
+        "stance_score": 0.9952877759933472,
+        "entailment_score": 0.00018292547611054033,
+        "contradiction_score": 0.9952877759933472,
+        "neutral_score": 0.004529267083853483,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "1259280",
+        "stance_score": 0.8308626413345337,
+        "entailment_score": 0.002899963641539216,
+        "contradiction_score": 0.8308626413345337,
+        "neutral_score": 0.16623736917972565,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "295": [],
+    "298": [
+      {
+        "doc_id": "15836115",
+        "stance_score": 0.9780148267745972,
+        "entailment_score": 9.877913544187322e-05,
+        "contradiction_score": 0.9780148267745972,
+        "neutral_score": 0.021886419504880905,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "300": [],
+    "303": [],
+    "312": [],
+    "314": [
+      {
+        "doc_id": "25373397",
+        "stance_score": 0.9993333220481873,
+        "entailment_score": 0.00018248750711791217,
+        "contradiction_score": 0.9993333220481873,
+        "neutral_score": 0.00048417941434308887,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34498325",
+        "stance_score": 0.9111225605010986,
+        "entailment_score": 0.006234820932149887,
+        "contradiction_score": 0.9111225605010986,
+        "neutral_score": 0.08264269679784775,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "6426919",
+        "stance_score": 0.6925026178359985,
+        "entailment_score": 0.0016751731745898724,
+        "contradiction_score": 0.6925026178359985,
+        "neutral_score": 0.3058222532272339,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "324": [],
+    "327": [],
+    "338": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7715253233909607,
+        "entailment_score": 0.000990021857433021,
+        "contradiction_score": 0.7715253233909607,
+        "neutral_score": 0.22748467326164246,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "343": [
+      {
+        "doc_id": "23783727",
+        "stance_score": 0.8706780672073364,
+        "entailment_score": 0.8706780672073364,
+        "contradiction_score": 0.019460804760456085,
+        "neutral_score": 0.10986115783452988,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "350": [
+      {
+        "doc_id": "34498325",
+        "stance_score": 0.9571226835250854,
+        "entailment_score": 0.003221281338483095,
+        "contradiction_score": 0.9571226835250854,
+        "neutral_score": 0.039655979722738266,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "13763195",
+        "stance_score": 0.5399585366249084,
+        "entailment_score": 0.5399585366249084,
+        "contradiction_score": 0.09527692198753357,
+        "neutral_score": 0.364764541387558,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "354": [
+      {
+        "doc_id": "15832146",
+        "stance_score": 0.9785496592521667,
+        "entailment_score": 0.9785496592521667,
+        "contradiction_score": 0.0012234816094860435,
+        "neutral_score": 0.02022687718272209,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "362": [
+      {
+        "doc_id": "15488881",
+        "stance_score": 0.9768114686012268,
+        "entailment_score": 0.9768114686012268,
+        "contradiction_score": 0.003200424602255225,
+        "neutral_score": 0.019988032057881355,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "380": [
+      {
+        "doc_id": "26030079",
+        "stance_score": 0.7898797988891602,
+        "entailment_score": 0.14101669192314148,
+        "contradiction_score": 0.7898797988891602,
+        "neutral_score": 0.06910356134176254,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "3835423",
+        "stance_score": 0.49932214617729187,
+        "entailment_score": 0.49932214617729187,
+        "contradiction_score": 0.0017820856301113963,
+        "neutral_score": 0.4988957643508911,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "384": [
+      {
+        "doc_id": "22194407",
+        "stance_score": 0.9771774411201477,
+        "entailment_score": 0.0004900768981315196,
+        "contradiction_score": 0.9771774411201477,
+        "neutral_score": 0.022332483902573586,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "385": [],
+    "386": [],
+    "388": [
+      {
+        "doc_id": "21602220",
+        "stance_score": 0.9636698365211487,
+        "entailment_score": 0.004149524960666895,
+        "contradiction_score": 0.9636698365211487,
+        "neutral_score": 0.03218062222003937,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17416520",
+        "stance_score": 0.536858856678009,
+        "entailment_score": 0.536858856678009,
+        "contradiction_score": 0.02599656581878662,
+        "neutral_score": 0.43714457750320435,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "399": [],
+    "410": [],
+    "411": [],
+    "415": [
+      {
+        "doc_id": "4709641",
+        "stance_score": 0.8759610652923584,
+        "entailment_score": 0.018292715772986412,
+        "contradiction_score": 0.8759610652923584,
+        "neutral_score": 0.10574613511562347,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "421": [],
+    "431": [],
+    "436": [],
+    "437": [
+      {
+        "doc_id": "8083310",
+        "stance_score": 0.9263712763786316,
+        "entailment_score": 0.9263712763786316,
+        "contradiction_score": 0.00823561567813158,
+        "neutral_score": 0.06539309769868851,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "439": [
+      {
+        "doc_id": "40769868",
+        "stance_score": 0.9925846457481384,
+        "entailment_score": 0.0007847756496630609,
+        "contradiction_score": 0.9925846457481384,
+        "neutral_score": 0.0066305845975875854,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "440": [
+      {
+        "doc_id": "40769868",
+        "stance_score": 0.9892972111701965,
+        "entailment_score": 0.0009971103863790631,
+        "contradiction_score": 0.9892972111701965,
+        "neutral_score": 0.009705626405775547,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "443": [
+      {
+        "doc_id": "3321943",
+        "stance_score": 0.8968163728713989,
+        "entailment_score": 0.8968163728713989,
+        "contradiction_score": 0.0470578707754612,
+        "neutral_score": 0.0561256930232048,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17271462",
+        "stance_score": 0.8887604475021362,
+        "entailment_score": 0.8887604475021362,
+        "contradiction_score": 0.00019885228539351374,
+        "neutral_score": 0.11104068905115128,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "452": [],
+    "475": [],
+    "478": [],
+    "491": [],
+    "501": [
+      {
+        "doc_id": "72372925",
+        "stance_score": 0.9617866277694702,
+        "entailment_score": 0.0008685239590704441,
+        "contradiction_score": 0.9617866277694702,
+        "neutral_score": 0.037344809621572495,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "502": [],
+    "507": [
+      {
+        "doc_id": "16066726",
+        "stance_score": 0.8256322145462036,
+        "entailment_score": 0.003221777966246009,
+        "contradiction_score": 0.8256322145462036,
+        "neutral_score": 0.1711459904909134,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "508": [
+      {
+        "doc_id": "15856466",
+        "stance_score": 0.5851046442985535,
+        "entailment_score": 0.5851046442985535,
+        "contradiction_score": 0.002903092885389924,
+        "neutral_score": 0.41199225187301636,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "513": [
+      {
+        "doc_id": "25301182",
+        "stance_score": 0.64487624168396,
+        "entailment_score": 0.02303372323513031,
+        "contradiction_score": 0.64487624168396,
+        "neutral_score": 0.33209002017974854,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24918110",
+        "stance_score": 0.6251580119132996,
+        "entailment_score": 0.020384125411510468,
+        "contradiction_score": 0.6251580119132996,
+        "neutral_score": 0.3544578552246094,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "514": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9964061379432678,
+        "entailment_score": 0.00014952535275369883,
+        "contradiction_score": 0.9964061379432678,
+        "neutral_score": 0.0034443214535713196,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "43122426",
+        "stance_score": 0.909832775592804,
+        "entailment_score": 0.01609841175377369,
+        "contradiction_score": 0.909832775592804,
+        "neutral_score": 0.07406886667013168,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "516": [],
+    "517": [
+      {
+        "doc_id": "30915421",
+        "stance_score": 0.9879531860351562,
+        "entailment_score": 0.0014360924251377583,
+        "contradiction_score": 0.9879531860351562,
+        "neutral_score": 0.010610679164528847,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4474874",
+        "stance_score": 0.6201703548431396,
+        "entailment_score": 0.010337271727621555,
+        "contradiction_score": 0.6201703548431396,
+        "neutral_score": 0.3694923520088196,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "521": [],
+    "525": [
+      {
+        "doc_id": "13639330",
+        "stance_score": 0.48217883706092834,
+        "entailment_score": 0.48217883706092834,
+        "contradiction_score": 0.03827925771474838,
+        "neutral_score": 0.4795418381690979,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "527": [],
+    "528": [],
+    "532": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7709222435951233,
+        "entailment_score": 0.0008027656585909426,
+        "contradiction_score": 0.7709222435951233,
+        "neutral_score": 0.22827501595020294,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "533": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7592867016792297,
+        "entailment_score": 0.000828985997941345,
+        "contradiction_score": 0.7592867016792297,
+        "neutral_score": 0.23988424241542816,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "535": [
+      {
+        "doc_id": "39368721",
+        "stance_score": 0.8076966404914856,
+        "entailment_score": 0.12834425270557404,
+        "contradiction_score": 0.8076966404914856,
+        "neutral_score": 0.06395908445119858,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "9288638",
+        "stance_score": 0.5616886615753174,
+        "entailment_score": 0.2334652543067932,
+        "contradiction_score": 0.5616886615753174,
+        "neutral_score": 0.2048460990190506,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "536": [
+      {
+        "doc_id": "3943235",
+        "stance_score": 0.9621329307556152,
+        "entailment_score": 0.0011565667809918523,
+        "contradiction_score": 0.9621329307556152,
+        "neutral_score": 0.03671044483780861,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "25440070",
+        "stance_score": 0.5794615149497986,
+        "entailment_score": 0.5794615149497986,
+        "contradiction_score": 0.17684416472911835,
+        "neutral_score": 0.24369433522224426,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "539": [
+      {
+        "doc_id": "13282296",
+        "stance_score": 0.5112234950065613,
+        "entailment_score": 0.19785849750041962,
+        "contradiction_score": 0.5112234950065613,
+        "neutral_score": 0.2909179627895355,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "540": [
+      {
+        "doc_id": "22545779",
+        "stance_score": 0.9955528378486633,
+        "entailment_score": 0.00014190062938723713,
+        "contradiction_score": 0.9955528378486633,
+        "neutral_score": 0.004305162001401186,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "45154987",
+        "stance_score": 0.994880199432373,
+        "entailment_score": 0.0005620525917038321,
+        "contradiction_score": 0.994880199432373,
+        "neutral_score": 0.004557747859507799,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "544": [],
+    "549": [],
+    "551": [
+      {
+        "doc_id": "33499189",
+        "stance_score": 0.5540318489074707,
+        "entailment_score": 0.0014401201624423265,
+        "contradiction_score": 0.5540318489074707,
+        "neutral_score": 0.4445280432701111,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "552": [],
+    "554": [
+      {
+        "doc_id": "3495456",
+        "stance_score": 0.725780725479126,
+        "entailment_score": 0.725780725479126,
+        "contradiction_score": 0.002756835427135229,
+        "neutral_score": 0.2714623808860779,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "560": [],
+    "569": [],
+    "575": [
+      {
+        "doc_id": "41811327",
+        "stance_score": 0.9934408068656921,
+        "entailment_score": 0.00023584776499774307,
+        "contradiction_score": 0.9934408068656921,
+        "neutral_score": 0.006323389243334532,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "577": [
+      {
+        "doc_id": "40900567",
+        "stance_score": 0.5939923524856567,
+        "entailment_score": 0.5939923524856567,
+        "contradiction_score": 0.029742589220404625,
+        "neutral_score": 0.3762650191783905,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "578": [
+      {
+        "doc_id": "8764879",
+        "stance_score": 0.8701058626174927,
+        "entailment_score": 0.8701058626174927,
+        "contradiction_score": 0.002179877832531929,
+        "neutral_score": 0.12771423161029816,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "587": [
+      {
+        "doc_id": "24530633",
+        "stance_score": 0.7834650874137878,
+        "entailment_score": 0.7834650874137878,
+        "contradiction_score": 0.02753424271941185,
+        "neutral_score": 0.18900059163570404,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "589": [],
+    "593": [
+      {
+        "doc_id": "24443043",
+        "stance_score": 0.6448100805282593,
+        "entailment_score": 0.0038288456853479147,
+        "contradiction_score": 0.6448100805282593,
+        "neutral_score": 0.35136109590530396,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "597": [
+      {
+        "doc_id": "76415938",
+        "stance_score": 0.9246706962585449,
+        "entailment_score": 0.007969639264047146,
+        "contradiction_score": 0.9246706962585449,
+        "neutral_score": 0.06735961139202118,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "23136735",
+        "stance_score": 0.844172477722168,
+        "entailment_score": 0.844172477722168,
+        "contradiction_score": 0.0011219002772122622,
+        "neutral_score": 0.15470558404922485,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "28617573",
+        "stance_score": 0.6680892109870911,
+        "entailment_score": 0.6680892109870911,
+        "contradiction_score": 0.14133088290691376,
+        "neutral_score": 0.19057995080947876,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "598": [
+      {
+        "doc_id": "76415938",
+        "stance_score": 0.9537615180015564,
+        "entailment_score": 0.008328991942107677,
+        "contradiction_score": 0.9537615180015564,
+        "neutral_score": 0.03790953755378723,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "613": [],
+    "619": [
+      {
+        "doc_id": "12866641",
+        "stance_score": 0.9626222848892212,
+        "entailment_score": 0.00021753663895651698,
+        "contradiction_score": 0.9626222848892212,
+        "neutral_score": 0.037160228937864304,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "623": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9908826947212219,
+        "entailment_score": 0.0002621878229547292,
+        "contradiction_score": 0.9908826947212219,
+        "neutral_score": 0.008854997344315052,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "628": [
+      {
+        "doc_id": "1259359",
+        "stance_score": 0.54411780834198,
+        "entailment_score": 0.05903549864888191,
+        "contradiction_score": 0.54411780834198,
+        "neutral_score": 0.3968466520309448,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "636": [
+      {
+        "doc_id": "22025252",
+        "stance_score": 0.9310392737388611,
+        "entailment_score": 0.005024908110499382,
+        "contradiction_score": 0.9310392737388611,
+        "neutral_score": 0.06393584609031677,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "637": [
+      {
+        "doc_id": "485020",
+        "stance_score": 0.9965789914131165,
+        "entailment_score": 0.00016925302043091506,
+        "contradiction_score": 0.9965789914131165,
+        "neutral_score": 0.0032517476938664913,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "641": [
+      {
+        "doc_id": "17973630",
+        "stance_score": 0.8974350094795227,
+        "entailment_score": 0.0008917227969504893,
+        "contradiction_score": 0.8974350094795227,
+        "neutral_score": 0.10167331248521805,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "644": [],
+    "649": [],
+    "659": [],
+    "660": [],
+    "674": [
+      {
+        "doc_id": "15879931",
+        "stance_score": 0.9308446049690247,
+        "entailment_score": 0.0002075035881716758,
+        "contradiction_score": 0.9308446049690247,
+        "neutral_score": 0.0689479187130928,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "684": [],
+    "690": [],
+    "691": [
+      {
+        "doc_id": "8083310",
+        "stance_score": 0.9269940257072449,
+        "entailment_score": 0.9269940257072449,
+        "contradiction_score": 0.006663598585873842,
+        "neutral_score": 0.06634236127138138,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24624992",
+        "stance_score": 0.7896189093589783,
+        "entailment_score": 0.7896189093589783,
+        "contradiction_score": 0.0017076998483389616,
+        "neutral_score": 0.20867334306240082,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "692": [
+      {
+        "doc_id": "11349166",
+        "stance_score": 0.9895281195640564,
+        "entailment_score": 0.0005956010427325964,
+        "contradiction_score": 0.9895281195640564,
+        "neutral_score": 0.009876322001218796,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "693": [
+      {
+        "doc_id": "11349166",
+        "stance_score": 0.9887577891349792,
+        "entailment_score": 0.0006843378068879247,
+        "contradiction_score": 0.9887577891349792,
+        "neutral_score": 0.01055794395506382,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "700": [],
+    "702": [],
+    "715": [],
+    "716": [],
+    "718": [],
+    "721": [
+      {
+        "doc_id": "12670680",
+        "stance_score": 0.8711503148078918,
+        "entailment_score": 0.8711503148078918,
+        "contradiction_score": 0.0017157190013676882,
+        "neutral_score": 0.12713396549224854,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "723": [
+      {
+        "doc_id": "5531479",
+        "stance_score": 0.5552849769592285,
+        "entailment_score": 0.5552849769592285,
+        "contradiction_score": 0.0012681460939347744,
+        "neutral_score": 0.44344693422317505,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "727": [],
+    "728": [],
+    "729": [
+      {
+        "doc_id": "37895688",
+        "stance_score": 0.8514533042907715,
+        "entailment_score": 0.00024110946105793118,
+        "contradiction_score": 0.8514533042907715,
+        "neutral_score": 0.14830568432807922,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "742": [],
+    "743": [],
+    "744": [],
+    "756": [
+      {
+        "doc_id": "25901598",
+        "stance_score": 0.9819186925888062,
+        "entailment_score": 0.0005459534586407244,
+        "contradiction_score": 0.9819186925888062,
+        "neutral_score": 0.017535334452986717,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12172346",
+        "stance_score": 0.5127788782119751,
+        "entailment_score": 0.5127788782119751,
+        "contradiction_score": 0.00036152152460999787,
+        "neutral_score": 0.48685961961746216,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "759": [
+      {
+        "doc_id": "6503185",
+        "stance_score": 0.9921923279762268,
+        "entailment_score": 0.9921923279762268,
+        "contradiction_score": 0.0001046038669301197,
+        "neutral_score": 0.0077030896209180355,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "768": [
+      {
+        "doc_id": "2890952",
+        "stance_score": 0.9882398843765259,
+        "entailment_score": 0.001545127248391509,
+        "contradiction_score": 0.9882398843765259,
+        "neutral_score": 0.010214927606284618,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34498325",
+        "stance_score": 0.8827092051506042,
+        "entailment_score": 0.008601746521890163,
+        "contradiction_score": 0.8827092051506042,
+        "neutral_score": 0.10868901759386063,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "32975424",
+        "stance_score": 0.5817314982414246,
+        "entailment_score": 0.0005786168621852994,
+        "contradiction_score": 0.5817314982414246,
+        "neutral_score": 0.41768988966941833,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "770": [
+      {
+        "doc_id": "32421068",
+        "stance_score": 0.49804919958114624,
+        "entailment_score": 0.49804919958114624,
+        "contradiction_score": 0.019685767590999603,
+        "neutral_score": 0.48226502537727356,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "775": [],
+    "781": [
+      {
+        "doc_id": "12670680",
+        "stance_score": 0.767990231513977,
+        "entailment_score": 0.767990231513977,
+        "contradiction_score": 0.0030481049325317144,
+        "neutral_score": 0.2289617508649826,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "783": [
+      {
+        "doc_id": "15716328",
+        "stance_score": 0.9240512251853943,
+        "entailment_score": 0.9240512251853943,
+        "contradiction_score": 0.006040702108293772,
+        "neutral_score": 0.06990808993577957,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "784": [],
+    "785": [],
+    "793": [],
+    "800": [],
+    "805": [],
+    "808": [],
+    "811": [],
+    "814": [],
+    "820": [],
+    "821": [],
+    "823": [
+      {
+        "doc_id": "6426919",
+        "stance_score": 0.7913229465484619,
+        "entailment_score": 0.0012994338758289814,
+        "contradiction_score": 0.7913229465484619,
+        "neutral_score": 0.2073775976896286,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "830": [
+      {
+        "doc_id": "36310858",
+        "stance_score": 0.9812207221984863,
+        "entailment_score": 0.0009036890114657581,
+        "contradiction_score": 0.9812207221984863,
+        "neutral_score": 0.017875542864203453,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.5749467015266418,
+        "entailment_score": 0.5749467015266418,
+        "contradiction_score": 0.005315756890922785,
+        "neutral_score": 0.4197375476360321,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "831": [
+      {
+        "doc_id": "36310858",
+        "stance_score": 0.9813496470451355,
+        "entailment_score": 0.0008844127296470106,
+        "contradiction_score": 0.9813496470451355,
+        "neutral_score": 0.017765989527106285,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12737132",
+        "stance_score": 0.7998297214508057,
+        "entailment_score": 0.00045133824460208416,
+        "contradiction_score": 0.7998297214508057,
+        "neutral_score": 0.19971884787082672,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.5774073600769043,
+        "entailment_score": 0.5774073600769043,
+        "contradiction_score": 0.005051136016845703,
+        "neutral_score": 0.41754150390625,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "832": [
+      {
+        "doc_id": "30303335",
+        "stance_score": 0.5611611008644104,
+        "entailment_score": 0.10870222747325897,
+        "contradiction_score": 0.5611611008644104,
+        "neutral_score": 0.33013665676116943,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "834": [
+      {
+        "doc_id": "3986403",
+        "stance_score": 0.973450779914856,
+        "entailment_score": 0.00020919386588502675,
+        "contradiction_score": 0.973450779914856,
+        "neutral_score": 0.026340017095208168,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "23122306",
+        "stance_score": 0.586510181427002,
+        "entailment_score": 0.586510181427002,
+        "contradiction_score": 0.0067975763231515884,
+        "neutral_score": 0.406692236661911,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "837": [
+      {
+        "doc_id": "15928989",
+        "stance_score": 0.6808775067329407,
+        "entailment_score": 0.6808775067329407,
+        "contradiction_score": 0.0016594687476754189,
+        "neutral_score": 0.31746307015419006,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "839": [],
+    "845": [],
+    "847": [
+      {
+        "doc_id": "21479231",
+        "stance_score": 0.9274951219558716,
+        "entailment_score": 0.0010917909676209092,
+        "contradiction_score": 0.9274951219558716,
+        "neutral_score": 0.07141302525997162,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "33835579",
+        "stance_score": 0.9098876118659973,
+        "entailment_score": 0.0013386252103373408,
+        "contradiction_score": 0.9098876118659973,
+        "neutral_score": 0.08877375721931458,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "852": [
+      {
+        "doc_id": "40867854",
+        "stance_score": 0.9846529364585876,
+        "entailment_score": 0.9846529364585876,
+        "contradiction_score": 0.003962854854762554,
+        "neutral_score": 0.01138416025787592,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "474325",
+        "stance_score": 0.8335073590278625,
+        "entailment_score": 0.011933259665966034,
+        "contradiction_score": 0.8335073590278625,
+        "neutral_score": 0.15455935895442963,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "859": [],
+    "870": [],
+    "873": [
+      {
+        "doc_id": "4353857",
+        "stance_score": 0.9855770468711853,
+        "entailment_score": 0.00011701872426783666,
+        "contradiction_score": 0.9855770468711853,
+        "neutral_score": 0.01430592592805624,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "879": [],
+    "880": [],
+    "882": [],
+    "887": [
+      {
+        "doc_id": "33989422",
+        "stance_score": 0.970237672328949,
+        "entailment_score": 0.001182291191071272,
+        "contradiction_score": 0.970237672328949,
+        "neutral_score": 0.02857998013496399,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "903": [
+      {
+        "doc_id": "14938990",
+        "stance_score": 0.9967840909957886,
+        "entailment_score": 0.0003863948804792017,
+        "contradiction_score": 0.9967840909957886,
+        "neutral_score": 0.002829493023455143,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "10648422",
+        "stance_score": 0.5226243734359741,
+        "entailment_score": 0.5226243734359741,
+        "contradiction_score": 0.018831269815564156,
+        "neutral_score": 0.45854440331459045,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "904": [
+      {
+        "doc_id": "2177022",
+        "stance_score": 0.6778618097305298,
+        "entailment_score": 0.009247837588191032,
+        "contradiction_score": 0.6778618097305298,
+        "neutral_score": 0.3128904104232788,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "907": [
+      {
+        "doc_id": "4422868",
+        "stance_score": 0.887622594833374,
+        "entailment_score": 0.0007866870146244764,
+        "contradiction_score": 0.887622594833374,
+        "neutral_score": 0.11159069091081619,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "911": [],
+    "913": [
+      {
+        "doc_id": "23938319",
+        "stance_score": 0.9602783918380737,
+        "entailment_score": 0.9602783918380737,
+        "contradiction_score": 0.0027008731849491596,
+        "neutral_score": 0.03702070936560631,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24624992",
+        "stance_score": 0.6412878632545471,
+        "entailment_score": 0.6412878632545471,
+        "contradiction_score": 0.0023285874631255865,
+        "neutral_score": 0.35638362169265747,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "9956893",
+        "stance_score": 0.5357047915458679,
+        "entailment_score": 0.5357047915458679,
+        "contradiction_score": 0.0013209187891334295,
+        "neutral_score": 0.4629742503166199,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "914": [
+      {
+        "doc_id": "23938319",
+        "stance_score": 0.9714543223381042,
+        "entailment_score": 0.9714543223381042,
+        "contradiction_score": 0.0014883674448356032,
+        "neutral_score": 0.02705729939043522,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24624992",
+        "stance_score": 0.6743639707565308,
+        "entailment_score": 0.6743639707565308,
+        "contradiction_score": 0.002425749786198139,
+        "neutral_score": 0.323210209608078,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "921": [],
+    "922": [
+      {
+        "doc_id": "17077004",
+        "stance_score": 0.8887458443641663,
+        "entailment_score": 0.011359754018485546,
+        "contradiction_score": 0.8887458443641663,
+        "neutral_score": 0.0998944416642189,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "74701974",
+        "stance_score": 0.691646933555603,
+        "entailment_score": 0.017662538215517998,
+        "contradiction_score": 0.691646933555603,
+        "neutral_score": 0.290690541267395,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "936": [
+      {
+        "doc_id": "3986403",
+        "stance_score": 0.9931349754333496,
+        "entailment_score": 0.00016766993212513626,
+        "contradiction_score": 0.9931349754333496,
+        "neutral_score": 0.006697433535009623,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "956": [],
+    "957": [
+      {
+        "doc_id": "2121272",
+        "stance_score": 0.8558688163757324,
+        "entailment_score": 0.001271872199140489,
+        "contradiction_score": 0.8558688163757324,
+        "neutral_score": 0.14285928010940552,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "960": [],
+    "967": [],
+    "971": [
+      {
+        "doc_id": "76415938",
+        "stance_score": 0.9225541949272156,
+        "entailment_score": 0.013644312508404255,
+        "contradiction_score": 0.9225541949272156,
+        "neutral_score": 0.06380149722099304,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "28617573",
+        "stance_score": 0.3051164448261261,
+        "entailment_score": 0.3051164448261261,
+        "contradiction_score": 0.23732931911945343,
+        "neutral_score": 0.4575542211532593,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "975": [],
+    "982": [],
+    "985": [
+      {
+        "doc_id": "6828370",
+        "stance_score": 0.9551616907119751,
+        "entailment_score": 0.9551616907119751,
+        "contradiction_score": 0.003317354479804635,
+        "neutral_score": 0.04152097553014755,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "993": [],
+    "1012": [
+      {
+        "doc_id": "43122426",
+        "stance_score": 0.9609225392341614,
+        "entailment_score": 0.0075051067396998405,
+        "contradiction_score": 0.9609225392341614,
+        "neutral_score": 0.03157230094075203,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1014": [],
+    "1019": [],
+    "1020": [],
+    "1021": [],
+    "1024": [],
+    "1029": [],
+    "1041": [],
+    "1049": [],
+    "1062": [],
+    "1086": [
+      {
+        "doc_id": "12039953",
+        "stance_score": 0.9946613907814026,
+        "entailment_score": 0.0005663170595653355,
+        "contradiction_score": 0.9946613907814026,
+        "neutral_score": 0.0047722687013447285,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "25440070",
+        "stance_score": 0.6135839223861694,
+        "entailment_score": 0.6135839223861694,
+        "contradiction_score": 0.16648495197296143,
+        "neutral_score": 0.21993106603622437,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "5691302",
+        "stance_score": 0.5763195753097534,
+        "entailment_score": 0.5763195753097534,
+        "contradiction_score": 0.05861316993832588,
+        "neutral_score": 0.3650672435760498,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "1088": [
+      {
+        "doc_id": "33638477",
+        "stance_score": 0.7359237670898438,
+        "entailment_score": 0.7359237670898438,
+        "contradiction_score": 0.003129539079964161,
+        "neutral_score": 0.26094672083854675,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1089": [
+      {
+        "doc_id": "7915836",
+        "stance_score": 0.9561634063720703,
+        "entailment_score": 0.005302664823830128,
+        "contradiction_score": 0.9561634063720703,
+        "neutral_score": 0.03853391483426094,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1099": [
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.3780483901500702,
+        "entailment_score": 0.3780483901500702,
+        "contradiction_score": 0.30726757645606995,
+        "neutral_score": 0.31468403339385986,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1100": [
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.36092472076416016,
+        "entailment_score": 0.36092472076416016,
+        "contradiction_score": 0.32553115487098694,
+        "neutral_score": 0.3135441243648529,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1104": [
+      {
+        "doc_id": "6158879",
+        "stance_score": 0.49795201420783997,
+        "entailment_score": 0.49795201420783997,
+        "contradiction_score": 0.0696171298623085,
+        "neutral_score": 0.43243086338043213,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1107": [],
+    "1110": [],
+    "1121": [
+      {
+        "doc_id": "23076291",
+        "stance_score": 0.7160015106201172,
+        "entailment_score": 0.7160015106201172,
+        "contradiction_score": 0.005788957700133324,
+        "neutral_score": 0.27820950746536255,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1130": [
+      {
+        "doc_id": "1550937",
+        "stance_score": 0.9964330196380615,
+        "entailment_score": 0.0004136822826694697,
+        "contradiction_score": 0.9964330196380615,
+        "neutral_score": 0.0031532817520201206,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17997584",
+        "stance_score": 0.97846919298172,
+        "entailment_score": 0.005339830182492733,
+        "contradiction_score": 0.97846919298172,
+        "neutral_score": 0.016191044822335243,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "21363424",
+        "stance_score": 0.9738641977310181,
+        "entailment_score": 0.000594905111938715,
+        "contradiction_score": 0.9738641977310181,
+        "neutral_score": 0.025540979579091072,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "1132": [
+      {
+        "doc_id": "33499189",
+        "stance_score": 0.7321799397468567,
+        "entailment_score": 0.0007916842005215585,
+        "contradiction_score": 0.7321799397468567,
+        "neutral_score": 0.26702845096588135,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "8903143",
+        "stance_score": 0.5715534090995789,
+        "entailment_score": 0.5715534090995789,
+        "contradiction_score": 0.001215155702084303,
+        "neutral_score": 0.42723143100738525,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1137": [],
+    "1140": [
+      {
+        "doc_id": "32766786",
+        "stance_score": 0.58437180519104,
+        "entailment_score": 0.12394502758979797,
+        "contradiction_score": 0.58437180519104,
+        "neutral_score": 0.2916831970214844,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1144": [
+      {
+        "doc_id": "3770750",
+        "stance_score": 0.9814700484275818,
+        "entailment_score": 0.0023159743286669254,
+        "contradiction_score": 0.9814700484275818,
+        "neutral_score": 0.01621396653354168,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12224536",
+        "stance_score": 0.8959589004516602,
+        "entailment_score": 0.8959589004516602,
+        "contradiction_score": 0.00040659893420524895,
+        "neutral_score": 0.10363443940877914,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "11201004",
+        "stance_score": 0.7319051027297974,
+        "entailment_score": 0.039024993777275085,
+        "contradiction_score": 0.7319051027297974,
+        "neutral_score": 0.22906993329524994,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "1146": [],
+    "1150": [
+      {
+        "doc_id": "3321943",
+        "stance_score": 0.910168468952179,
+        "entailment_score": 0.910168468952179,
+        "contradiction_score": 0.03899753838777542,
+        "neutral_score": 0.050833988934755325,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1163": [],
+    "1175": [
+      {
+        "doc_id": "31387717",
+        "stance_score": 0.9873971343040466,
+        "entailment_score": 0.00013063133519608527,
+        "contradiction_score": 0.9873971343040466,
+        "neutral_score": 0.012472189031541348,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1179": [
+      {
+        "doc_id": "44366096",
+        "stance_score": 0.9924848675727844,
+        "entailment_score": 0.00023197804694063962,
+        "contradiction_score": 0.9924848675727844,
+        "neutral_score": 0.007283123675733805,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1180": [
+      {
+        "doc_id": "44366096",
+        "stance_score": 0.9840990304946899,
+        "entailment_score": 0.0003845139581244439,
+        "contradiction_score": 0.9840990304946899,
+        "neutral_score": 0.01551633607596159,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1185": [],
+    "1187": [
+      {
+        "doc_id": "25901598",
+        "stance_score": 0.9840127229690552,
+        "entailment_score": 0.000957794371061027,
+        "contradiction_score": 0.9840127229690552,
+        "neutral_score": 0.015029513277113438,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1191": [],
+    "1194": [],
+    "1196": [],
+    "1197": [],
+    "1199": [
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.29448401927948,
+        "entailment_score": 0.27758336067199707,
+        "contradiction_score": 0.29448401927948,
+        "neutral_score": 0.42793264985084534,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1200": [
+      {
+        "doc_id": "31387717",
+        "stance_score": 0.996393620967865,
+        "entailment_score": 7.448067481163889e-05,
+        "contradiction_score": 0.996393620967865,
+        "neutral_score": 0.003531890455633402,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "23938319",
+        "stance_score": 0.9679175019264221,
+        "entailment_score": 0.9679175019264221,
+        "contradiction_score": 0.0015886473702266812,
+        "neutral_score": 0.030493909493088722,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1202": [],
+    "1204": [
+      {
+        "doc_id": "15907458",
+        "stance_score": 0.9248028993606567,
+        "entailment_score": 0.002616885816678405,
+        "contradiction_score": 0.9248028993606567,
+        "neutral_score": 0.07258018851280212,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1207": [],
+    "1213": [],
+    "1216": [
+      {
+        "doc_id": "24335068",
+        "stance_score": 0.9926309585571289,
+        "entailment_score": 0.0005518314428627491,
+        "contradiction_score": 0.9926309585571289,
+        "neutral_score": 0.00681727658957243,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1221": [],
+    "1225": [
+      {
+        "doc_id": "16806763",
+        "stance_score": 0.8806580901145935,
+        "entailment_score": 0.8806580901145935,
+        "contradiction_score": 0.0034359688870608807,
+        "neutral_score": 0.1159060001373291,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "26059876",
+        "stance_score": 0.6175046563148499,
+        "entailment_score": 0.00860683061182499,
+        "contradiction_score": 0.6175046563148499,
+        "neutral_score": 0.3738885223865509,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "9650982",
+        "stance_score": 0.5454643368721008,
+        "entailment_score": 0.03193173557519913,
+        "contradiction_score": 0.5454643368721008,
+        "neutral_score": 0.42260393500328064,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "1226": [],
+    "1232": [],
+    "1241": [
+      {
+        "doc_id": "6729465",
+        "stance_score": 0.785278856754303,
+        "entailment_score": 0.00947405956685543,
+        "contradiction_score": 0.785278856754303,
+        "neutral_score": 0.20524710416793823,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1245": [],
+    "1259": [],
+    "1262": [],
+    "1266": [],
+    "1270": [],
+    "1271": [],
+    "1272": [
+      {
+        "doc_id": "15685921",
+        "stance_score": 0.5183171629905701,
+        "entailment_score": 0.0026292421389371157,
+        "contradiction_score": 0.5183171629905701,
+        "neutral_score": 0.4790536165237427,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1273": [
+      {
+        "doc_id": "24555417",
+        "stance_score": 0.9692172408103943,
+        "entailment_score": 0.9692172408103943,
+        "contradiction_score": 0.00015233449812512845,
+        "neutral_score": 0.03063048981130123,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1274": [
+      {
+        "doc_id": "26625002",
+        "stance_score": 0.6306018233299255,
+        "entailment_score": 0.0025821616873145103,
+        "contradiction_score": 0.6306018233299255,
+        "neutral_score": 0.36681607365608215,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1278": [],
+    "1279": [],
+    "1280": [
+      {
+        "doc_id": "2890952",
+        "stance_score": 0.989561140537262,
+        "entailment_score": 0.0015049591893330216,
+        "contradiction_score": 0.989561140537262,
+        "neutral_score": 0.008933862671256065,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1281": [
+      {
+        "doc_id": "2890952",
+        "stance_score": 0.9897796511650085,
+        "entailment_score": 0.0013175179483368993,
+        "contradiction_score": 0.9897796511650085,
+        "neutral_score": 0.008902898989617825,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1282": [],
+    "1290": [
+      {
+        "doc_id": "26000593",
+        "stance_score": 0.9875298738479614,
+        "entailment_score": 0.9875298738479614,
+        "contradiction_score": 0.004327386151999235,
+        "neutral_score": 0.008142740465700626,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.3582080602645874,
+        "entailment_score": 0.3582080602645874,
+        "contradiction_score": 0.29198557138442993,
+        "neutral_score": 0.34980639815330505,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1292": [],
+    "1298": [],
+    "1303": [],
+    "1316": [],
+    "1319": [
+      {
+        "doc_id": "16284655",
+        "stance_score": 0.9945915341377258,
+        "entailment_score": 0.00017838174244388938,
+        "contradiction_score": 0.9945915341377258,
+        "neutral_score": 0.005229964852333069,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14192687",
+        "stance_score": 0.9607940316200256,
+        "entailment_score": 0.006913804914802313,
+        "contradiction_score": 0.9607940316200256,
+        "neutral_score": 0.03229214996099472,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "1320": [
+      {
+        "doc_id": "16284655",
+        "stance_score": 0.9948855042457581,
+        "entailment_score": 0.00020962570852134377,
+        "contradiction_score": 0.9948855042457581,
+        "neutral_score": 0.004904795903712511,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14192687",
+        "stance_score": 0.9738556146621704,
+        "entailment_score": 0.004204178228974342,
+        "contradiction_score": 0.9738556146621704,
+        "neutral_score": 0.021940283477306366,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "1332": [
+      {
+        "doc_id": "38830961",
+        "stance_score": 0.5696901082992554,
+        "entailment_score": 0.005176166072487831,
+        "contradiction_score": 0.5696901082992554,
+        "neutral_score": 0.4251337945461273,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1335": [],
+    "1336": [],
+    "1337": [],
+    "1339": [],
+    "1344": [],
+    "1352": [],
+    "1359": [
+      {
+        "doc_id": "21479231",
+        "stance_score": 0.9700987935066223,
+        "entailment_score": 0.0009181639761663973,
+        "contradiction_score": 0.9700987935066223,
+        "neutral_score": 0.028983045369386673,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1362": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7058616876602173,
+        "entailment_score": 0.0010569881414994597,
+        "contradiction_score": 0.7058616876602173,
+        "neutral_score": 0.2930813729763031,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1363": [],
+    "1368": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9934426546096802,
+        "entailment_score": 0.00017499794194009155,
+        "contradiction_score": 0.9934426546096802,
+        "neutral_score": 0.006382299587130547,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "41131087",
+        "stance_score": 0.8180112242698669,
+        "entailment_score": 0.8180112242698669,
+        "contradiction_score": 0.03320503979921341,
+        "neutral_score": 0.14878374338150024,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1370": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9923060536384583,
+        "entailment_score": 0.00019157757924403995,
+        "contradiction_score": 0.9923060536384583,
+        "neutral_score": 0.007502375636249781,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1379": [],
+    "1382": [],
+    "1385": [
+      {
+        "doc_id": "3559136",
+        "stance_score": 0.9979832172393799,
+        "entailment_score": 6.465918704634532e-05,
+        "contradiction_score": 0.9979832172393799,
+        "neutral_score": 0.0019521820358932018,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1389": [
+      {
+        "doc_id": "26735905",
+        "stance_score": 0.9806259870529175,
+        "entailment_score": 0.0033959553111344576,
+        "contradiction_score": 0.9806259870529175,
+        "neutral_score": 0.015978071838617325,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1395": []
+  },
+  "strict": {
+    "1": [
+      {
+        "doc_id": "2121272",
+        "stance_score": 0.9766392111778259,
+        "entailment_score": 0.0005581721779890358,
+        "contradiction_score": 0.9766392111778259,
+        "neutral_score": 0.022802645340561867,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "3": [
+      {
+        "doc_id": "1544804",
+        "stance_score": 0.6686344742774963,
+        "entailment_score": 0.6686344742774963,
+        "contradiction_score": 0.005686718504875898,
+        "neutral_score": 0.3256787657737732,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "5": [],
+    "13": [
+      {
+        "doc_id": "70455704",
+        "stance_score": 0.8236744403839111,
+        "entailment_score": 0.8236744403839111,
+        "contradiction_score": 0.0029806725215166807,
+        "neutral_score": 0.17334485054016113,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "11360768",
+        "stance_score": 0.2703627943992615,
+        "entailment_score": 0.2703627943992615,
+        "contradiction_score": 0.0049438741989433765,
+        "neutral_score": 0.7246933579444885,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "33740844",
+        "stance_score": 0.26811593770980835,
+        "entailment_score": 0.26811593770980835,
+        "contradiction_score": 0.000907648412976414,
+        "neutral_score": 0.730976402759552,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "36": [
+      {
+        "doc_id": "18256197",
+        "stance_score": 0.43178701400756836,
+        "entailment_score": 0.43178701400756836,
+        "contradiction_score": 0.17116907238960266,
+        "neutral_score": 0.3970438838005066,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "42": [],
+    "48": [
+      {
+        "doc_id": "11349166",
+        "stance_score": 0.9702274799346924,
+        "entailment_score": 0.0013673027278855443,
+        "contradiction_score": 0.9702274799346924,
+        "neutral_score": 0.028405210003256798,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "49": [],
+    "50": [],
+    "51": [],
+    "53": [
+      {
+        "doc_id": "4418878",
+        "stance_score": 0.7667006850242615,
+        "entailment_score": 0.7667006850242615,
+        "contradiction_score": 0.0001768559159245342,
+        "neutral_score": 0.23312242329120636,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "54": [],
+    "56": [
+      {
+        "doc_id": "4709641",
+        "stance_score": 0.8465031385421753,
+        "entailment_score": 0.024643773213028908,
+        "contradiction_score": 0.8465031385421753,
+        "neutral_score": 0.12885311245918274,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4459491",
+        "stance_score": 0.7825466990470886,
+        "entailment_score": 0.002243152353912592,
+        "contradiction_score": 0.7825466990470886,
+        "neutral_score": 0.21521009504795074,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "57": [
+      {
+        "doc_id": "4709641",
+        "stance_score": 0.8558413982391357,
+        "entailment_score": 0.024387463927268982,
+        "contradiction_score": 0.8558413982391357,
+        "neutral_score": 0.11977113038301468,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4459491",
+        "stance_score": 0.801483690738678,
+        "entailment_score": 0.0019829042721539736,
+        "contradiction_score": 0.801483690738678,
+        "neutral_score": 0.19653335213661194,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "70": [
+      {
+        "doc_id": "21557055",
+        "stance_score": 0.9947235584259033,
+        "entailment_score": 0.0010822234908118844,
+        "contradiction_score": 0.9947235584259033,
+        "neutral_score": 0.004194137640297413,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "21521236",
+        "stance_score": 0.9333544373512268,
+        "entailment_score": 0.0041656093671917915,
+        "contradiction_score": 0.9333544373512268,
+        "neutral_score": 0.062479909509420395,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "72": [
+      {
+        "doc_id": "6076903",
+        "stance_score": 0.9848398566246033,
+        "entailment_score": 0.00019754801178351045,
+        "contradiction_score": 0.9848398566246033,
+        "neutral_score": 0.01496259868144989,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "75": [],
+    "94": [],
+    "99": [],
+    "100": [
+      {
+        "doc_id": "4381486",
+        "stance_score": 0.39013364911079407,
+        "entailment_score": 0.06973031908273697,
+        "contradiction_score": 0.39013364911079407,
+        "neutral_score": 0.5401359796524048,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "113": [
+      {
+        "doc_id": "44030361",
+        "stance_score": 0.9458614587783813,
+        "entailment_score": 0.9458614587783813,
+        "contradiction_score": 0.000730565981939435,
+        "neutral_score": 0.05340798944234848,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "115": [],
+    "118": [],
+    "124": [
+      {
+        "doc_id": "21479231",
+        "stance_score": 0.9345242381095886,
+        "entailment_score": 0.001462449668906629,
+        "contradiction_score": 0.9345242381095886,
+        "neutral_score": 0.06401336938142776,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "127": [
+      {
+        "doc_id": "3748310",
+        "stance_score": 0.9777845144271851,
+        "entailment_score": 0.004120233468711376,
+        "contradiction_score": 0.9777845144271851,
+        "neutral_score": 0.018095320090651512,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "128": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7451967000961304,
+        "entailment_score": 0.0009368514292873442,
+        "contradiction_score": 0.7451967000961304,
+        "neutral_score": 0.2538664638996124,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "2593298",
+        "stance_score": 0.43322333693504333,
+        "entailment_score": 0.08455408364534378,
+        "contradiction_score": 0.43322333693504333,
+        "neutral_score": 0.48222264647483826,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "129": [
+      {
+        "doc_id": "22711954",
+        "stance_score": 0.9318680167198181,
+        "entailment_score": 0.002492368221282959,
+        "contradiction_score": 0.9318680167198181,
+        "neutral_score": 0.06563964486122131,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "130": [
+      {
+        "doc_id": "22711954",
+        "stance_score": 0.929370641708374,
+        "entailment_score": 0.002438815776258707,
+        "contradiction_score": 0.929370641708374,
+        "neutral_score": 0.0681905448436737,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "6319826",
+        "stance_score": 0.17316341400146484,
+        "entailment_score": 0.167440727353096,
+        "contradiction_score": 0.17316341400146484,
+        "neutral_score": 0.6593958139419556,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "132": [
+      {
+        "doc_id": "37619697",
+        "stance_score": 0.8145716786384583,
+        "entailment_score": 0.0026034279726445675,
+        "contradiction_score": 0.8145716786384583,
+        "neutral_score": 0.18282489478588104,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "133": [
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.5025267004966736,
+        "entailment_score": 0.5025267004966736,
+        "contradiction_score": 0.006924162153154612,
+        "neutral_score": 0.4905491769313812,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "137": [],
+    "141": [
+      {
+        "doc_id": "18379855",
+        "stance_score": 0.20463544130325317,
+        "entailment_score": 0.001487596076913178,
+        "contradiction_score": 0.20463544130325317,
+        "neutral_score": 0.7938769459724426,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "142": [
+      {
+        "doc_id": "10582939",
+        "stance_score": 0.6645255088806152,
+        "entailment_score": 0.0044473921880126,
+        "contradiction_score": 0.6645255088806152,
+        "neutral_score": 0.33102715015411377,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "143": [],
+    "146": [],
+    "148": [
+      {
+        "doc_id": "1084345",
+        "stance_score": 0.6208296418190002,
+        "entailment_score": 0.6208296418190002,
+        "contradiction_score": 0.012383893132209778,
+        "neutral_score": 0.36678647994995117,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "163": [
+      {
+        "doc_id": "5824985",
+        "stance_score": 0.987097442150116,
+        "entailment_score": 0.0014818658819422126,
+        "contradiction_score": 0.987097442150116,
+        "neutral_score": 0.011420642025768757,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "20130904",
+        "stance_score": 0.8842136263847351,
+        "entailment_score": 0.8842136263847351,
+        "contradiction_score": 0.0013972277520224452,
+        "neutral_score": 0.11438915133476257,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "171": [
+      {
+        "doc_id": "14938990",
+        "stance_score": 0.9970563650131226,
+        "entailment_score": 0.00036272534634917974,
+        "contradiction_score": 0.9970563650131226,
+        "neutral_score": 0.0025808820500969887,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12670680",
+        "stance_score": 0.36658617854118347,
+        "entailment_score": 0.36658617854118347,
+        "contradiction_score": 0.026896977797150612,
+        "neutral_score": 0.6065168380737305,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "179": [
+      {
+        "doc_id": "17450673",
+        "stance_score": 0.48526373505592346,
+        "entailment_score": 0.0027827764861285686,
+        "contradiction_score": 0.48526373505592346,
+        "neutral_score": 0.5119534730911255,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "180": [],
+    "183": [
+      {
+        "doc_id": "3495456",
+        "stance_score": 0.7420578002929688,
+        "entailment_score": 0.7420578002929688,
+        "contradiction_score": 0.00238009518943727,
+        "neutral_score": 0.2555621266365051,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "185": [],
+    "198": [
+      {
+        "doc_id": "29347970",
+        "stance_score": 0.37751540541648865,
+        "entailment_score": 0.37751540541648865,
+        "contradiction_score": 0.002502029063180089,
+        "neutral_score": 0.6199826002120972,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "208": [],
+    "212": [],
+    "213": [
+      {
+        "doc_id": "21048969",
+        "stance_score": 0.20862209796905518,
+        "entailment_score": 0.0209855567663908,
+        "contradiction_score": 0.20862209796905518,
+        "neutral_score": 0.7703923583030701,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "216": [
+      {
+        "doc_id": "21363424",
+        "stance_score": 0.38797786831855774,
+        "entailment_score": 0.00488780764862895,
+        "contradiction_score": 0.38797786831855774,
+        "neutral_score": 0.6071343421936035,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "217": [
+      {
+        "doc_id": "21363424",
+        "stance_score": 0.3979983329772949,
+        "entailment_score": 0.005089570768177509,
+        "contradiction_score": 0.3979983329772949,
+        "neutral_score": 0.5969120860099792,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "218": [
+      {
+        "doc_id": "26030079",
+        "stance_score": 0.7980100512504578,
+        "entailment_score": 0.12446549534797668,
+        "contradiction_score": 0.7980100512504578,
+        "neutral_score": 0.07752444595098495,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "219": [
+      {
+        "doc_id": "26030079",
+        "stance_score": 0.807863175868988,
+        "entailment_score": 0.1169295385479927,
+        "contradiction_score": 0.807863175868988,
+        "neutral_score": 0.07520730793476105,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "40365566",
+        "stance_score": 0.25583943724632263,
+        "entailment_score": 0.020397091284394264,
+        "contradiction_score": 0.25583943724632263,
+        "neutral_score": 0.7237634658813477,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "230": [],
+    "232": [
+      {
+        "doc_id": "25938221",
+        "stance_score": 0.3627465069293976,
+        "entailment_score": 0.3627465069293976,
+        "contradiction_score": 0.0033369504380971193,
+        "neutral_score": 0.6339165568351746,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "233": [
+      {
+        "doc_id": "41380943",
+        "stance_score": 0.10364846885204315,
+        "entailment_score": 0.10247348248958588,
+        "contradiction_score": 0.10364846885204315,
+        "neutral_score": 0.7938780784606934,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "236": [
+      {
+        "doc_id": "4343437",
+        "stance_score": 0.2863575220108032,
+        "entailment_score": 0.0019720932468771935,
+        "contradiction_score": 0.2863575220108032,
+        "neutral_score": 0.7116703987121582,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4388470",
+        "stance_score": 0.2723601758480072,
+        "entailment_score": 0.2723601758480072,
+        "contradiction_score": 0.059747032821178436,
+        "neutral_score": 0.6678927540779114,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "41380943",
+        "stance_score": 0.25533655285835266,
+        "entailment_score": 0.10923562198877335,
+        "contradiction_score": 0.25533655285835266,
+        "neutral_score": 0.6354278326034546,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "237": [
+      {
+        "doc_id": "17416520",
+        "stance_score": 0.3797718584537506,
+        "entailment_score": 0.3797718584537506,
+        "contradiction_score": 0.03427659347653389,
+        "neutral_score": 0.585951566696167,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "238": [],
+    "239": [
+      {
+        "doc_id": "40349336",
+        "stance_score": 0.5244851112365723,
+        "entailment_score": 0.5244851112365723,
+        "contradiction_score": 0.0019543590024113655,
+        "neutral_score": 0.47356054186820984,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "248": [],
+    "249": [],
+    "261": [
+      {
+        "doc_id": "17097974",
+        "stance_score": 0.4207623600959778,
+        "entailment_score": 0.004609476774930954,
+        "contradiction_score": 0.4207623600959778,
+        "neutral_score": 0.5746281147003174,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "10697096",
+        "stance_score": 0.23862648010253906,
+        "entailment_score": 0.039245203137397766,
+        "contradiction_score": 0.23862648010253906,
+        "neutral_score": 0.7221283316612244,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "268": [],
+    "269": [
+      {
+        "doc_id": "37296667",
+        "stance_score": 0.3328327536582947,
+        "entailment_score": 0.3328327536582947,
+        "contradiction_score": 0.001627246499992907,
+        "neutral_score": 0.6655400395393372,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "274": [
+      {
+        "doc_id": "7639744",
+        "stance_score": 0.26277250051498413,
+        "entailment_score": 0.009102237410843372,
+        "contradiction_score": 0.26277250051498413,
+        "neutral_score": 0.728125274181366,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "275": [],
+    "279": [
+      {
+        "doc_id": "25737507",
+        "stance_score": 0.962738037109375,
+        "entailment_score": 0.962738037109375,
+        "contradiction_score": 0.00027445549494586885,
+        "neutral_score": 0.03698756545782089,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "294": [
+      {
+        "doc_id": "41811327",
+        "stance_score": 0.9952877759933472,
+        "entailment_score": 0.00018292547611054033,
+        "contradiction_score": 0.9952877759933472,
+        "neutral_score": 0.004529267083853483,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "1259280",
+        "stance_score": 0.8308626413345337,
+        "entailment_score": 0.002899963641539216,
+        "contradiction_score": 0.8308626413345337,
+        "neutral_score": 0.16623736917972565,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "295": [
+      {
+        "doc_id": "40096222",
+        "stance_score": 0.36221447587013245,
+        "entailment_score": 0.36221447587013245,
+        "contradiction_score": 0.017289793118834496,
+        "neutral_score": 0.6204956769943237,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "298": [
+      {
+        "doc_id": "15836115",
+        "stance_score": 0.9780148267745972,
+        "entailment_score": 9.877913544187322e-05,
+        "contradiction_score": 0.9780148267745972,
+        "neutral_score": 0.021886419504880905,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "300": [
+      {
+        "doc_id": "4421742",
+        "stance_score": 0.34190481901168823,
+        "entailment_score": 0.007004917599260807,
+        "contradiction_score": 0.34190481901168823,
+        "neutral_score": 0.6510902643203735,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "303": [
+      {
+        "doc_id": "4388470",
+        "stance_score": 0.17538490891456604,
+        "entailment_score": 0.17538490891456604,
+        "contradiction_score": 0.03750848397612572,
+        "neutral_score": 0.7871065735816956,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "312": [],
+    "314": [
+      {
+        "doc_id": "25373397",
+        "stance_score": 0.9993333220481873,
+        "entailment_score": 0.00018248750711791217,
+        "contradiction_score": 0.9993333220481873,
+        "neutral_score": 0.00048417941434308887,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34498325",
+        "stance_score": 0.9111225605010986,
+        "entailment_score": 0.006234820932149887,
+        "contradiction_score": 0.9111225605010986,
+        "neutral_score": 0.08264269679784775,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "6426919",
+        "stance_score": 0.6925026178359985,
+        "entailment_score": 0.0016751731745898724,
+        "contradiction_score": 0.6925026178359985,
+        "neutral_score": 0.3058222532272339,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "324": [],
+    "327": [],
+    "338": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7715253233909607,
+        "entailment_score": 0.000990021857433021,
+        "contradiction_score": 0.7715253233909607,
+        "neutral_score": 0.22748467326164246,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "343": [
+      {
+        "doc_id": "23783727",
+        "stance_score": 0.8706780672073364,
+        "entailment_score": 0.8706780672073364,
+        "contradiction_score": 0.019460804760456085,
+        "neutral_score": 0.10986115783452988,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "6158879",
+        "stance_score": 0.20726679265499115,
+        "entailment_score": 0.20726679265499115,
+        "contradiction_score": 0.04036358743906021,
+        "neutral_score": 0.7523696422576904,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "350": [
+      {
+        "doc_id": "34498325",
+        "stance_score": 0.9571226835250854,
+        "entailment_score": 0.003221281338483095,
+        "contradiction_score": 0.9571226835250854,
+        "neutral_score": 0.039655979722738266,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "13763195",
+        "stance_score": 0.5399585366249084,
+        "entailment_score": 0.5399585366249084,
+        "contradiction_score": 0.09527692198753357,
+        "neutral_score": 0.364764541387558,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "354": [
+      {
+        "doc_id": "15832146",
+        "stance_score": 0.9785496592521667,
+        "entailment_score": 0.9785496592521667,
+        "contradiction_score": 0.0012234816094860435,
+        "neutral_score": 0.02022687718272209,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "362": [
+      {
+        "doc_id": "15488881",
+        "stance_score": 0.9768114686012268,
+        "entailment_score": 0.9768114686012268,
+        "contradiction_score": 0.003200424602255225,
+        "neutral_score": 0.019988032057881355,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "380": [
+      {
+        "doc_id": "26030079",
+        "stance_score": 0.7898797988891602,
+        "entailment_score": 0.14101669192314148,
+        "contradiction_score": 0.7898797988891602,
+        "neutral_score": 0.06910356134176254,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "3835423",
+        "stance_score": 0.49932214617729187,
+        "entailment_score": 0.49932214617729187,
+        "contradiction_score": 0.0017820856301113963,
+        "neutral_score": 0.4988957643508911,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "384": [
+      {
+        "doc_id": "22194407",
+        "stance_score": 0.9771774411201477,
+        "entailment_score": 0.0004900768981315196,
+        "contradiction_score": 0.9771774411201477,
+        "neutral_score": 0.022332483902573586,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "10365749",
+        "stance_score": 0.25242283940315247,
+        "entailment_score": 0.0037524988874793053,
+        "contradiction_score": 0.25242283940315247,
+        "neutral_score": 0.7438247203826904,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "385": [],
+    "386": [
+      {
+        "doc_id": "12258338",
+        "stance_score": 0.4159960150718689,
+        "entailment_score": 0.036293987184762955,
+        "contradiction_score": 0.4159960150718689,
+        "neutral_score": 0.5477100610733032,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "388": [
+      {
+        "doc_id": "21602220",
+        "stance_score": 0.9636698365211487,
+        "entailment_score": 0.004149524960666895,
+        "contradiction_score": 0.9636698365211487,
+        "neutral_score": 0.03218062222003937,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17416520",
+        "stance_score": 0.536858856678009,
+        "entailment_score": 0.536858856678009,
+        "contradiction_score": 0.02599656581878662,
+        "neutral_score": 0.43714457750320435,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "399": [],
+    "410": [],
+    "411": [],
+    "415": [
+      {
+        "doc_id": "4709641",
+        "stance_score": 0.8759610652923584,
+        "entailment_score": 0.018292715772986412,
+        "contradiction_score": 0.8759610652923584,
+        "neutral_score": 0.10574613511562347,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "421": [
+      {
+        "doc_id": "3727986",
+        "stance_score": 0.3344230651855469,
+        "entailment_score": 0.01300700381398201,
+        "contradiction_score": 0.3344230651855469,
+        "neutral_score": 0.6525700092315674,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "431": [
+      {
+        "doc_id": "2543135",
+        "stance_score": 0.38891518115997314,
+        "entailment_score": 0.048908449709415436,
+        "contradiction_score": 0.38891518115997314,
+        "neutral_score": 0.5621763467788696,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "436": [],
+    "437": [
+      {
+        "doc_id": "8083310",
+        "stance_score": 0.9263712763786316,
+        "entailment_score": 0.9263712763786316,
+        "contradiction_score": 0.00823561567813158,
+        "neutral_score": 0.06539309769868851,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "439": [
+      {
+        "doc_id": "40769868",
+        "stance_score": 0.9925846457481384,
+        "entailment_score": 0.0007847756496630609,
+        "contradiction_score": 0.9925846457481384,
+        "neutral_score": 0.0066305845975875854,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "440": [
+      {
+        "doc_id": "40769868",
+        "stance_score": 0.9892972111701965,
+        "entailment_score": 0.0009971103863790631,
+        "contradiction_score": 0.9892972111701965,
+        "neutral_score": 0.009705626405775547,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "443": [
+      {
+        "doc_id": "3321943",
+        "stance_score": 0.8968163728713989,
+        "entailment_score": 0.8968163728713989,
+        "contradiction_score": 0.0470578707754612,
+        "neutral_score": 0.0561256930232048,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17271462",
+        "stance_score": 0.8887604475021362,
+        "entailment_score": 0.8887604475021362,
+        "contradiction_score": 0.00019885228539351374,
+        "neutral_score": 0.11104068905115128,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "13048272",
+        "stance_score": 0.22658757865428925,
+        "entailment_score": 0.22658757865428925,
+        "contradiction_score": 0.0005678815068677068,
+        "neutral_score": 0.7728445529937744,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "452": [
+      {
+        "doc_id": "24530633",
+        "stance_score": 0.24287563562393188,
+        "entailment_score": 0.24287563562393188,
+        "contradiction_score": 0.038511455059051514,
+        "neutral_score": 0.7186128497123718,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "475": [],
+    "478": [],
+    "491": [],
+    "501": [
+      {
+        "doc_id": "72372925",
+        "stance_score": 0.9617866277694702,
+        "entailment_score": 0.0008685239590704441,
+        "contradiction_score": 0.9617866277694702,
+        "neutral_score": 0.037344809621572495,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "15984735",
+        "stance_score": 0.4939236044883728,
+        "entailment_score": 0.005859593395143747,
+        "contradiction_score": 0.4939236044883728,
+        "neutral_score": 0.5002167820930481,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "502": [],
+    "507": [
+      {
+        "doc_id": "16066726",
+        "stance_score": 0.8256322145462036,
+        "entailment_score": 0.003221777966246009,
+        "contradiction_score": 0.8256322145462036,
+        "neutral_score": 0.1711459904909134,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "508": [
+      {
+        "doc_id": "15856466",
+        "stance_score": 0.5851046442985535,
+        "entailment_score": 0.5851046442985535,
+        "contradiction_score": 0.002903092885389924,
+        "neutral_score": 0.41199225187301636,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "513": [
+      {
+        "doc_id": "25301182",
+        "stance_score": 0.64487624168396,
+        "entailment_score": 0.02303372323513031,
+        "contradiction_score": 0.64487624168396,
+        "neutral_score": 0.33209002017974854,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24918110",
+        "stance_score": 0.6251580119132996,
+        "entailment_score": 0.020384125411510468,
+        "contradiction_score": 0.6251580119132996,
+        "neutral_score": 0.3544578552246094,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "24443043",
+        "stance_score": 0.4373381435871124,
+        "entailment_score": 0.0038404264487326145,
+        "contradiction_score": 0.4373381435871124,
+        "neutral_score": 0.558821439743042,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "514": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9964061379432678,
+        "entailment_score": 0.00014952535275369883,
+        "contradiction_score": 0.9964061379432678,
+        "neutral_score": 0.0034443214535713196,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "43122426",
+        "stance_score": 0.909832775592804,
+        "entailment_score": 0.01609841175377369,
+        "contradiction_score": 0.909832775592804,
+        "neutral_score": 0.07406886667013168,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "516": [],
+    "517": [
+      {
+        "doc_id": "30915421",
+        "stance_score": 0.9879531860351562,
+        "entailment_score": 0.0014360924251377583,
+        "contradiction_score": 0.9879531860351562,
+        "neutral_score": 0.010610679164528847,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4474874",
+        "stance_score": 0.6201703548431396,
+        "entailment_score": 0.010337271727621555,
+        "contradiction_score": 0.6201703548431396,
+        "neutral_score": 0.3694923520088196,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "521": [
+      {
+        "doc_id": "25028913",
+        "stance_score": 0.26483073830604553,
+        "entailment_score": 0.26483073830604553,
+        "contradiction_score": 0.13061226904392242,
+        "neutral_score": 0.6045569777488708,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34873974",
+        "stance_score": 0.21501223742961884,
+        "entailment_score": 0.019976569339632988,
+        "contradiction_score": 0.21501223742961884,
+        "neutral_score": 0.765011191368103,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "525": [
+      {
+        "doc_id": "13639330",
+        "stance_score": 0.48217883706092834,
+        "entailment_score": 0.48217883706092834,
+        "contradiction_score": 0.03827925771474838,
+        "neutral_score": 0.4795418381690979,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "527": [],
+    "528": [
+      {
+        "doc_id": "8300657",
+        "stance_score": 0.3299614489078522,
+        "entailment_score": 0.3299614489078522,
+        "contradiction_score": 0.0011894966010004282,
+        "neutral_score": 0.6688491106033325,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "532": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7709222435951233,
+        "entailment_score": 0.0008027656585909426,
+        "contradiction_score": 0.7709222435951233,
+        "neutral_score": 0.22827501595020294,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "533": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7592867016792297,
+        "entailment_score": 0.000828985997941345,
+        "contradiction_score": 0.7592867016792297,
+        "neutral_score": 0.23988424241542816,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "535": [
+      {
+        "doc_id": "39368721",
+        "stance_score": 0.8076966404914856,
+        "entailment_score": 0.12834425270557404,
+        "contradiction_score": 0.8076966404914856,
+        "neutral_score": 0.06395908445119858,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "9288638",
+        "stance_score": 0.5616886615753174,
+        "entailment_score": 0.2334652543067932,
+        "contradiction_score": 0.5616886615753174,
+        "neutral_score": 0.2048460990190506,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "536": [
+      {
+        "doc_id": "3943235",
+        "stance_score": 0.9621329307556152,
+        "entailment_score": 0.0011565667809918523,
+        "contradiction_score": 0.9621329307556152,
+        "neutral_score": 0.03671044483780861,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "25440070",
+        "stance_score": 0.5794615149497986,
+        "entailment_score": 0.5794615149497986,
+        "contradiction_score": 0.17684416472911835,
+        "neutral_score": 0.24369433522224426,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "539": [
+      {
+        "doc_id": "13282296",
+        "stance_score": 0.5112234950065613,
+        "entailment_score": 0.19785849750041962,
+        "contradiction_score": 0.5112234950065613,
+        "neutral_score": 0.2909179627895355,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "540": [
+      {
+        "doc_id": "22545779",
+        "stance_score": 0.9955528378486633,
+        "entailment_score": 0.00014190062938723713,
+        "contradiction_score": 0.9955528378486633,
+        "neutral_score": 0.004305162001401186,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "45154987",
+        "stance_score": 0.994880199432373,
+        "entailment_score": 0.0005620525917038321,
+        "contradiction_score": 0.994880199432373,
+        "neutral_score": 0.004557747859507799,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "544": [
+      {
+        "doc_id": "10627801",
+        "stance_score": 0.20053595304489136,
+        "entailment_score": 0.20053595304489136,
+        "contradiction_score": 0.00299323839135468,
+        "neutral_score": 0.7964708805084229,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "549": [],
+    "551": [
+      {
+        "doc_id": "33499189",
+        "stance_score": 0.5540318489074707,
+        "entailment_score": 0.0014401201624423265,
+        "contradiction_score": 0.5540318489074707,
+        "neutral_score": 0.4445280432701111,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "8903143",
+        "stance_score": 0.20548610389232635,
+        "entailment_score": 0.20548610389232635,
+        "contradiction_score": 0.0010328468633815646,
+        "neutral_score": 0.7934810519218445,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "552": [],
+    "554": [
+      {
+        "doc_id": "3495456",
+        "stance_score": 0.725780725479126,
+        "entailment_score": 0.725780725479126,
+        "contradiction_score": 0.002756835427135229,
+        "neutral_score": 0.2714623808860779,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "560": [
+      {
+        "doc_id": "24783597",
+        "stance_score": 0.2529976963996887,
+        "entailment_score": 0.20154252648353577,
+        "contradiction_score": 0.2529976963996887,
+        "neutral_score": 0.5454597473144531,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "569": [],
+    "575": [
+      {
+        "doc_id": "41811327",
+        "stance_score": 0.9934408068656921,
+        "entailment_score": 0.00023584776499774307,
+        "contradiction_score": 0.9934408068656921,
+        "neutral_score": 0.006323389243334532,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "577": [
+      {
+        "doc_id": "40900567",
+        "stance_score": 0.5939923524856567,
+        "entailment_score": 0.5939923524856567,
+        "contradiction_score": 0.029742589220404625,
+        "neutral_score": 0.3762650191783905,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "578": [
+      {
+        "doc_id": "8764879",
+        "stance_score": 0.8701058626174927,
+        "entailment_score": 0.8701058626174927,
+        "contradiction_score": 0.002179877832531929,
+        "neutral_score": 0.12771423161029816,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "587": [
+      {
+        "doc_id": "24530633",
+        "stance_score": 0.7834650874137878,
+        "entailment_score": 0.7834650874137878,
+        "contradiction_score": 0.02753424271941185,
+        "neutral_score": 0.18900059163570404,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "589": [],
+    "593": [
+      {
+        "doc_id": "24443043",
+        "stance_score": 0.6448100805282593,
+        "entailment_score": 0.0038288456853479147,
+        "contradiction_score": 0.6448100805282593,
+        "neutral_score": 0.35136109590530396,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "19675911",
+        "stance_score": 0.21383531391620636,
+        "entailment_score": 0.21383531391620636,
+        "contradiction_score": 0.1270867884159088,
+        "neutral_score": 0.6590779423713684,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "597": [
+      {
+        "doc_id": "76415938",
+        "stance_score": 0.9246706962585449,
+        "entailment_score": 0.007969639264047146,
+        "contradiction_score": 0.9246706962585449,
+        "neutral_score": 0.06735961139202118,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "23136735",
+        "stance_score": 0.844172477722168,
+        "entailment_score": 0.844172477722168,
+        "contradiction_score": 0.0011219002772122622,
+        "neutral_score": 0.15470558404922485,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "28617573",
+        "stance_score": 0.6680892109870911,
+        "entailment_score": 0.6680892109870911,
+        "contradiction_score": 0.14133088290691376,
+        "neutral_score": 0.19057995080947876,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "598": [
+      {
+        "doc_id": "76415938",
+        "stance_score": 0.9537615180015564,
+        "entailment_score": 0.008328991942107677,
+        "contradiction_score": 0.9537615180015564,
+        "neutral_score": 0.03790953755378723,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "28617573",
+        "stance_score": 0.19239553809165955,
+        "entailment_score": 0.19239553809165955,
+        "contradiction_score": 0.14576312899589539,
+        "neutral_score": 0.6618412733078003,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "613": [],
+    "619": [
+      {
+        "doc_id": "12866641",
+        "stance_score": 0.9626222848892212,
+        "entailment_score": 0.00021753663895651698,
+        "contradiction_score": 0.9626222848892212,
+        "neutral_score": 0.037160228937864304,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "623": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9908826947212219,
+        "entailment_score": 0.0002621878229547292,
+        "contradiction_score": 0.9908826947212219,
+        "neutral_score": 0.008854997344315052,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "628": [
+      {
+        "doc_id": "1259359",
+        "stance_score": 0.54411780834198,
+        "entailment_score": 0.05903549864888191,
+        "contradiction_score": 0.54411780834198,
+        "neutral_score": 0.3968466520309448,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "636": [
+      {
+        "doc_id": "22025252",
+        "stance_score": 0.9310392737388611,
+        "entailment_score": 0.005024908110499382,
+        "contradiction_score": 0.9310392737388611,
+        "neutral_score": 0.06393584609031677,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.4201699495315552,
+        "entailment_score": 0.4201699495315552,
+        "contradiction_score": 0.004232949111610651,
+        "neutral_score": 0.5755971074104309,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "637": [
+      {
+        "doc_id": "485020",
+        "stance_score": 0.9965789914131165,
+        "entailment_score": 0.00016925302043091506,
+        "contradiction_score": 0.9965789914131165,
+        "neutral_score": 0.0032517476938664913,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "641": [
+      {
+        "doc_id": "17973630",
+        "stance_score": 0.8974350094795227,
+        "entailment_score": 0.0008917227969504893,
+        "contradiction_score": 0.8974350094795227,
+        "neutral_score": 0.10167331248521805,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "21373821",
+        "stance_score": 0.2492123246192932,
+        "entailment_score": 0.2492123246192932,
+        "contradiction_score": 0.015522683039307594,
+        "neutral_score": 0.7352648973464966,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "644": [
+      {
+        "doc_id": "13619127",
+        "stance_score": 0.19390474259853363,
+        "entailment_score": 0.05153710022568703,
+        "contradiction_score": 0.19390474259853363,
+        "neutral_score": 0.7545581459999084,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "649": [],
+    "659": [],
+    "660": [
+      {
+        "doc_id": "13624704",
+        "stance_score": 0.22174018621444702,
+        "entailment_score": 0.22174018621444702,
+        "contradiction_score": 0.0783863514661789,
+        "neutral_score": 0.6998735070228577,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "674": [
+      {
+        "doc_id": "15879931",
+        "stance_score": 0.9308446049690247,
+        "entailment_score": 0.0002075035881716758,
+        "contradiction_score": 0.9308446049690247,
+        "neutral_score": 0.0689479187130928,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "684": [
+      {
+        "doc_id": "17416520",
+        "stance_score": 0.28126227855682373,
+        "entailment_score": 0.28126227855682373,
+        "contradiction_score": 0.03837962448596954,
+        "neutral_score": 0.6803580522537231,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "690": [],
+    "691": [
+      {
+        "doc_id": "8083310",
+        "stance_score": 0.9269940257072449,
+        "entailment_score": 0.9269940257072449,
+        "contradiction_score": 0.006663598585873842,
+        "neutral_score": 0.06634236127138138,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24624992",
+        "stance_score": 0.7896189093589783,
+        "entailment_score": 0.7896189093589783,
+        "contradiction_score": 0.0017076998483389616,
+        "neutral_score": 0.20867334306240082,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "692": [
+      {
+        "doc_id": "11349166",
+        "stance_score": 0.9895281195640564,
+        "entailment_score": 0.0005956010427325964,
+        "contradiction_score": 0.9895281195640564,
+        "neutral_score": 0.009876322001218796,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "623486",
+        "stance_score": 0.3883226215839386,
+        "entailment_score": 0.00981173012405634,
+        "contradiction_score": 0.3883226215839386,
+        "neutral_score": 0.6018656492233276,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "693": [
+      {
+        "doc_id": "11349166",
+        "stance_score": 0.9887577891349792,
+        "entailment_score": 0.0006843378068879247,
+        "contradiction_score": 0.9887577891349792,
+        "neutral_score": 0.01055794395506382,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "623486",
+        "stance_score": 0.4014297127723694,
+        "entailment_score": 0.008983992971479893,
+        "contradiction_score": 0.4014297127723694,
+        "neutral_score": 0.5895863175392151,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "700": [],
+    "702": [],
+    "715": [],
+    "716": [],
+    "718": [],
+    "721": [
+      {
+        "doc_id": "12670680",
+        "stance_score": 0.8711503148078918,
+        "entailment_score": 0.8711503148078918,
+        "contradiction_score": 0.0017157190013676882,
+        "neutral_score": 0.12713396549224854,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "723": [
+      {
+        "doc_id": "5531479",
+        "stance_score": 0.5552849769592285,
+        "entailment_score": 0.5552849769592285,
+        "contradiction_score": 0.0012681460939347744,
+        "neutral_score": 0.44344693422317505,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "727": [
+      {
+        "doc_id": "4423401",
+        "stance_score": 0.4538496732711792,
+        "entailment_score": 0.007701740134507418,
+        "contradiction_score": 0.4538496732711792,
+        "neutral_score": 0.5384485721588135,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "728": [],
+    "729": [
+      {
+        "doc_id": "37895688",
+        "stance_score": 0.8514533042907715,
+        "entailment_score": 0.00024110946105793118,
+        "contradiction_score": 0.8514533042907715,
+        "neutral_score": 0.14830568432807922,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "22997657",
+        "stance_score": 0.48757675290107727,
+        "entailment_score": 0.0025481239426881075,
+        "contradiction_score": 0.48757675290107727,
+        "neutral_score": 0.5098751187324524,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "742": [],
+    "743": [],
+    "744": [
+      {
+        "doc_id": "12207167",
+        "stance_score": 0.3586413264274597,
+        "entailment_score": 0.010174861177802086,
+        "contradiction_score": 0.3586413264274597,
+        "neutral_score": 0.6311838030815125,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "756": [
+      {
+        "doc_id": "25901598",
+        "stance_score": 0.9819186925888062,
+        "entailment_score": 0.0005459534586407244,
+        "contradiction_score": 0.9819186925888062,
+        "neutral_score": 0.017535334452986717,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12172346",
+        "stance_score": 0.5127788782119751,
+        "entailment_score": 0.5127788782119751,
+        "contradiction_score": 0.00036152152460999787,
+        "neutral_score": 0.48685961961746216,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "759": [
+      {
+        "doc_id": "6503185",
+        "stance_score": 0.9921923279762268,
+        "entailment_score": 0.9921923279762268,
+        "contradiction_score": 0.0001046038669301197,
+        "neutral_score": 0.0077030896209180355,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "768": [
+      {
+        "doc_id": "2890952",
+        "stance_score": 0.9882398843765259,
+        "entailment_score": 0.001545127248391509,
+        "contradiction_score": 0.9882398843765259,
+        "neutral_score": 0.010214927606284618,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34498325",
+        "stance_score": 0.8827092051506042,
+        "entailment_score": 0.008601746521890163,
+        "contradiction_score": 0.8827092051506042,
+        "neutral_score": 0.10868901759386063,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "32975424",
+        "stance_score": 0.5817314982414246,
+        "entailment_score": 0.0005786168621852994,
+        "contradiction_score": 0.5817314982414246,
+        "neutral_score": 0.41768988966941833,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "770": [
+      {
+        "doc_id": "32421068",
+        "stance_score": 0.49804919958114624,
+        "entailment_score": 0.49804919958114624,
+        "contradiction_score": 0.019685767590999603,
+        "neutral_score": 0.48226502537727356,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "775": [
+      {
+        "doc_id": "40901687",
+        "stance_score": 0.2314794361591339,
+        "entailment_score": 0.046789079904556274,
+        "contradiction_score": 0.2314794361591339,
+        "neutral_score": 0.7217315435409546,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "781": [
+      {
+        "doc_id": "12670680",
+        "stance_score": 0.767990231513977,
+        "entailment_score": 0.767990231513977,
+        "contradiction_score": 0.0030481049325317144,
+        "neutral_score": 0.2289617508649826,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24338780",
+        "stance_score": 0.29272615909576416,
+        "entailment_score": 0.0014988722978159785,
+        "contradiction_score": 0.29272615909576416,
+        "neutral_score": 0.7057750225067139,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "783": [
+      {
+        "doc_id": "15716328",
+        "stance_score": 0.9240512251853943,
+        "entailment_score": 0.9240512251853943,
+        "contradiction_score": 0.006040702108293772,
+        "neutral_score": 0.06990808993577957,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24338780",
+        "stance_score": 0.465472936630249,
+        "entailment_score": 0.0014822152443230152,
+        "contradiction_score": 0.465472936630249,
+        "neutral_score": 0.5330448746681213,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "784": [
+      {
+        "doc_id": "6285534",
+        "stance_score": 0.4568479359149933,
+        "entailment_score": 0.0014437615172937512,
+        "contradiction_score": 0.4568479359149933,
+        "neutral_score": 0.5417083501815796,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "785": [],
+    "793": [],
+    "800": [],
+    "805": [
+      {
+        "doc_id": "31311495",
+        "stance_score": 0.2138316035270691,
+        "entailment_score": 0.2138316035270691,
+        "contradiction_score": 0.009437095373868942,
+        "neutral_score": 0.7767312526702881,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "808": [],
+    "811": [],
+    "814": [],
+    "820": [],
+    "821": [],
+    "823": [
+      {
+        "doc_id": "6426919",
+        "stance_score": 0.7913229465484619,
+        "entailment_score": 0.0012994338758289814,
+        "contradiction_score": 0.7913229465484619,
+        "neutral_score": 0.2073775976896286,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "830": [
+      {
+        "doc_id": "36310858",
+        "stance_score": 0.9812207221984863,
+        "entailment_score": 0.0009036890114657581,
+        "contradiction_score": 0.9812207221984863,
+        "neutral_score": 0.017875542864203453,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.5749467015266418,
+        "entailment_score": 0.5749467015266418,
+        "contradiction_score": 0.005315756890922785,
+        "neutral_score": 0.4197375476360321,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "12737132",
+        "stance_score": 0.44534826278686523,
+        "entailment_score": 0.0006515728309750557,
+        "contradiction_score": 0.44534826278686523,
+        "neutral_score": 0.554000198841095,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "831": [
+      {
+        "doc_id": "36310858",
+        "stance_score": 0.9813496470451355,
+        "entailment_score": 0.0008844127296470106,
+        "contradiction_score": 0.9813496470451355,
+        "neutral_score": 0.017765989527106285,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12737132",
+        "stance_score": 0.7998297214508057,
+        "entailment_score": 0.00045133824460208416,
+        "contradiction_score": 0.7998297214508057,
+        "neutral_score": 0.19971884787082672,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "14328288",
+        "stance_score": 0.5774073600769043,
+        "entailment_score": 0.5774073600769043,
+        "contradiction_score": 0.005051136016845703,
+        "neutral_score": 0.41754150390625,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "832": [
+      {
+        "doc_id": "30303335",
+        "stance_score": 0.5611611008644104,
+        "entailment_score": 0.10870222747325897,
+        "contradiction_score": 0.5611611008644104,
+        "neutral_score": 0.33013665676116943,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "6936141",
+        "stance_score": 0.319942444562912,
+        "entailment_score": 0.00047098528011702,
+        "contradiction_score": 0.319942444562912,
+        "neutral_score": 0.6795865893363953,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "834": [
+      {
+        "doc_id": "3986403",
+        "stance_score": 0.973450779914856,
+        "entailment_score": 0.00020919386588502675,
+        "contradiction_score": 0.973450779914856,
+        "neutral_score": 0.026340017095208168,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "23122306",
+        "stance_score": 0.586510181427002,
+        "entailment_score": 0.586510181427002,
+        "contradiction_score": 0.0067975763231515884,
+        "neutral_score": 0.406692236661911,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "837": [
+      {
+        "doc_id": "15928989",
+        "stance_score": 0.6808775067329407,
+        "entailment_score": 0.6808775067329407,
+        "contradiction_score": 0.0016594687476754189,
+        "neutral_score": 0.31746307015419006,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "839": [],
+    "845": [],
+    "847": [
+      {
+        "doc_id": "21479231",
+        "stance_score": 0.9274951219558716,
+        "entailment_score": 0.0010917909676209092,
+        "contradiction_score": 0.9274951219558716,
+        "neutral_score": 0.07141302525997162,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "33835579",
+        "stance_score": 0.9098876118659973,
+        "entailment_score": 0.0013386252103373408,
+        "contradiction_score": 0.9098876118659973,
+        "neutral_score": 0.08877375721931458,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "15997009",
+        "stance_score": 0.3357408046722412,
+        "entailment_score": 0.12727393209934235,
+        "contradiction_score": 0.3357408046722412,
+        "neutral_score": 0.5369852185249329,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "852": [
+      {
+        "doc_id": "40867854",
+        "stance_score": 0.9846529364585876,
+        "entailment_score": 0.9846529364585876,
+        "contradiction_score": 0.003962854854762554,
+        "neutral_score": 0.01138416025787592,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "474325",
+        "stance_score": 0.8335073590278625,
+        "entailment_score": 0.011933259665966034,
+        "contradiction_score": 0.8335073590278625,
+        "neutral_score": 0.15455935895442963,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "38735355",
+        "stance_score": 0.376854807138443,
+        "entailment_score": 0.003793442388996482,
+        "contradiction_score": 0.376854807138443,
+        "neutral_score": 0.6193516850471497,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "859": [],
+    "870": [],
+    "873": [
+      {
+        "doc_id": "4353857",
+        "stance_score": 0.9855770468711853,
+        "entailment_score": 0.00011701872426783666,
+        "contradiction_score": 0.9855770468711853,
+        "neutral_score": 0.01430592592805624,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "879": [],
+    "880": [],
+    "882": [
+      {
+        "doc_id": "168265642",
+        "stance_score": 0.2806668281555176,
+        "entailment_score": 0.2806668281555176,
+        "contradiction_score": 0.0036849828902632,
+        "neutral_score": 0.7156482338905334,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "887": [
+      {
+        "doc_id": "33989422",
+        "stance_score": 0.970237672328949,
+        "entailment_score": 0.001182291191071272,
+        "contradiction_score": 0.970237672328949,
+        "neutral_score": 0.02857998013496399,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "903": [
+      {
+        "doc_id": "14938990",
+        "stance_score": 0.9967840909957886,
+        "entailment_score": 0.0003863948804792017,
+        "contradiction_score": 0.9967840909957886,
+        "neutral_score": 0.002829493023455143,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "10648422",
+        "stance_score": 0.5226243734359741,
+        "entailment_score": 0.5226243734359741,
+        "contradiction_score": 0.018831269815564156,
+        "neutral_score": 0.45854440331459045,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "904": [
+      {
+        "doc_id": "2177022",
+        "stance_score": 0.6778618097305298,
+        "entailment_score": 0.009247837588191032,
+        "contradiction_score": 0.6778618097305298,
+        "neutral_score": 0.3128904104232788,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "907": [
+      {
+        "doc_id": "4422868",
+        "stance_score": 0.887622594833374,
+        "entailment_score": 0.0007866870146244764,
+        "contradiction_score": 0.887622594833374,
+        "neutral_score": 0.11159069091081619,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "26059876",
+        "stance_score": 0.38816893100738525,
+        "entailment_score": 0.008304072543978691,
+        "contradiction_score": 0.38816893100738525,
+        "neutral_score": 0.6035270094871521,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "911": [
+      {
+        "doc_id": "58006489",
+        "stance_score": 0.4326978027820587,
+        "entailment_score": 0.0022985192481428385,
+        "contradiction_score": 0.4326978027820587,
+        "neutral_score": 0.5650036334991455,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "913": [
+      {
+        "doc_id": "23938319",
+        "stance_score": 0.9602783918380737,
+        "entailment_score": 0.9602783918380737,
+        "contradiction_score": 0.0027008731849491596,
+        "neutral_score": 0.03702070936560631,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24624992",
+        "stance_score": 0.6412878632545471,
+        "entailment_score": 0.6412878632545471,
+        "contradiction_score": 0.0023285874631255865,
+        "neutral_score": 0.35638362169265747,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "9956893",
+        "stance_score": 0.5357047915458679,
+        "entailment_score": 0.5357047915458679,
+        "contradiction_score": 0.0013209187891334295,
+        "neutral_score": 0.4629742503166199,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "914": [
+      {
+        "doc_id": "23938319",
+        "stance_score": 0.9714543223381042,
+        "entailment_score": 0.9714543223381042,
+        "contradiction_score": 0.0014883674448356032,
+        "neutral_score": 0.02705729939043522,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "24624992",
+        "stance_score": 0.6743639707565308,
+        "entailment_score": 0.6743639707565308,
+        "contradiction_score": 0.002425749786198139,
+        "neutral_score": 0.323210209608078,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "921": [
+      {
+        "doc_id": "13083189",
+        "stance_score": 0.4030922055244446,
+        "entailment_score": 0.4030922055244446,
+        "contradiction_score": 0.04472247138619423,
+        "neutral_score": 0.5521853566169739,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "2575938",
+        "stance_score": 0.11672624200582504,
+        "entailment_score": 0.11672624200582504,
+        "contradiction_score": 0.11081916838884354,
+        "neutral_score": 0.7724546790122986,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "922": [
+      {
+        "doc_id": "17077004",
+        "stance_score": 0.8887458443641663,
+        "entailment_score": 0.011359754018485546,
+        "contradiction_score": 0.8887458443641663,
+        "neutral_score": 0.0998944416642189,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "74701974",
+        "stance_score": 0.691646933555603,
+        "entailment_score": 0.017662538215517998,
+        "contradiction_score": 0.691646933555603,
+        "neutral_score": 0.290690541267395,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "936": [
+      {
+        "doc_id": "3986403",
+        "stance_score": 0.9931349754333496,
+        "entailment_score": 0.00016766993212513626,
+        "contradiction_score": 0.9931349754333496,
+        "neutral_score": 0.006697433535009623,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "956": [],
+    "957": [
+      {
+        "doc_id": "2121272",
+        "stance_score": 0.8558688163757324,
+        "entailment_score": 0.001271872199140489,
+        "contradiction_score": 0.8558688163757324,
+        "neutral_score": 0.14285928010940552,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "960": [],
+    "967": [],
+    "971": [
+      {
+        "doc_id": "76415938",
+        "stance_score": 0.9225541949272156,
+        "entailment_score": 0.013644312508404255,
+        "contradiction_score": 0.9225541949272156,
+        "neutral_score": 0.06380149722099304,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "28617573",
+        "stance_score": 0.3051164448261261,
+        "entailment_score": 0.3051164448261261,
+        "contradiction_score": 0.23732931911945343,
+        "neutral_score": 0.4575542211532593,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "975": [],
+    "982": [
+      {
+        "doc_id": "29557235",
+        "stance_score": 0.2508603036403656,
+        "entailment_score": 0.2508603036403656,
+        "contradiction_score": 0.0010937375482171774,
+        "neutral_score": 0.7480459213256836,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "985": [
+      {
+        "doc_id": "6828370",
+        "stance_score": 0.9551616907119751,
+        "entailment_score": 0.9551616907119751,
+        "contradiction_score": 0.003317354479804635,
+        "neutral_score": 0.04152097553014755,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "993": [],
+    "1012": [
+      {
+        "doc_id": "43122426",
+        "stance_score": 0.9609225392341614,
+        "entailment_score": 0.0075051067396998405,
+        "contradiction_score": 0.9609225392341614,
+        "neutral_score": 0.03157230094075203,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1014": [],
+    "1019": [
+      {
+        "doc_id": "8386609",
+        "stance_score": 0.4424149692058563,
+        "entailment_score": 0.4424149692058563,
+        "contradiction_score": 0.0021479371935129166,
+        "neutral_score": 0.5554370284080505,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1020": [],
+    "1021": [],
+    "1024": [],
+    "1029": [],
+    "1041": [
+      {
+        "doc_id": "16626264",
+        "stance_score": 0.2261902093887329,
+        "entailment_score": 0.001771444221958518,
+        "contradiction_score": 0.2261902093887329,
+        "neutral_score": 0.7720383405685425,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1049": [],
+    "1062": [],
+    "1086": [
+      {
+        "doc_id": "12039953",
+        "stance_score": 0.9946613907814026,
+        "entailment_score": 0.0005663170595653355,
+        "contradiction_score": 0.9946613907814026,
+        "neutral_score": 0.0047722687013447285,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "25440070",
+        "stance_score": 0.6135839223861694,
+        "entailment_score": 0.6135839223861694,
+        "contradiction_score": 0.16648495197296143,
+        "neutral_score": 0.21993106603622437,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "5691302",
+        "stance_score": 0.5763195753097534,
+        "entailment_score": 0.5763195753097534,
+        "contradiction_score": 0.05861316993832588,
+        "neutral_score": 0.3650672435760498,
+        "predicted_label": "entailment",
+        "reranked_position": 3
+      }
+    ],
+    "1088": [
+      {
+        "doc_id": "33638477",
+        "stance_score": 0.7359237670898438,
+        "entailment_score": 0.7359237670898438,
+        "contradiction_score": 0.003129539079964161,
+        "neutral_score": 0.26094672083854675,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1089": [
+      {
+        "doc_id": "7915836",
+        "stance_score": 0.9561634063720703,
+        "entailment_score": 0.005302664823830128,
+        "contradiction_score": 0.9561634063720703,
+        "neutral_score": 0.03853391483426094,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17628888",
+        "stance_score": 0.37455886602401733,
+        "entailment_score": 0.018992610275745392,
+        "contradiction_score": 0.37455886602401733,
+        "neutral_score": 0.6064485311508179,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1099": [
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.3780483901500702,
+        "entailment_score": 0.3780483901500702,
+        "contradiction_score": 0.30726757645606995,
+        "neutral_score": 0.31468403339385986,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1100": [
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.36092472076416016,
+        "entailment_score": 0.36092472076416016,
+        "contradiction_score": 0.32553115487098694,
+        "neutral_score": 0.3135441243648529,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "22420524",
+        "stance_score": 0.2255384624004364,
+        "entailment_score": 0.0015323762781918049,
+        "contradiction_score": 0.2255384624004364,
+        "neutral_score": 0.7729291915893555,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1104": [
+      {
+        "doc_id": "6158879",
+        "stance_score": 0.49795201420783997,
+        "entailment_score": 0.49795201420783997,
+        "contradiction_score": 0.0696171298623085,
+        "neutral_score": 0.43243086338043213,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.497601181268692,
+        "entailment_score": 0.00121898646466434,
+        "contradiction_score": 0.497601181268692,
+        "neutral_score": 0.5011798739433289,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1107": [],
+    "1110": [],
+    "1121": [
+      {
+        "doc_id": "23076291",
+        "stance_score": 0.7160015106201172,
+        "entailment_score": 0.7160015106201172,
+        "contradiction_score": 0.005788957700133324,
+        "neutral_score": 0.27820950746536255,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1130": [
+      {
+        "doc_id": "1550937",
+        "stance_score": 0.9964330196380615,
+        "entailment_score": 0.0004136822826694697,
+        "contradiction_score": 0.9964330196380615,
+        "neutral_score": 0.0031532817520201206,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "17997584",
+        "stance_score": 0.97846919298172,
+        "entailment_score": 0.005339830182492733,
+        "contradiction_score": 0.97846919298172,
+        "neutral_score": 0.016191044822335243,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "21363424",
+        "stance_score": 0.9738641977310181,
+        "entailment_score": 0.000594905111938715,
+        "contradiction_score": 0.9738641977310181,
+        "neutral_score": 0.025540979579091072,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "1132": [
+      {
+        "doc_id": "33499189",
+        "stance_score": 0.7321799397468567,
+        "entailment_score": 0.0007916842005215585,
+        "contradiction_score": 0.7321799397468567,
+        "neutral_score": 0.26702845096588135,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "8903143",
+        "stance_score": 0.5715534090995789,
+        "entailment_score": 0.5715534090995789,
+        "contradiction_score": 0.001215155702084303,
+        "neutral_score": 0.42723143100738525,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1137": [],
+    "1140": [
+      {
+        "doc_id": "32766786",
+        "stance_score": 0.58437180519104,
+        "entailment_score": 0.12394502758979797,
+        "contradiction_score": 0.58437180519104,
+        "neutral_score": 0.2916831970214844,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1144": [
+      {
+        "doc_id": "3770750",
+        "stance_score": 0.9814700484275818,
+        "entailment_score": 0.0023159743286669254,
+        "contradiction_score": 0.9814700484275818,
+        "neutral_score": 0.01621396653354168,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "12224536",
+        "stance_score": 0.8959589004516602,
+        "entailment_score": 0.8959589004516602,
+        "contradiction_score": 0.00040659893420524895,
+        "neutral_score": 0.10363443940877914,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "11201004",
+        "stance_score": 0.7319051027297974,
+        "entailment_score": 0.039024993777275085,
+        "contradiction_score": 0.7319051027297974,
+        "neutral_score": 0.22906993329524994,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "1146": [],
+    "1150": [
+      {
+        "doc_id": "3321943",
+        "stance_score": 0.910168468952179,
+        "entailment_score": 0.910168468952179,
+        "contradiction_score": 0.03899753838777542,
+        "neutral_score": 0.050833988934755325,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1163": [
+      {
+        "doc_id": "17416520",
+        "stance_score": 0.44060540199279785,
+        "entailment_score": 0.44060540199279785,
+        "contradiction_score": 0.030359743162989616,
+        "neutral_score": 0.5290348529815674,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "15305881",
+        "stance_score": 0.3457983434200287,
+        "entailment_score": 0.3457983434200287,
+        "contradiction_score": 0.0012352679623290896,
+        "neutral_score": 0.6529664993286133,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1175": [
+      {
+        "doc_id": "31387717",
+        "stance_score": 0.9873971343040466,
+        "entailment_score": 0.00013063133519608527,
+        "contradiction_score": 0.9873971343040466,
+        "neutral_score": 0.012472189031541348,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1179": [
+      {
+        "doc_id": "44366096",
+        "stance_score": 0.9924848675727844,
+        "entailment_score": 0.00023197804694063962,
+        "contradiction_score": 0.9924848675727844,
+        "neutral_score": 0.007283123675733805,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1180": [
+      {
+        "doc_id": "44366096",
+        "stance_score": 0.9840990304946899,
+        "entailment_score": 0.0003845139581244439,
+        "contradiction_score": 0.9840990304946899,
+        "neutral_score": 0.01551633607596159,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "10627801",
+        "stance_score": 0.24695836007595062,
+        "entailment_score": 0.24695836007595062,
+        "contradiction_score": 0.0027936846017837524,
+        "neutral_score": 0.7502478957176208,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1185": [],
+    "1187": [
+      {
+        "doc_id": "25901598",
+        "stance_score": 0.9840127229690552,
+        "entailment_score": 0.000957794371061027,
+        "contradiction_score": 0.9840127229690552,
+        "neutral_score": 0.015029513277113438,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1191": [],
+    "1194": [
+      {
+        "doc_id": "33499189",
+        "stance_score": 0.21235282719135284,
+        "entailment_score": 0.0011181043228134513,
+        "contradiction_score": 0.21235282719135284,
+        "neutral_score": 0.786529004573822,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4926049",
+        "stance_score": 0.20355349779129028,
+        "entailment_score": 0.20355349779129028,
+        "contradiction_score": 0.019353726878762245,
+        "neutral_score": 0.7770927548408508,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1196": [],
+    "1197": [],
+    "1199": [
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.29448401927948,
+        "entailment_score": 0.27758336067199707,
+        "contradiction_score": 0.29448401927948,
+        "neutral_score": 0.42793264985084534,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1200": [
+      {
+        "doc_id": "31387717",
+        "stance_score": 0.996393620967865,
+        "entailment_score": 7.448067481163889e-05,
+        "contradiction_score": 0.996393620967865,
+        "neutral_score": 0.003531890455633402,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "23938319",
+        "stance_score": 0.9679175019264221,
+        "entailment_score": 0.9679175019264221,
+        "contradiction_score": 0.0015886473702266812,
+        "neutral_score": 0.030493909493088722,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1202": [],
+    "1204": [
+      {
+        "doc_id": "15907458",
+        "stance_score": 0.9248028993606567,
+        "entailment_score": 0.002616885816678405,
+        "contradiction_score": 0.9248028993606567,
+        "neutral_score": 0.07258018851280212,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1207": [],
+    "1213": [],
+    "1216": [
+      {
+        "doc_id": "24335068",
+        "stance_score": 0.9926309585571289,
+        "entailment_score": 0.0005518314428627491,
+        "contradiction_score": 0.9926309585571289,
+        "neutral_score": 0.00681727658957243,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "8903143",
+        "stance_score": 0.3636040985584259,
+        "entailment_score": 0.3636040985584259,
+        "contradiction_score": 0.0014737258898094296,
+        "neutral_score": 0.6349221467971802,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1221": [],
+    "1225": [
+      {
+        "doc_id": "16806763",
+        "stance_score": 0.8806580901145935,
+        "entailment_score": 0.8806580901145935,
+        "contradiction_score": 0.0034359688870608807,
+        "neutral_score": 0.1159060001373291,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "26059876",
+        "stance_score": 0.6175046563148499,
+        "entailment_score": 0.00860683061182499,
+        "contradiction_score": 0.6175046563148499,
+        "neutral_score": 0.3738885223865509,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "9650982",
+        "stance_score": 0.5454643368721008,
+        "entailment_score": 0.03193173557519913,
+        "contradiction_score": 0.5454643368721008,
+        "neutral_score": 0.42260393500328064,
+        "predicted_label": "contradiction",
+        "reranked_position": 3
+      }
+    ],
+    "1226": [
+      {
+        "doc_id": "21363424",
+        "stance_score": 0.3542116582393646,
+        "entailment_score": 0.0030857373494654894,
+        "contradiction_score": 0.3542116582393646,
+        "neutral_score": 0.6427026391029358,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1232": [
+      {
+        "doc_id": "24783597",
+        "stance_score": 0.2451181858778,
+        "entailment_score": 0.20384430885314941,
+        "contradiction_score": 0.2451181858778,
+        "neutral_score": 0.5510374903678894,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1241": [
+      {
+        "doc_id": "6729465",
+        "stance_score": 0.785278856754303,
+        "entailment_score": 0.00947405956685543,
+        "contradiction_score": 0.785278856754303,
+        "neutral_score": 0.20524710416793823,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4427392",
+        "stance_score": 0.4362560212612152,
+        "entailment_score": 0.4362560212612152,
+        "contradiction_score": 0.007834096439182758,
+        "neutral_score": 0.5559099316596985,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1245": [
+      {
+        "doc_id": "11360768",
+        "stance_score": 0.25866544246673584,
+        "entailment_score": 0.25866544246673584,
+        "contradiction_score": 0.005068305414170027,
+        "neutral_score": 0.7362663149833679,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "34198460",
+        "stance_score": 0.20423129200935364,
+        "entailment_score": 0.20423129200935364,
+        "contradiction_score": 0.0013583533000200987,
+        "neutral_score": 0.7944102883338928,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "23294314",
+        "stance_score": 0.14908021688461304,
+        "entailment_score": 0.14908021688461304,
+        "contradiction_score": 0.08191972225904465,
+        "neutral_score": 0.7690000534057617,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      }
+    ],
+    "1259": [],
+    "1262": [],
+    "1266": [
+      {
+        "doc_id": "17450673",
+        "stance_score": 0.36239513754844666,
+        "entailment_score": 0.0029110973700881004,
+        "contradiction_score": 0.36239513754844666,
+        "neutral_score": 0.6346938014030457,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "5487448",
+        "stance_score": 0.22398146986961365,
+        "entailment_score": 0.016207648441195488,
+        "contradiction_score": 0.22398146986961365,
+        "neutral_score": 0.7598108649253845,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1270": [],
+    "1271": [
+      {
+        "doc_id": "5597586",
+        "stance_score": 0.3325396478176117,
+        "entailment_score": 0.3325396478176117,
+        "contradiction_score": 0.006867622956633568,
+        "neutral_score": 0.6605927348136902,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1272": [
+      {
+        "doc_id": "15685921",
+        "stance_score": 0.5183171629905701,
+        "entailment_score": 0.0026292421389371157,
+        "contradiction_score": 0.5183171629905701,
+        "neutral_score": 0.4790536165237427,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1273": [
+      {
+        "doc_id": "24555417",
+        "stance_score": 0.9692172408103943,
+        "entailment_score": 0.9692172408103943,
+        "contradiction_score": 0.00015233449812512845,
+        "neutral_score": 0.03063048981130123,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      }
+    ],
+    "1274": [
+      {
+        "doc_id": "26625002",
+        "stance_score": 0.6306018233299255,
+        "entailment_score": 0.0025821616873145103,
+        "contradiction_score": 0.6306018233299255,
+        "neutral_score": 0.36681607365608215,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1278": [],
+    "1279": [],
+    "1280": [
+      {
+        "doc_id": "2890952",
+        "stance_score": 0.989561140537262,
+        "entailment_score": 0.0015049591893330216,
+        "contradiction_score": 0.989561140537262,
+        "neutral_score": 0.008933862671256065,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "29557235",
+        "stance_score": 0.31093311309814453,
+        "entailment_score": 0.31093311309814453,
+        "contradiction_score": 0.001000117277726531,
+        "neutral_score": 0.6880667805671692,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1281": [
+      {
+        "doc_id": "2890952",
+        "stance_score": 0.9897796511650085,
+        "entailment_score": 0.0013175179483368993,
+        "contradiction_score": 0.9897796511650085,
+        "neutral_score": 0.008902898989617825,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1282": [],
+    "1290": [
+      {
+        "doc_id": "26000593",
+        "stance_score": 0.9875298738479614,
+        "entailment_score": 0.9875298738479614,
+        "contradiction_score": 0.004327386151999235,
+        "neutral_score": 0.008142740465700626,
+        "predicted_label": "entailment",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "4687948",
+        "stance_score": 0.3582080602645874,
+        "entailment_score": 0.3582080602645874,
+        "contradiction_score": 0.29198557138442993,
+        "neutral_score": 0.34980639815330505,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      }
+    ],
+    "1292": [],
+    "1298": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.20718435943126678,
+        "entailment_score": 0.0012433023657649755,
+        "contradiction_score": 0.20718435943126678,
+        "neutral_score": 0.7915723323822021,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1303": [],
+    "1316": [],
+    "1319": [
+      {
+        "doc_id": "16284655",
+        "stance_score": 0.9945915341377258,
+        "entailment_score": 0.00017838174244388938,
+        "contradiction_score": 0.9945915341377258,
+        "neutral_score": 0.005229964852333069,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14192687",
+        "stance_score": 0.9607940316200256,
+        "entailment_score": 0.006913804914802313,
+        "contradiction_score": 0.9607940316200256,
+        "neutral_score": 0.03229214996099472,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "1320": [
+      {
+        "doc_id": "16284655",
+        "stance_score": 0.9948855042457581,
+        "entailment_score": 0.00020962570852134377,
+        "contradiction_score": 0.9948855042457581,
+        "neutral_score": 0.004904795903712511,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "14192687",
+        "stance_score": 0.9738556146621704,
+        "entailment_score": 0.004204178228974342,
+        "contradiction_score": 0.9738556146621704,
+        "neutral_score": 0.021940283477306366,
+        "predicted_label": "contradiction",
+        "reranked_position": 2
+      }
+    ],
+    "1332": [
+      {
+        "doc_id": "38830961",
+        "stance_score": 0.5696901082992554,
+        "entailment_score": 0.005176166072487831,
+        "contradiction_score": 0.5696901082992554,
+        "neutral_score": 0.4251337945461273,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1335": [],
+    "1336": [],
+    "1337": [],
+    "1339": [],
+    "1344": [],
+    "1352": [],
+    "1359": [
+      {
+        "doc_id": "21479231",
+        "stance_score": 0.9700987935066223,
+        "entailment_score": 0.0009181639761663973,
+        "contradiction_score": 0.9700987935066223,
+        "neutral_score": 0.028983045369386673,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "7639744",
+        "stance_score": 0.21561947464942932,
+        "entailment_score": 0.023930691182613373,
+        "contradiction_score": 0.21561947464942932,
+        "neutral_score": 0.7604498267173767,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1362": [
+      {
+        "doc_id": "34338075",
+        "stance_score": 0.7058616876602173,
+        "entailment_score": 0.0010569881414994597,
+        "contradiction_score": 0.7058616876602173,
+        "neutral_score": 0.2930813729763031,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "2593298",
+        "stance_score": 0.3910636901855469,
+        "entailment_score": 0.08960482478141785,
+        "contradiction_score": 0.3910636901855469,
+        "neutral_score": 0.5193315148353577,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1363": [
+      {
+        "doc_id": "2593298",
+        "stance_score": 0.29744037985801697,
+        "entailment_score": 0.1256237030029297,
+        "contradiction_score": 0.29744037985801697,
+        "neutral_score": 0.5769359469413757,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1368": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9934426546096802,
+        "entailment_score": 0.00017499794194009155,
+        "contradiction_score": 0.9934426546096802,
+        "neutral_score": 0.006382299587130547,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "41131087",
+        "stance_score": 0.8180112242698669,
+        "entailment_score": 0.8180112242698669,
+        "contradiction_score": 0.03320503979921341,
+        "neutral_score": 0.14878374338150024,
+        "predicted_label": "entailment",
+        "reranked_position": 2
+      },
+      {
+        "doc_id": "2425364",
+        "stance_score": 0.37033137679100037,
+        "entailment_score": 0.37033137679100037,
+        "contradiction_score": 0.035580575466156006,
+        "neutral_score": 0.594088077545166,
+        "predicted_label": "neutral",
+        "reranked_position": 3
+      },
+      {
+        "doc_id": "33740844",
+        "stance_score": 0.3215629458427429,
+        "entailment_score": 0.3215629458427429,
+        "contradiction_score": 0.0010958536295220256,
+        "neutral_score": 0.6773412227630615,
+        "predicted_label": "neutral",
+        "reranked_position": 4
+      }
+    ],
+    "1370": [
+      {
+        "doc_id": "30720103",
+        "stance_score": 0.9923060536384583,
+        "entailment_score": 0.00019157757924403995,
+        "contradiction_score": 0.9923060536384583,
+        "neutral_score": 0.007502375636249781,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      },
+      {
+        "doc_id": "2425364",
+        "stance_score": 0.3025881350040436,
+        "entailment_score": 0.3025881350040436,
+        "contradiction_score": 0.04045774042606354,
+        "neutral_score": 0.6569541692733765,
+        "predicted_label": "neutral",
+        "reranked_position": 2
+      }
+    ],
+    "1379": [
+      {
+        "doc_id": "17450673",
+        "stance_score": 0.40577611327171326,
+        "entailment_score": 0.003041133051738143,
+        "contradiction_score": 0.40577611327171326,
+        "neutral_score": 0.5911827683448792,
+        "predicted_label": "neutral",
+        "reranked_position": 1
+      }
+    ],
+    "1382": [],
+    "1385": [
+      {
+        "doc_id": "3559136",
+        "stance_score": 0.9979832172393799,
+        "entailment_score": 6.465918704634532e-05,
+        "contradiction_score": 0.9979832172393799,
+        "neutral_score": 0.0019521820358932018,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1389": [
+      {
+        "doc_id": "26735905",
+        "stance_score": 0.9806259870529175,
+        "entailment_score": 0.0033959553111344576,
+        "contradiction_score": 0.9806259870529175,
+        "neutral_score": 0.015978071838617325,
+        "predicted_label": "contradiction",
+        "reranked_position": 1
+      }
+    ],
+    "1395": []
+  }
+}

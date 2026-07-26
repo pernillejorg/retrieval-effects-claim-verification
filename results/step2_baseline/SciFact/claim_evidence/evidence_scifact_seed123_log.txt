@@ -1,0 +1,198 @@
+
+============================================================
+  RoBERTa Claim+Evidence Classifier  --  SCIFACT
+============================================================
+
+Using device: cuda
+
+Train claims : 809
+Val claims   : 300
+Train label distribution: {'NEI': 304, 'CONTRADICT': 173, 'SUPPORT': 332}
+
+Loading tokenizer: roberta-base
+
+Checking claim token lengths...
+
+--- Learning rate search ---
+
+  Trying learning rate: 1e-05
+Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights: 100%|██████████| 197/197 [00:00<00:00, 5689.44it/s]
+[transformers] [1mRobertaForSequenceClassification LOAD REPORT[0m from: roberta-base
+Key                        | Status     | 
+---------------------------+------------+-
+lm_head.bias               | UNEXPECTED | 
+lm_head.dense.weight       | UNEXPECTED | 
+lm_head.layer_norm.bias    | UNEXPECTED | 
+lm_head.layer_norm.weight  | UNEXPECTED | 
+lm_head.dense.bias         | UNEXPECTED | 
+classifier.dense.weight    | MISSING    | 
+classifier.dense.bias      | MISSING    | 
+classifier.out_proj.weight | MISSING    | 
+classifier.out_proj.bias   | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  Val F1 at lr=1e-05: 0.3780
+
+  Trying learning rate: 2e-05
+Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights: 100%|██████████| 197/197 [00:00<00:00, 4139.63it/s]
+[transformers] [1mRobertaForSequenceClassification LOAD REPORT[0m from: roberta-base
+Key                        | Status     | 
+---------------------------+------------+-
+lm_head.bias               | UNEXPECTED | 
+lm_head.dense.weight       | UNEXPECTED | 
+lm_head.layer_norm.bias    | UNEXPECTED | 
+lm_head.layer_norm.weight  | UNEXPECTED | 
+lm_head.dense.bias         | UNEXPECTED | 
+classifier.dense.weight    | MISSING    | 
+classifier.dense.bias      | MISSING    | 
+classifier.out_proj.weight | MISSING    | 
+classifier.out_proj.bias   | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  Val F1 at lr=2e-05: 0.4316
+
+  Trying learning rate: 3e-05
+Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights: 100%|██████████| 197/197 [00:00<00:00, 5538.39it/s]
+[transformers] [1mRobertaForSequenceClassification LOAD REPORT[0m from: roberta-base
+Key                        | Status     | 
+---------------------------+------------+-
+lm_head.bias               | UNEXPECTED | 
+lm_head.dense.weight       | UNEXPECTED | 
+lm_head.layer_norm.bias    | UNEXPECTED | 
+lm_head.layer_norm.weight  | UNEXPECTED | 
+lm_head.dense.bias         | UNEXPECTED | 
+classifier.dense.weight    | MISSING    | 
+classifier.dense.bias      | MISSING    | 
+classifier.out_proj.weight | MISSING    | 
+classifier.out_proj.bias   | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+  Val F1 at lr=3e-05: 0.4930
+
+  Best learning rate: 3e-05 (val F1 = 0.4930)
+
+
+Starting full training run with best learning rate: 3e-05
+
+Loading weights:   0%|          | 0/197 [00:00<?, ?it/s]Loading weights: 100%|██████████| 197/197 [00:00<00:00, 5704.25it/s]
+[transformers] [1mRobertaForSequenceClassification LOAD REPORT[0m from: roberta-base
+Key                        | Status     | 
+---------------------------+------------+-
+lm_head.bias               | UNEXPECTED | 
+lm_head.dense.weight       | UNEXPECTED | 
+lm_head.layer_norm.bias    | UNEXPECTED | 
+lm_head.layer_norm.weight  | UNEXPECTED | 
+lm_head.dense.bias         | UNEXPECTED | 
+classifier.dense.weight    | MISSING    | 
+classifier.dense.bias      | MISSING    | 
+classifier.out_proj.weight | MISSING    | 
+classifier.out_proj.bias   | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+Starting training...
+
+Epoch 1 / 10
+  Train loss      : 1.0795
+  Val macro F1    : 0.2366
+  Val precision   : 0.2974
+  Val recall      : 0.3540
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.61it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.61it/s]
+  New best model saved (val F1 = 0.2366)
+
+Epoch 2 / 10
+  Train loss      : 1.0433
+  Val macro F1    : 0.2185
+  Val precision   : 0.4056
+  Val recall      : 0.3425
+  No improvement for 1 epoch(s).
+
+Epoch 3 / 10
+  Train loss      : 0.9080
+  Val macro F1    : 0.4995
+  Val precision   : 0.4573
+  Val recall      : 0.5609
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]
+  New best model saved (val F1 = 0.4995)
+
+Epoch 4 / 10
+  Train loss      : 0.7510
+  Val macro F1    : 0.4916
+  Val precision   : 0.4397
+  Val recall      : 0.5575
+  No improvement for 1 epoch(s).
+
+Epoch 5 / 10
+  Train loss      : 0.6441
+  Val macro F1    : 0.5047
+  Val precision   : 0.4526
+  Val recall      : 0.5712
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]
+  New best model saved (val F1 = 0.5047)
+
+Epoch 6 / 10
+  Train loss      : 0.5270
+  Val macro F1    : 0.5465
+  Val precision   : 0.5531
+  Val recall      : 0.5571
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]
+  New best model saved (val F1 = 0.5465)
+
+Epoch 7 / 10
+  Train loss      : 0.4739
+  Val macro F1    : 0.5281
+  Val precision   : 0.5295
+  Val recall      : 0.5821
+  No improvement for 1 epoch(s).
+
+Epoch 8 / 10
+  Train loss      : 0.4067
+  Val macro F1    : 0.5638
+  Val precision   : 0.5625
+  Val recall      : 0.5719
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]
+  New best model saved (val F1 = 0.5638)
+
+Epoch 9 / 10
+  Train loss      : 0.3504
+  Val macro F1    : 0.5854
+  Val precision   : 0.5850
+  Val recall      : 0.5862
+Writing model shards:   0%|          | 0/1 [00:00<?, ?it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]Writing model shards: 100%|██████████| 1/1 [00:00<00:00,  1.05it/s]
+  New best model saved (val F1 = 0.5854)
+
+Epoch 10 / 10
+  Train loss      : 0.3113
+  Val macro F1    : 0.5808
+  Val precision   : 0.5818
+  Val recall      : 0.5802
+  No improvement for 1 epoch(s).
+
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 5478.80it/s]
+
+Validation classification report (reloaded best checkpoint):
+              precision    recall  f1-score   support
+
+     SUPPORT       0.61      0.63      0.62       124
+  CONTRADICT       0.30      0.28      0.29        64
+         NEI       0.84      0.85      0.84       112
+
+    accuracy                           0.64       300
+   macro avg       0.58      0.59      0.59       300
+weighted avg       0.63      0.64      0.63       300
+
+Reloaded checkpoint macro F1 : 0.5854
+  Confirmed: reloaded checkpoint reproduces the reported F1 (0.5854).
+
+(No held-out test set for SciFact, as validation is the final reported result.)
+
+Best learning rate used  : 3e-05
+Model saved to           : /content/rag-claim-verification/models/saved_models/evidence_scifact_seed123
+Results saved to results/baseline_scifact_claim_evidence.json

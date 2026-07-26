@@ -1,0 +1,84 @@
+Using device: cuda
+Loading Model 1 (claim-only) from: models/saved_models/baseline_scifact_seed7
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 5740.81it/s]
+Loading Model 2 (claim+evidence) from: models/saved_models/evidence_scifact_seed7
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 4426.81it/s]
+Loaded 300 claims and corpus of 5183 documents
+
+Building BM25 retriever...
+Building BM25 index over 5183 documents...
+BM25 index built successfully.
+Building dense retriever (one-time encoding)...
+Loading dense retrieval model: sentence-transformers/all-mpnet-base-v2
+Using device: cuda
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 5273.05it/s]
+Encoding 5183 documents into dense vectors...
+(This happens once per corpus -- subsequent retrievals are fast)
+Batches:   0%|          | 0/81 [00:00<?, ?it/s]Batches:   1%|          | 1/81 [00:00<00:48,  1.63it/s]Batches:   2%|▏         | 2/81 [00:00<00:35,  2.22it/s]Batches:   4%|▎         | 3/81 [00:01<00:31,  2.51it/s]Batches:   5%|▍         | 4/81 [00:01<00:28,  2.68it/s]Batches:   6%|▌         | 5/81 [00:01<00:27,  2.78it/s]Batches:   7%|▋         | 6/81 [00:02<00:26,  2.85it/s]Batches:   9%|▊         | 7/81 [00:02<00:26,  2.78it/s]Batches:  10%|▉         | 8/81 [00:03<00:25,  2.82it/s]Batches:  11%|█         | 9/81 [00:03<00:25,  2.86it/s]Batches:  12%|█▏        | 10/81 [00:03<00:24,  2.89it/s]Batches:  14%|█▎        | 11/81 [00:04<00:24,  2.91it/s]Batches:  15%|█▍        | 12/81 [00:04<00:23,  2.92it/s]Batches:  16%|█▌        | 13/81 [00:04<00:23,  2.93it/s]Batches:  17%|█▋        | 14/81 [00:05<00:22,  2.93it/s]Batches:  19%|█▊        | 15/81 [00:05<00:22,  2.94it/s]Batches:  20%|█▉        | 16/81 [00:05<00:22,  2.94it/s]Batches:  21%|██        | 17/81 [00:06<00:21,  2.94it/s]Batches:  22%|██▏       | 18/81 [00:06<00:21,  2.95it/s]Batches:  23%|██▎       | 19/81 [00:06<00:21,  2.95it/s]Batches:  25%|██▍       | 20/81 [00:07<00:20,  2.95it/s]Batches:  26%|██▌       | 21/81 [00:07<00:20,  2.95it/s]Batches:  27%|██▋       | 22/81 [00:07<00:20,  2.92it/s]Batches:  28%|██▊       | 23/81 [00:08<00:19,  2.94it/s]Batches:  30%|██▉       | 24/81 [00:08<00:19,  2.95it/s]Batches:  31%|███       | 25/81 [00:08<00:18,  2.95it/s]Batches:  32%|███▏      | 26/81 [00:09<00:18,  2.96it/s]Batches:  33%|███▎      | 27/81 [00:09<00:18,  2.96it/s]Batches:  35%|███▍      | 28/81 [00:09<00:17,  2.97it/s]Batches:  36%|███▌      | 29/81 [00:10<00:17,  2.97it/s]Batches:  37%|███▋      | 30/81 [00:10<00:17,  2.97it/s]Batches:  38%|███▊      | 31/81 [00:10<00:16,  2.97it/s]Batches:  40%|███▉      | 32/81 [00:11<00:16,  2.98it/s]Batches:  41%|████      | 33/81 [00:11<00:16,  2.98it/s]Batches:  42%|████▏     | 34/81 [00:11<00:15,  2.98it/s]Batches:  43%|████▎     | 35/81 [00:12<00:15,  2.98it/s]Batches:  44%|████▍     | 36/81 [00:12<00:15,  2.98it/s]Batches:  46%|████▌     | 37/81 [00:12<00:14,  2.98it/s]Batches:  47%|████▋     | 38/81 [00:13<00:14,  2.98it/s]Batches:  48%|████▊     | 39/81 [00:13<00:14,  2.98it/s]Batches:  49%|████▉     | 40/81 [00:13<00:13,  2.99it/s]Batches:  51%|█████     | 41/81 [00:14<00:13,  2.98it/s]Batches:  52%|█████▏    | 42/81 [00:14<00:13,  2.99it/s]Batches:  53%|█████▎    | 43/81 [00:14<00:12,  2.99it/s]Batches:  54%|█████▍    | 44/81 [00:15<00:12,  2.99it/s]Batches:  56%|█████▌    | 45/81 [00:15<00:12,  3.00it/s]Batches:  57%|█████▋    | 46/81 [00:15<00:11,  3.00it/s]Batches:  58%|█████▊    | 47/81 [00:16<00:11,  3.03it/s]Batches:  59%|█████▉    | 48/81 [00:16<00:10,  3.02it/s]Batches:  60%|██████    | 49/81 [00:16<00:10,  3.05it/s]Batches:  62%|██████▏   | 50/81 [00:17<00:09,  3.11it/s]Batches:  63%|██████▎   | 51/81 [00:17<00:09,  3.13it/s]Batches:  64%|██████▍   | 52/81 [00:17<00:08,  3.23it/s]Batches:  65%|██████▌   | 53/81 [00:17<00:08,  3.25it/s]Batches:  67%|██████▋   | 54/81 [00:18<00:08,  3.26it/s]Batches:  68%|██████▊   | 55/81 [00:18<00:07,  3.37it/s]Batches:  69%|██████▉   | 56/81 [00:18<00:07,  3.44it/s]Batches:  70%|███████   | 57/81 [00:19<00:06,  3.50it/s]Batches:  72%|███████▏  | 58/81 [00:19<00:06,  3.40it/s]Batches:  73%|███████▎  | 59/81 [00:19<00:06,  3.42it/s]Batches:  74%|███████▍  | 60/81 [00:20<00:06,  3.45it/s]Batches:  75%|███████▌  | 61/81 [00:20<00:05,  3.50it/s]Batches:  77%|███████▋  | 62/81 [00:20<00:05,  3.50it/s]Batches:  78%|███████▊  | 63/81 [00:20<00:05,  3.44it/s]Batches:  79%|███████▉  | 64/81 [00:21<00:04,  3.47it/s]Batches:  80%|████████  | 65/81 [00:21<00:04,  3.59it/s]Batches:  81%|████████▏ | 66/81 [00:21<00:04,  3.68it/s]Batches:  83%|████████▎ | 67/81 [00:21<00:03,  3.75it/s]Batches:  84%|████████▍ | 68/81 [00:22<00:03,  3.86it/s]Batches:  85%|████████▌ | 69/81 [00:22<00:03,  4.00it/s]Batches:  86%|████████▋ | 70/81 [00:22<00:02,  4.05it/s]Batches:  88%|████████▊ | 71/81 [00:22<00:02,  4.10it/s]Batches:  89%|████████▉ | 72/81 [00:23<00:02,  4.27it/s]Batches:  90%|█████████ | 73/81 [00:23<00:01,  4.24it/s]Batches:  91%|█████████▏| 74/81 [00:23<00:01,  4.52it/s]Batches:  93%|█████████▎| 75/81 [00:23<00:01,  4.65it/s]Batches:  94%|█████████▍| 76/81 [00:23<00:01,  4.75it/s]Batches:  95%|█████████▌| 77/81 [00:24<00:00,  4.95it/s]Batches:  96%|█████████▋| 78/81 [00:24<00:00,  5.26it/s]Batches:  98%|█████████▊| 79/81 [00:24<00:00,  5.44it/s]Batches:  99%|█████████▉| 80/81 [00:24<00:00,  5.81it/s]Batches: 100%|██████████| 81/81 [00:24<00:00,  6.17it/s]Batches: 100%|██████████| 81/81 [00:24<00:00,  3.28it/s]
+Corpus encoded. Embedding matrix shape: (5183, 768)
+Building stance reranker...
+Loading stance reranker: cross-encoder/nli-deberta-v3-small
+Using device: cuda
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 6165.36it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (657 > 512). Running this sequence through the model will result in indexing errors
+Model label order: {0: 'contradiction', 1: 'entailment', 2: 'neutral'}
+Stance reranker loaded successfully.
+
+Running pipeline: No Retrieval (Model 1, claim-only)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.52      0.65      0.58       124
+  CONTRADICT       0.35      0.27      0.30        64
+         NEI       0.69      0.59      0.64       112
+
+    accuracy                           0.55       300
+   macro avg       0.52      0.50      0.51       300
+weighted avg       0.55      0.55      0.54       300
+
+Macro F1: 0.5059
+Macro F1: 0.5059  Precision: 0.5216  Recall: 0.5027
+
+Running pipeline: BM25 + RoBERTa (Model 2)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.46      0.73      0.57       124
+  CONTRADICT       0.12      0.03      0.05        64
+         NEI       0.63      0.49      0.55       112
+
+    accuracy                           0.49       300
+   macro avg       0.41      0.42      0.39       300
+weighted avg       0.45      0.49      0.45       300
+
+Macro F1: 0.3899
+Macro F1: 0.3899  Precision: 0.4064  Recall: 0.4187
+
+Running pipeline: Dense + RoBERTa (Model 2)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.50      0.77      0.61       124
+  CONTRADICT       0.26      0.09      0.14        64
+         NEI       0.78      0.61      0.68       112
+
+    accuracy                           0.56       300
+   macro avg       0.51      0.49      0.48       300
+weighted avg       0.55      0.56      0.53       300
+
+Macro F1: 0.4755
+Macro F1: 0.4755  Precision: 0.5142  Recall: 0.4890
+
+Running pipeline: Dense + Soft Stance Reranking + RoBERTa (Model 2)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.47      0.51      0.49       124
+  CONTRADICT       0.18      0.05      0.07        64
+         NEI       0.52      0.70      0.60       112
+
+    accuracy                           0.48       300
+   macro avg       0.39      0.42      0.39       300
+weighted avg       0.43      0.48      0.44       300
+
+Macro F1: 0.3866
+Macro F1: 0.3866  Precision: 0.3901  Recall: 0.4171
+
+Aggregate metrics saved to results/step5_variance/pipeline_scifact_seed7_thr0_5.json
+Per-claim records saved to results/step5_variance/records_scifact_seed7_thr0_5.json

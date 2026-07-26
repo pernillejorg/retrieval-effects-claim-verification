@@ -1,0 +1,60 @@
+
+============================================================
+  Retrieval Evaluation -- SCIFACT
+============================================================
+
+Downloading builder script:   0%|          | 0.00/7.92k [00:00<?, ?B/s]Downloading builder script: 100%|██████████| 7.92k/7.92k [00:00<00:00, 66.1kB/s]Downloading builder script: 100%|██████████| 7.92k/7.92k [00:00<00:00, 65.8kB/s]
+Downloading metadata:   0%|          | 0.00/3.33k [00:00<?, ?B/s]Downloading metadata: 100%|██████████| 3.33k/3.33k [00:00<00:00, 27.6kB/s]Downloading metadata: 100%|██████████| 3.33k/3.33k [00:00<00:00, 27.5kB/s]
+Downloading readme:   0%|          | 0.00/8.06k [00:00<?, ?B/s]Downloading readme: 100%|██████████| 8.06k/8.06k [00:00<00:00, 69.5kB/s]Downloading readme: 100%|██████████| 8.06k/8.06k [00:00<00:00, 69.3kB/s]
+The repository for allenai/scifact contains custom code which must be executed to correctly load the dataset. You can inspect the repository content at https://hf.co/datasets/allenai/scifact.
+You can avoid this prompt in future by passing the argument `trust_remote_code=True`.
+
+Do you wish to run the custom code? [y/N] Downloading data:   0%|          | 0.00/3.12M [00:00<?, ?B/s]Downloading data:   1%|          | 17.4k/3.12M [00:00<00:26, 118kB/s]Downloading data:   2%|▏         | 52.2k/3.12M [00:00<00:16, 187kB/s]Downloading data:   4%|▍         | 139k/3.12M [00:00<00:08, 371kB/s] Downloading data:  10%|█         | 313k/3.12M [00:00<00:04, 689kB/s]Downloading data:  21%|██        | 660k/3.12M [00:00<00:01, 1.29MB/s]Downloading data:  43%|████▎     | 1.34M/3.12M [00:00<00:00, 2.41MB/s]Downloading data:  87%|████████▋ | 2.70M/3.12M [00:01<00:00, 4.62MB/s]Downloading data: 100%|██████████| 3.12M/3.12M [00:01<00:00, 3.00MB/s]
+Generating train split:   0%|          | 0/1261 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 1261/1261 [00:00<00:00, 14021.49 examples/s]
+Generating test split:   0%|          | 0/300 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 300/300 [00:00<00:00, 22385.94 examples/s]
+Generating validation split:   0%|          | 0/450 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 450/450 [00:00<00:00, 21544.11 examples/s]
+Generating train split:   0%|          | 0/5183 [00:00<?, ? examples/s]Generating train split:  33%|███▎      | 1733/5183 [00:00<00:00, 17292.99 examples/s]Generating train split:  81%|████████▏ | 4215/5183 [00:00<00:00, 16779.42 examples/s]Generating train split: 100%|██████████| 5183/5183 [00:00<00:00, 16782.99 examples/s]
+Validation claims : 450
+Corpus size       : 5183 documents
+
+Claims with evidence (non-NEI): 450
+NEI claims (excluded from Recall@k): 0
+
+--- BM25 Retrieval ---
+Building BM25 index over 5183 documents...
+BM25 index built successfully.
+
+Running BM25 retrieval...
+  Retrieving for claim 1 / 450...
+  Retrieving for claim 101 / 450...
+  Retrieving for claim 201 / 450...
+  Retrieving for claim 301 / 450...
+  Retrieving for claim 401 / 450...
+
+--- Dense Retrieval ---
+Loading dense retrieval model: sentence-transformers/all-MiniLM-L6-v2
+Using device: cuda
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 5947.48it/s]
+Encoding 5183 documents into dense vectors...
+(This happens once per corpus -- subsequent retrievals are fast)
+Batches:   0%|          | 0/81 [00:00<?, ?it/s]Batches:   1%|          | 1/81 [00:00<00:55,  1.45it/s]Batches:   4%|▎         | 3/81 [00:00<00:17,  4.37it/s]Batches:   6%|▌         | 5/81 [00:00<00:11,  6.89it/s]Batches:   9%|▊         | 7/81 [00:01<00:08,  9.04it/s]Batches:  11%|█         | 9/81 [00:01<00:06, 10.67it/s]Batches:  14%|█▎        | 11/81 [00:01<00:05, 12.12it/s]Batches:  16%|█▌        | 13/81 [00:01<00:05, 13.22it/s]Batches:  19%|█▊        | 15/81 [00:01<00:04, 14.06it/s]Batches:  21%|██        | 17/81 [00:01<00:04, 14.65it/s]Batches:  23%|██▎       | 19/81 [00:01<00:04, 15.15it/s]Batches:  26%|██▌       | 21/81 [00:01<00:03, 15.52it/s]Batches:  28%|██▊       | 23/81 [00:02<00:03, 15.95it/s]Batches:  31%|███       | 25/81 [00:02<00:03, 16.29it/s]Batches:  33%|███▎      | 27/81 [00:02<00:03, 16.54it/s]Batches:  36%|███▌      | 29/81 [00:02<00:03, 16.69it/s]Batches:  38%|███▊      | 31/81 [00:02<00:02, 16.91it/s]Batches:  41%|████      | 33/81 [00:02<00:03, 13.38it/s]Batches:  43%|████▎     | 35/81 [00:02<00:03, 14.40it/s]Batches:  46%|████▌     | 37/81 [00:02<00:02, 15.25it/s]Batches:  48%|████▊     | 39/81 [00:03<00:02, 15.90it/s]Batches:  51%|█████     | 41/81 [00:03<00:02, 16.35it/s]Batches:  53%|█████▎    | 43/81 [00:03<00:02, 16.69it/s]Batches:  56%|█████▌    | 45/81 [00:03<00:02, 17.06it/s]Batches:  58%|█████▊    | 47/81 [00:03<00:01, 17.29it/s]Batches:  60%|██████    | 49/81 [00:03<00:01, 17.42it/s]Batches:  63%|██████▎   | 51/81 [00:03<00:01, 17.55it/s]Batches:  65%|██████▌   | 53/81 [00:03<00:01, 17.78it/s]Batches:  68%|██████▊   | 55/81 [00:03<00:01, 17.97it/s]Batches:  70%|███████   | 57/81 [00:04<00:01, 18.09it/s]Batches:  73%|███████▎  | 59/81 [00:04<00:01, 18.21it/s]Batches:  75%|███████▌  | 61/81 [00:04<00:01, 18.24it/s]Batches:  78%|███████▊  | 63/81 [00:04<00:00, 18.32it/s]Batches:  80%|████████  | 65/81 [00:04<00:00, 18.41it/s]Batches:  83%|████████▎ | 67/81 [00:04<00:00, 18.41it/s]Batches:  85%|████████▌ | 69/81 [00:04<00:00, 18.46it/s]Batches:  88%|████████▊ | 71/81 [00:04<00:00, 18.61it/s]Batches:  90%|█████████ | 73/81 [00:04<00:00, 18.73it/s]Batches:  94%|█████████▍| 76/81 [00:05<00:00, 19.42it/s]Batches:  98%|█████████▊| 79/81 [00:05<00:00, 20.54it/s]Batches: 100%|██████████| 81/81 [00:05<00:00, 15.26it/s]
+Corpus encoded. Embedding matrix shape: (5183, 384)
+
+Running dense retrieval...
+  Retrieving for claim 1 / 450...
+  Retrieving for claim 101 / 450...
+  Retrieving for claim 201 / 450...
+  Retrieving for claim 301 / 450...
+  Retrieving for claim 401 / 450...
+
+==================================================
+  Retrieval Recall@k -- SCIFACT (validation)
+==================================================
+  Method                  R@1    R@5   R@10
+  --------------------------------------
+  BM25                  0.487  0.676  0.758
+  Dense                 0.562  0.809  0.851
+==================================================
+
+Recall@k summary saved to /content/rag-claim-verification/models/../results/retrieval_recall_scifact.json
+Retrieved candidates saved to /content/rag-claim-verification/models/../results/retrieval_candidates_scifact.json

@@ -1,0 +1,14 @@
+{
+  "dataset": "scifact",
+  "split_reported": "validation",
+  "best_learning_rate": 3e-05,
+  "macro_f1": 0.4570343563575611,
+  "precision": 0.4830021613647344,
+  "recall": 0.45060483870967744,
+  "model_name": "roberta-base",
+  "max_length": 128,
+  "batch_size": 16,
+  "max_epochs": 10,
+  "early_stopping_patience": 2,
+  "seed": 42
+}

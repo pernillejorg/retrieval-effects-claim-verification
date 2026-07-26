@@ -1,0 +1,29 @@
+{
+  "dataset": "scifact_open",
+  "mode": "soft",
+  "retrieval_k": 10,
+  "loose_neutral_threshold": 0.5,
+  "strict_neutral_threshold": 0.8,
+  "avg_docs_retrieved": 10,
+  "avg_docs_would_filter_loose": 9.13978494623656,
+  "avg_docs_would_filter_strict": 8.78136200716846,
+  "avg_docs_surviving_loose": 10.0,
+  "avg_docs_surviving_strict": 10.0,
+  "recall_at_k": {
+    "dense_before_reranking": {
+      "1": 0.4077669902912621,
+      "5": 0.6990291262135923,
+      "10": 0.7524271844660194
+    },
+    "dense_loose_reranking": {
+      "1": 0.1262135922330097,
+      "5": 0.49029126213592233,
+      "10": 0.7524271844660194
+    },
+    "dense_strict_reranking": {
+      "1": 0.1262135922330097,
+      "5": 0.49029126213592233,
+      "10": 0.7524271844660194
+    }
+  }
+}

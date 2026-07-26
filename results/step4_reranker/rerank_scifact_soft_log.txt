@@ -1,0 +1,53 @@
+
+============================================================
+  Stance-Aware Reranking Evaluation -- SCIFACT
+============================================================
+
+Using device: cuda
+
+Validation claims : 300
+Corpus size       : 5183 documents
+
+Claims with evidence (non-NEI): 300
+NEI claims (excluded from Recall@k): 0
+
+--- Loading saved dense retrieval candidates from Step 3 ---
+Loaded candidates for 300 claims.
+
+
+--- Stance-Aware Reranking ---
+Loading stance reranker: cross-encoder/nli-deberta-v3-small
+Using device: cuda
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 6027.85it/s]
+Model label order: {0: 'contradiction', 1: 'entailment', 2: 'neutral'}
+Stance reranker loaded successfully.
+
+Applying loose threshold (neutral <= 0.5)...
+  Reranking claim 1 / 300...
+  Reranking claim 101 / 300...
+  Reranking claim 201 / 300...
+
+Applying strict threshold (neutral <= 0.8)...
+  Reranking claim 1 / 300...
+  Reranking claim 101 / 300...
+  Reranking claim 201 / 300...
+
+============================================================
+  Reranking Recall@k -- SCIFACT -- MODE: SOFT
+============================================================
+
+  Method                                 R@1    R@5   R@10
+  -------------------------------------------------------
+  Dense (before reranking)             0.533  0.733  0.803
+  Dense + stance rerank soft (loose)   0.120  0.520  0.803
+  Dense + stance rerank soft (strict)  0.120  0.520  0.803
+============================================================
+
+  Avg docs retrieved            : 10.0
+  Avg docs would filter loose   : 9.4
+  Avg docs would filter strict  : 9.0
+  Avg docs SURVIVING loose (soft): 10.0
+  Avg docs SURVIVING strict (soft): 10.0
+
+Reranking results saved to /content/rag-claim-verification/models/../results/reranking_mpnet_soft_scifact.json
+Reranked candidates saved to /content/rag-claim-verification/models/../results/reranked_candidates_mpnet_soft_scifact.json
