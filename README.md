@@ -214,7 +214,7 @@ Once results are in for both datasets, the key questions are: does the behaviour
   - [ x] Step 5: Full RAG pipeline
   - [ x] Step 6: Experimental matrix
   - [ x] Step 7: Failure taxonomy and annotation
-  - [ ] Step 8: Confidence scoring analysis
-  - [ ] Step 9: Cross-dataset comparison
+  - [ x] Step 8: Confidence scoring analysis
+  - [ x] Step 9: Cross-dataset comparison
   - [ ] Step 10: Real-world case study
  
