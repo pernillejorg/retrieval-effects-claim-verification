@@ -9,7 +9,9 @@ being topically related.
 The key insight: topical similarity is not enough for fact-checking.
 A document about omega-3 and cardiovascular health might be retrieved for
 a related claim, but if it says nothing specific about that claim, it adds
-noise rather than signal. The stance filter catches this.
+noise rather than signal. Whether the stance filter actually catches this is
+the hypothesis this module tests; Step 4 results show it does not, on
+scientific text.
 
 Design decisions (document these in your thesis):
 - Cross-encoder/nli-deberta-v3-small: small enough for CPU/MacBook,
@@ -28,8 +30,16 @@ Design decisions (document these in your thesis):
   a document takes any stance at all on the claim
 
 References:
-- He et al. (2021) -- DeBERTa: Decoding-enhanced BERT with Disentangled Attention
-- Stammbach & Neumann (2019) -- NLI-filtering for health claim verification
+- He et al. (2021): DeBERTa: Decoding-enhanced BERT with Disentangled Attention
+- Stammbach & Neumann (2019): Team DOMLIN: Exploiting Evidence Enhancement for
+  the FEVER Shared Task. Proc. 2nd Workshop on Fact Extraction and VERification
+  (FEVER), pp. 105-109.
+    What this paper does and does not do: their evidence selection is a
+    supervised BERT sentence ranker trained with hinge loss, and entailment enters
+    only as the downstream verifier. It is therefore NOT a precursor to stance-based
+    filtering. It is cited here for their noisy-vs-trustworthy evidence result
+    (their Table 4: 56.0% vs 75.7% label accuracy), which motivates the question
+    this module tests -- whether more retrieved evidence helps or hurts.
 """
 
 #importing the operating system module for path handling
