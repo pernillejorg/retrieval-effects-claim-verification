@@ -4,8 +4,7 @@ This document records Step 5, the full retrieval-augmented generation (RAG) pipe
 
 Step 5 was carried out in **two parts**, reflecting a design issue discovered during the work:
 
-- **Part A: naive concatenation.** Retrieved documents are concatenated whole and   fed to the classifier until the 512-token limit is reached. This is the natural first
-implementation and mirrors how prior work (MAPLE) feeds retrieved abstracts.
+- **Part A: naive concatenation.** Retrieved documents are concatenated whole and   fed to the classifier until the 512-token limit is reached. This is the natural first implementation and the one that follows most directly from supplying the top-k retrieved abstracts as evidence.
 - **Part B: per-document token budget.** After discovering that Part A saturates the
 context window (below), the evidence budget is instead divided equally across the
 retrieved documents, so that all documents contribute and the retrieval depth k genuinely affects the input.
@@ -48,12 +47,9 @@ The first implementation concatenated retrieved documents whole, adding each doc
 
 Investigation showed why. Scientific abstracts are long (typically 200–300 tokens each). With a 512-token input and the claim consuming part of it, only about **two whole abstracts fit** before the budget is exhausted; any further retrieved documents are truncated away and never reach the classifier. Increasing k beyond ~2 therefore changes nothing, because the additional documents are discarded. **The effective retrieval depth is bounded by the context window, not by k.**
 
-This is a genuine finding rather than a mere implementation detail, and it is directly
-relevant to prior work. MAPLE (Zeng and Zubiaga, 2024) retrieves the top-3 BM25 abstracts and feeds them to a 512-token model, and the MAPLE paper itself notes that its retrieved-evidence instances are lengthy and "may exceed the maximum context length". Our analysis makes the consequence explicit: with whole-document concatenation, the nominal retrieval depth (k = 3) overstates the evidence the model actually reads, because the context window saturates after roughly two abstracts. In other words, the effective depth in such setups is set by the model's context length, not by the retrieval parameter.
+This is a genuine finding rather than a mere implementation detail, and it is directly relevant to any pipeline that concatenates retrieved abstracts into a fixed context window. MAPLE (Zeng and Zubiaga, 2024) retrieves the top-3 BM25 abstracts for its SciFact_retrieved configuration and operates at a maximum length of 512 tokens, and it reports that its LLaMA 2 baseline degrades badly on that configuration partly because the lengthy retrieved instances may exceed that model's context length. The present analysis makes a related consequence explicit for the concatenation setting used here: with whole-document concatenation, the nominal retrieval depth (k = 3) overstates the evidence the model actually reads, because the context window saturates after roughly two abstracts. The effective depth in such setups is set by the model's context length, not by the retrieval parameter.
 
-*Note on scope.* We cite MAPLE only for its retrieval depth (k = 3) and its shared
-context-length limitation. MAPLE is a methodologically different system, a few-shot
-T5-small model measuring semantic-similarity evolution, feeding a logistic classifier, whereas this project uses a fully fine-tuned RoBERTa classifier reading claim + evidence. The two are therefore not directly comparable in absolute performance, and no such comparison is drawn; the connection is limited to retrieval depth and the context-length observation.
+*Note on scope.* MAPLE is cited here only for its retrieval depth (k = 3), which anchors the depth used in this step to prior work on the same dataset. MAPLE is a methodologically different system: a few-shot method that fine-tunes T5-small with LoRA on unlabelled claim-evidence pairs, transforms the resulting semantic-similarity trajectories into features, and trains a logistic classifier on a handful of labelled examples. This project instead fully fine-tunes a RoBERTa classifier that reads claim and evidence directly. The two are therefore not comparable in absolute performance, and no such comparison is drawn; the connection is limited to retrieval depth.
 
 ### Part A results (naive concatenation, k = 3)
 
@@ -247,7 +243,7 @@ reported retrieval depth k = 3; propagating it across the full k-sweep (Step 6) 
 ## Result for the thesis
 
 A project titled "Retrieval Effects and Failure Behaviour" is well served by these results.
-Step 5 contributes: (i) a documented context-window saturation finding, nominal retrieval depth overstates effective evidence when long documents are concatenated whole, which also illuminates a limitation of prior work (MAPLE); (ii) a design response (per-document budget) that makes retrieval depth a controllable variable; (iii) a multi-seed pipeline variance study showing that retrieval-augmented conditions are markedly less stable across seeds than the no-retrieval baseline, and that retrieval's apparent small-corpus benefit does not survive averaging; and (iv) two robust negative results, retrieval reliably does not help at scale (SciFact-Open), and stance reranking reliably hurts on both datasets, with a diagnosed
+Step 5 contributes: (i) a documented context-window saturation finding, nominal retrieval depth overstates effective evidence when long documents are concatenated whole, which also qualifies how a nominal retrieval depth should be read in any concatenation-based pipeline; (ii) a design response (per-document budget) that makes retrieval depth a controllable variable; (iii) a multi-seed pipeline variance study showing that retrieval-augmented conditions are markedly less stable across seeds than the no-retrieval baseline, and that retrieval's apparent small-corpus benefit does not survive averaging; and (iv) two robust negative results, retrieval reliably does not help at scale (SciFact-Open), and stance reranking reliably hurts on both datasets, with a diagnosed
 mechanism. These are exactly the kind of conditional, fragile, and negative findings a
 failure-focused empirical study is designed to surface, and the variance study is what allows them to be stated with calibrated confidence rather than as single-run point estimates.
 
