@@ -891,4 +891,3 @@ if __name__ == "__main__":
         evaluate_on_scifact_open(seed=args.seed)
     else:
         run_baseline(dataset_name=args.dataset, input_mode=args.input_mode, seed=args.seed)
-
