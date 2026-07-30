@@ -779,9 +779,9 @@ def evaluate_on_scifact_open(seed=42):
     zero-shot generalisation reference: the same claim-only model trained on
     SciFact is scored on SciFact-Open's claims.
 
-    SciFact-Open has no NEI class (SUPPORT/CONTRADICT only). Any NEI the model
-    predicts is necessarily wrong here; metrics are computed only over the labels
-    actually present, so scores reflect SciFact-Open's two real classes.
+    SciFact-Open provides no explicit NEI label; the loader maps claims with no
+    evidence to NEI so both corpora share the same three-class scheme. Macro F1
+    here is therefore computed over all three classes.
     """
     #seeding for reproducibility (evaluation is deterministic, but kept for consistency)
     #seeding everything for reproducibility before any randomness happens
