@@ -8,5 +8,5 @@
   "max_length": 128,
   "batch_size": 16,
   "trained_on": "scifact",
-  "seed": 42
+  "seed": 123
 }
