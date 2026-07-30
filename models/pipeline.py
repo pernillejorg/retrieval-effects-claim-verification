@@ -30,7 +30,7 @@ Two classifiers (from Step 2, produced by baseline.py):
 
 Retriever choice (mpnet): all-mpnet-base-v2 is used as the dense retriever. Both it and
 the lighter all-MiniLM-L6-v2 were evaluated in Step 3; mpnet was chosen empirically as it
-won 5 of 6 dense recall metrics and resolved MiniLM's anomalous top-rank underperformance.
+won 4 of 6 dense recall metrics and resolved MiniLM's anomalous top-rank underperformance.
 This choice is therefore evidenced, not assumed.
 
 Reranking mode (soft): soft reranking (reorder, keep all documents) is used rather than
