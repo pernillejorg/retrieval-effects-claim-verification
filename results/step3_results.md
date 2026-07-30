@@ -94,8 +94,7 @@ mpnet is not uniformly superior. On SciFact-Open at R@10, mpnet (0.752) is margi
 **all-mpnet-base-v2 is selected as the primary dense retriever** for the downstream
 pipeline (Steps 4 onward). The reasoning:
 
-1. **mpnet wins on 5 of the 6 dense metrics** across the two datasets, losing only
-   SciFact-Open R@10 by a negligible 0.010 (0.752 vs 0.762).
+1. **mpnet wins on 4 of the 6 dense metrics** across the two datasets, losing SciFact R@5 (0.733 vs 0.753) and SciFact-Open R@10 (0.752 vs 0.762)
 2. **mpnet wins decisively where it matters most.** On SciFact-Open it leads at R@1
    (0.408 vs 0.369) and R@5 (0.699 vs 0.641), the top ranks that feed the stance reranker and classifier, which operate on the few highest-ranked documents.
 3. **mpnet gives a coherent retrieval story.** It resolves MiniLM's anomaly where     dense retrieval underperformed BM25 at R@1 on the large corpus. With mpnet, dense consistently beats BM25, which is the clean, defensible narrative.
