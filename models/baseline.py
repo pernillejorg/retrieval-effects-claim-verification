@@ -846,7 +846,8 @@ def evaluate_on_scifact_open(seed=42):
         "max_length": MAX_LENGTH_CLAIM_ONLY,
         "batch_size": BATCH_SIZE,
         "trained_on": "scifact",
-        "seed": 42,
+        #"seed": 42,
+        "seed": seed,
     }
 
     results_dir = os.path.join(os.path.dirname(__file__), "..", "results")
