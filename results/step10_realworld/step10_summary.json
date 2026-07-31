@@ -1,0 +1,433 @@
+{
+  "n_claims": 30,
+  "no_retrieval": {
+    "overall": {
+      "n": 30,
+      "correct": 7,
+      "accuracy_pct": 23.3
+    },
+    "by_corpus_fit": {
+      "near": {
+        "n": 17,
+        "correct": 4,
+        "accuracy_pct": 23.5
+      },
+      "far": {
+        "n": 13,
+        "correct": 3,
+        "accuracy_pct": 23.1
+      }
+    },
+    "confidence_by_true_label": {
+      "CONTRADICT": {
+        "n": 7,
+        "accuracy_pct": 0.0,
+        "mean_max_softmax": 0.8524,
+        "n_wrong": 7,
+        "mean_max_softmax_when_wrong": 0.8524
+      },
+      "NEI": {
+        "n": 9,
+        "accuracy_pct": 55.6,
+        "mean_max_softmax": 0.7667,
+        "n_wrong": 4,
+        "mean_max_softmax_when_wrong": 0.8657
+      },
+      "SUPPORT": {
+        "n": 14,
+        "accuracy_pct": 14.3,
+        "mean_max_softmax": 0.8312,
+        "n_wrong": 12,
+        "mean_max_softmax_when_wrong": 0.8258
+      }
+    }
+  },
+  "dense_by_k": {
+    "1": {
+      "overall": {
+        "n": 30,
+        "correct": 10,
+        "accuracy_pct": 33.3
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 3,
+          "accuracy_pct": 17.6
+        },
+        "far": {
+          "n": 13,
+          "correct": 7,
+          "accuracy_pct": 53.8
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.9616,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.9616
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 55.6,
+          "mean_max_softmax": 0.9094,
+          "n_wrong": 4,
+          "mean_max_softmax_when_wrong": 0.8157
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 35.7,
+          "mean_max_softmax": 0.8901,
+          "n_wrong": 9,
+          "mean_max_softmax_when_wrong": 0.9183
+        }
+      }
+    },
+    "3": {
+      "overall": {
+        "n": 30,
+        "correct": 9,
+        "accuracy_pct": 30.0
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 3,
+          "accuracy_pct": 17.6
+        },
+        "far": {
+          "n": 13,
+          "correct": 6,
+          "accuracy_pct": 46.2
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.9083,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.9083
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 22.2,
+          "mean_max_softmax": 0.7899,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.7327
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 50.0,
+          "mean_max_softmax": 0.8638,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.8332
+        }
+      }
+    },
+    "5": {
+      "overall": {
+        "n": 30,
+        "correct": 13,
+        "accuracy_pct": 43.3
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 6,
+          "accuracy_pct": 35.3
+        },
+        "far": {
+          "n": 13,
+          "correct": 7,
+          "accuracy_pct": 53.8
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.9011,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.9011
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 22.2,
+          "mean_max_softmax": 0.7825,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.7225
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 78.6,
+          "mean_max_softmax": 0.7991,
+          "n_wrong": 3,
+          "mean_max_softmax_when_wrong": 0.7868
+        }
+      }
+    },
+    "10": {
+      "overall": {
+        "n": 30,
+        "correct": 12,
+        "accuracy_pct": 40.0
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 6,
+          "accuracy_pct": 35.3
+        },
+        "far": {
+          "n": 13,
+          "correct": 6,
+          "accuracy_pct": 46.2
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.8642,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.8642
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 22.2,
+          "mean_max_softmax": 0.7251,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.7051
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 71.4,
+          "mean_max_softmax": 0.7517,
+          "n_wrong": 4,
+          "mean_max_softmax_when_wrong": 0.5977
+        }
+      }
+    }
+  },
+  "dense_reranked_by_k": {
+    "1": {
+      "overall": {
+        "n": 30,
+        "correct": 8,
+        "accuracy_pct": 26.7
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 1,
+          "accuracy_pct": 5.9
+        },
+        "far": {
+          "n": 13,
+          "correct": 7,
+          "accuracy_pct": 53.8
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.964,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.964
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 55.6,
+          "mean_max_softmax": 0.873,
+          "n_wrong": 4,
+          "mean_max_softmax_when_wrong": 0.7391
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 21.4,
+          "mean_max_softmax": 0.9555,
+          "n_wrong": 11,
+          "mean_max_softmax_when_wrong": 0.9605
+        }
+      }
+    },
+    "3": {
+      "overall": {
+        "n": 30,
+        "correct": 11,
+        "accuracy_pct": 36.7
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 5,
+          "accuracy_pct": 29.4
+        },
+        "far": {
+          "n": 13,
+          "correct": 6,
+          "accuracy_pct": 46.2
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.9576,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.9576
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 11.1,
+          "mean_max_softmax": 0.7963,
+          "n_wrong": 8,
+          "mean_max_softmax_when_wrong": 0.7715
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 71.4,
+          "mean_max_softmax": 0.7814,
+          "n_wrong": 4,
+          "mean_max_softmax_when_wrong": 0.714
+        }
+      }
+    },
+    "5": {
+      "overall": {
+        "n": 30,
+        "correct": 11,
+        "accuracy_pct": 36.7
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 5,
+          "accuracy_pct": 29.4
+        },
+        "far": {
+          "n": 13,
+          "correct": 6,
+          "accuracy_pct": 46.2
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.9359,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.9359
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 22.2,
+          "mean_max_softmax": 0.7876,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.732
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 64.3,
+          "mean_max_softmax": 0.8165,
+          "n_wrong": 5,
+          "mean_max_softmax_when_wrong": 0.793
+        }
+      }
+    },
+    "10": {
+      "overall": {
+        "n": 30,
+        "correct": 13,
+        "accuracy_pct": 43.3
+      },
+      "by_corpus_fit": {
+        "near": {
+          "n": 17,
+          "correct": 6,
+          "accuracy_pct": 35.3
+        },
+        "far": {
+          "n": 13,
+          "correct": 7,
+          "accuracy_pct": 53.8
+        }
+      },
+      "confidence_by_true_label": {
+        "CONTRADICT": {
+          "n": 7,
+          "accuracy_pct": 0.0,
+          "mean_max_softmax": 0.94,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.94
+        },
+        "NEI": {
+          "n": 9,
+          "accuracy_pct": 22.2,
+          "mean_max_softmax": 0.7962,
+          "n_wrong": 7,
+          "mean_max_softmax_when_wrong": 0.7437
+        },
+        "SUPPORT": {
+          "n": 14,
+          "accuracy_pct": 78.6,
+          "mean_max_softmax": 0.7548,
+          "n_wrong": 3,
+          "mean_max_softmax_when_wrong": 0.6024
+        }
+      }
+    }
+  },
+  "effective_rerank_pool_by_k": {
+    "1": 10,
+    "3": 10,
+    "5": 10,
+    "10": 10
+  },
+  "retrieval_vs_no_retrieval": {
+    "anchor_k": 3,
+    "no_retrieval_accuracy_pct": 23.3,
+    "dense_accuracy_at_anchor_k": 30.0,
+    "reranked_accuracy_at_anchor_k": 36.7,
+    "dense_beats_no_retrieval_at_anchor_k": true,
+    "reranked_beats_no_retrieval_at_anchor_k": true,
+    "highest_observed_dense_accuracy_across_tested_k": 43.3,
+    "highest_observed_reranked_accuracy_across_tested_k": 43.3,
+    "any_retrieval_beats_no_retrieval_exploratory": true,
+    "note": "H4 (from Step 9): retrieval is hypothesised to be no better than, and possibly worse than, no retrieval on these out-of-domain claims. The PRIMARY test is at the anchor depth k = 3. The 'highest observed' figures across all depths are exploratory descriptions of what happened on these ~30 claims, NOT selected or validated optimal depths, and accuracy here is descriptive, not a significance test."
+  },
+  "provenance": {
+    "run_utc": "2026-07-27T16:25:08.162847+00:00",
+    "device": "cuda",
+    "model1_path": "models/saved_models/baseline_scifact",
+    "model2_path": "models/saved_models/evidence_scifact",
+    "corpus": "scifact_open",
+    "corpus_doc_count": 500000,
+    "claims_csv": "realworld/seafood_claims.csv",
+    "claims_csv_sha256": "dcd0a40d052a666a6580307e731ea6c1ab68127800ad267b8eb05c68d58dde54",
+    "k_values": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "rerank_pool_size_base": 10,
+    "effective_rerank_pool_by_k": {
+      "1": 10,
+      "3": 10,
+      "5": 10,
+      "10": 10
+    },
+    "neutral_threshold": 0.5,
+    "conditions": [
+      "no_retrieval (Model 1)",
+      "dense -> Model 2 (swept over k)",
+      "dense+soft_rerank -> Model 2 (swept over k)"
+    ],
+    "confidence_definition": "max softmax probability over the 3 classes (same as Step 8)"
+  }
+}
