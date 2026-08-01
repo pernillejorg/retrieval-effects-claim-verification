@@ -1,12 +1,11 @@
-# RAG Claim Verification — MSc Thesis
+# Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification
 
-**Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification**
+*MSc Artificial Intelligence dissertation, Queen Mary University of London*
 
- *MSc AI Thesis Project: supervised research*
  ---
-  Author: Pernille Bergesen (MSc AI Student)
- 
-  Supervisor: Arkaitz Zubiaga (Senior Lecturer in NLP)
+
+**Author:** Pernille Bergesen · **Supervisor:** Arkaitz Zubiaga
+
  ---
 
 ## Overview
@@ -107,20 +106,27 @@ rag-claim-verification/
 │   ├── Step5_pipeline_multipleseeds.ipynb
 │   ├── Step5_pipeline.ipynb
 │   ├── Step6_experiments.ipynb
+│   ├── Step6_experiments_multiseed.ipynb
 │   ├── Step7_FailureTaxonomy.ipynb
 │   ├── Step8_ConfidenceScoring.ipynb
-│   └── Step9_CrossCorpus.ipynb
-├── realworld/                      #Step 10 real-world case study (in progress)
-│   └── seafood_claims.py           #seafood/sustainability social-media claims
+│   ├── Step9_CrossCorpus.ipynb
+│   └── Step10_RealWorld.ipynb
+├── realworld/                      #Step 10 real-world case study
+│   ├── seafood_claims.py           #case study runner
+│   ├── seafood_claims.csv          #the 30 collected claims
+│   ├── collection_guide.md         #collection protocol, fixed before collection
+│   └── results_annotation_guide.md #annotation scheme for the case study
 ├── results/                        #result write-ups and output tables
 │   ├── step2_baseline/             #Step 2 output JSONs
 │   ├── step3_retrieval/            #Step 3 recall JSONs
 │   ├── step4_reranker/             #Step 4 output tables
 │   ├── step5_pipeline/             #Step 5 pipeline records
 │   ├── step6_matrix/               #Step 6 k-sweep matrix and records
+│   │   └── step6_multiseed_matrix/ #seed 123 and 7 runs, plus assembled summary
 │   ├── step7_failure/              #annotations, rates, analysis JSONs
 │   ├── step8_confidence/           #confidence JSONs and CSV tables
 │   ├── step9_comparison/           #cross-corpus comparison JSON and CSVs
+│   ├── step10_realworld/           #case study records and summary
 │   ├── step1_results.md
 │   ├── step2_results.md
 │   ├── step3_results.md
@@ -129,7 +135,8 @@ rag-claim-verification/
 │   ├── step6_results.md
 │   ├── step7_results.md
 │   ├── step8_results.md
-│   └── step9_results.md
+│   ├── step9_results.md
+│   └── step10_results.md
 ├── .gitignore
 ├── README.md
 └── requirements.txt
@@ -173,7 +180,7 @@ The motivation is that topical similarity may not be enough. A document about om
 | Dense | semantic similarity baseline, no filtering |
 | Dense + stance reranking | semantic retrieval filtered by NLI stance scores |
 
-Two filter thresholds are tested: loose and strict.
+Two filter thresholds are tested, loose and strict, alongside a soft mode that reorders without removing anything. Hard filtering proved unusable at either threshold, discarding around nine of ten documents, so soft reranking is the mode carried into the pipeline.
 
 ### Step 5: RAG Pipeline
 
@@ -187,11 +194,13 @@ The pipeline variants are run under systematically varied retrieval depth:
 
 | Variable | Values tested |
 |---|---|
-| Retrieval condition | BM25, dense, dense + stance |
+| Retrieval condition | no retrieval, BM25, dense, dense + stance |
 | k (number of docs retrieved) | 1, 3, 5, 10 |
-| Stance filter threshold | loose, strict |
+| Training seed | 42, 123, 7 |
 
-Metric: F1, precision, recall. Run on both datasets for the core conditions. This isolates the effect of how many documents are supplied to the verifier.
+Metric: macro F1. Run on both datasets. The matrix was run under all three seeds, so every cell carries a mean and standard deviation rather than a single value. The stance threshold is not swept here: soft reranking retains all documents, so the threshold does not filter and the matrix runs at the loose setting only.
+
+Two readings from the original seed-42 run did not survive averaging: retrieval's apparent advantage at k = 1 on SciFact, and the corpus-dependent optimum on SciFact-Open. Both are reported in `results/step6_results.md` alongside the seed-42 tables.
 
 ### Step 7: Failure Taxonomy
 
@@ -214,27 +223,27 @@ Once results are in for both datasets, the key questions are: does reranking hel
 
 ### Step 10: Real-World Application
 
-20 to 30 real seafood and sustainability claims from social media, run through the best pipeline. The analysis is qualitative: which failure types come up, whether the stance filter catches irrelevant evidence on out-of-domain claims, and whether the confidence score flags uncertain predictions appropriately. This tests whether the behaviour observed on scientific benchmarks transfers to a real-world domain.
+30 real seafood and sustainability claims collected from public social media, run through the same pipeline and corpus under three conditions and four depths. Five expectations were fixed in advance, each carried in from an earlier step, and the claims were selected to exercise different failure modes rather than sampled at random, so the accuracy figures illustrate transferability rather than estimating deployment performance. The clearest result is that the confidence inversion on refutation claims reproduces in a domain the pipeline was never built for: the model scored zero of seven on the true-CONTRADICT claims in all nine condition-by-depth runs, at mean confidence rising to 0.96.
  
   ---
  
   ## Models and Libraries
  
-  - `transformers` + `roberta-base`: claim verification model
-  - - `rank_bm25`: BM25 retrieval
-    - - `sentence-transformers`: dense retrieval
-      - - `cross-encoder/nli-deberta-v3-small`: stance-aware reranking
-        - - `datasets`: dataset loading from Hugging Face
-          - - `scikit-learn`: evaluation metrics
-           
-            - ---
+- `transformers` + `roberta-base`: claim verification model
+- `rank_bm25`: BM25 retrieval
+- `sentence-transformers`: dense retrieval
+- `cross-encoder/nli-deberta-v3-small`: stance-aware reranking
+- `datasets`: dataset loading from Hugging Face
+- `scikit-learn`: evaluation metrics
+
+---
  
   ## What Goes Beyond Prior Work
  
   | | MAPLE | Stammbach & Neumann (2019) | This project |
   |---|---|---|---|
   | Datasets | SciFact only | FEVER (Wikipedia) | SciFact + SciFact-Open |
-  | Retrieval analysis | Performance drop noted | Single noisy vs filtered evidence comparison | Controlled matrix: k, method, threshold |
+  | Retrieval analysis | Drop under retrieved evidence noted for baselines | Single noisy vs filtered evidence comparison | Controlled matrix: method, depth k, three seeds |
   | Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
   | Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
   | Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
@@ -246,14 +255,14 @@ Once results are in for both datasets, the key questions are: does reranking hel
  
   ## Status
  
-  - [ x] Step 1: Dataset loading and preprocessing
-  - [ x] Step 2: RoBERTa baseline
-  - [ x] Step 3: BM25 + dense retrieval
-  - [ x] Step 4: Stance-aware reranker
-  - [ x] Step 5: Full RAG pipeline
-  - [ x] Step 6: Experimental matrix
-  - [ x] Step 7: Failure taxonomy and annotation
-  - [ x] Step 8: Confidence scoring analysis
-  - [ x] Step 9: Cross-dataset comparison
-  - [ x] Step 10: Real-world case study
+  - [x] Step 1: Dataset loading and preprocessing
+  - [x] Step 2: RoBERTa baseline
+  - [x] Step 3: BM25 + dense retrieval
+  - [x] Step 4: Stance-aware reranker
+  - [x] Step 5: Full RAG pipeline
+  - [x] Step 6: Experimental matrix
+  - [x] Step 7: Failure taxonomy and annotation
+  - [x] Step 8: Confidence scoring analysis
+  - [x] Step 9: Cross-dataset comparison
+  - [x] Step 10: Real-world case study
  
