@@ -260,7 +260,7 @@ Full pinned versions are in `requirements.txt`.
  
 ## What Goes Beyond Prior Work
  
-| | MAPLE | Stammbach & Neumann (2019) | This project |
+| | MAPLE | DOMLIN | This project |
 |---|---|---|---|
 | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
 | Retrieval analysis | Drop under retrieved evidence noted for baselines | Single noisy vs filtered evidence comparison | Controlled matrix: method, depth k, three seeds |
@@ -271,6 +271,9 @@ Full pinned versions are in `requirements.txt`.
 | Real-world domain | Not done | Not done | Seafood/sustainability social media claims |
 | Retrieval value at scale | Not studied | Not studied | Shown counterproductive on the large corpus |
  
+
+MAPLE (Zeng and Zubiaga, 2024) is a few-shot claim verification method using seq2seq training dynamics as classifier features. DOMLIN (Stammbach and Neumann, 2019) is a FEVER shared-task system built on a supervised sentence ranker followed by an entailment classifier.
+
   ---
  
 ## Status
