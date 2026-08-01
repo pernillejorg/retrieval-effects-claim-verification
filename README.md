@@ -235,13 +235,26 @@ Three questions are asked of the two corpora side by side: does reranking help c
   ---
  
 ## Models and Libraries
- 
-- `transformers` + `roberta-base`: claim verification model
-- `rank_bm25`: BM25 retrieval
-- `sentence-transformers`: dense retrieval
-- `cross-encoder/nli-deberta-v3-small`: stance-aware reranking
+
+**Models**
+
+- `roberta-base`: claim verification classifier, fine-tuned in two variants
+- `sentence-transformers/all-mpnet-base-v2`: dense retrieval (primary)
+- `sentence-transformers/all-MiniLM-L6-v2`: dense retrieval (comparison)
+- `cross-encoder/nli-deberta-v3-small`: zero-shot stance scoring
+
+**Libraries**
+
+- `torch`, `transformers`: model training and inference
+- `sentence-transformers`: dense embedding and retrieval
+- `rank-bm25`: BM25 sparse retrieval
 - `datasets`: dataset loading from Hugging Face
-- `scikit-learn`: evaluation metrics
+- `scikit-learn`: evaluation metrics and Cohen's kappa
+- `numpy`, `pandas`: analysis and result tables
+- `matplotlib`, `seaborn`: figures
+- `tqdm`, `python-dotenv`: utilities
+
+Full pinned versions are in `requirements.txt`.
 
 ---
  
