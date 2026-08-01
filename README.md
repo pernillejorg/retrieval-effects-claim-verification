@@ -242,7 +242,7 @@ Once results are in for both datasets, the key questions are: does reranking hel
  
   | | MAPLE | Stammbach & Neumann (2019) | This project |
   |---|---|---|---|
-  | Datasets | SciFact only | FEVER (Wikipedia) | SciFact + SciFact-Open |
+  | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
   | Retrieval analysis | Drop under retrieved evidence noted for baselines | Single noisy vs filtered evidence comparison | Controlled matrix: method, depth k, three seeds |
   | Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
   | Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
