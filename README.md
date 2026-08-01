@@ -255,5 +255,5 @@ Once results are in for both datasets, the key questions are: does reranking hel
   - [ x] Step 7: Failure taxonomy and annotation
   - [ x] Step 8: Confidence scoring analysis
   - [ x] Step 9: Cross-dataset comparison
-  - [ ] Step 10: Real-world case study
+  - [ x] Step 10: Real-world case study
  
