@@ -275,6 +275,8 @@ Full pinned versions are in `requirements.txt`.
 - **MAPLE** (Zeng and Zubiaga, 2024): a few-shot claim verification method using seq2seq training dynamics as classifier features
 - **DOMLIN** (Stammbach and Neumann, 2019): a FEVER shared-task system built on a supervised sentence ranker followed by an entailment classifier
 
+Both are systems proposed to verify claims better. This project holds the task fixed and varies retrieval instead, so the comparison is one of scope: neither prior system set out to characterise how retrieval fails, which is the question asked here.
+
   ---
  
 ## Status
