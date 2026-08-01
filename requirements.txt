@@ -1,29 +1,38 @@
-# Core ML / NLP
+#Listing the dependencies for the project
+#grouping them by the pipeline stage each package serves
+
+#Claim verification
+#Step 2: two roberta-base classifiers, one reading claims alone and one
+#reading claim and evidence
 torch>=2.0.0
 transformers>=4.40.0
+
+#Evidence retrieval
+#Step 3: BM25 for the sparse baseline, sentence-transformers for
+#all-mpnet-base-v2 and all-MiniLM-L6-v2, ranking by exact cosine similarity
+#over normalised embeddings rather than an approximate index, so that
+#retrieval error is never confounded with index approximation
+rank-bm25>=0.2.2
 sentence-transformers>=2.7.0
 
-# Retrieval
-rank-bm25>=0.2.2
-faiss-cpu>=1.8.0
+#Stance reranking
+#Step 4: cross-encoder/nli-deberta-v3-small, loaded through transformers
+#rather than a pipeline wrapper so the label order (contradiction,
+#entailment, neutral) stays explicit and checkable
+#therefore no additional package 
 
-# NLI reranker (cross-encoder)
-# model: cross-encoder/nli-deberta-v3-small (loaded via sentence-transformers)
-
-# Datasets
+#Datasets
+#Step 1: SciFact and SciFact-Open, loaded from the Hugging Face hub
 datasets>=2.19.0
 
-# Evaluation
+#Analysis/Experimentations
+#Steps 6 to 10: macro F1 and Cohen's kappa from scikit-learn, seed variance
+#and recall from numpy, result tables from pandas
 scikit-learn>=1.4.0
 numpy>=1.26.0
 pandas>=2.2.0
 
-# Notebook support
+#Notebook support
+#running the notebooks locally, though the reported runs were executed on Colab
 jupyter>=1.0.0
 ipykernel>=6.29.0
-matplotlib>=3.8.0
-seaborn>=0.13.0
-
-# Utilities
-tqdm>=4.66.0
-python-dotenv>=1.0.0
