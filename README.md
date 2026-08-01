@@ -236,6 +236,8 @@ Three questions are asked of the two corpora side by side: does reranking help c
  
 ## Models and Libraries
 
+## Models and Libraries
+
 **Models**
 
 - `roberta-base`: claim verification classifier, fine-tuned in two variants
@@ -251,8 +253,6 @@ Three questions are asked of the two corpora side by side: does reranking help c
 - `datasets`: dataset loading from Hugging Face
 - `scikit-learn`: evaluation metrics and Cohen's kappa
 - `numpy`, `pandas`: analysis and result tables
-- `matplotlib`, `seaborn`: figures
-- `tqdm`, `python-dotenv`: utilities
 
 Full pinned versions are in `requirements.txt`.
 
