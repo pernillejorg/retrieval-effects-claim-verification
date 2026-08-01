@@ -1,0 +1,27 @@
+{
+  "dataset": "scifact",
+  "top_k": 3,
+  "neutral_threshold": 0.5,
+  "metrics": {
+    "no_retrieval": {
+      "macro_f1": 0.5263006088280061,
+      "macro_precision": 0.5286850425505244,
+      "macro_recall": 0.5246495775729647
+    },
+    "bm25_roberta": {
+      "macro_f1": 0.5126627429998217,
+      "macro_precision": 0.5585397452788757,
+      "macro_recall": 0.5138968894009216
+    },
+    "dense_roberta": {
+      "macro_f1": 0.5582510423524248,
+      "macro_precision": 0.5934495419789537,
+      "macro_recall": 0.5537394393241167
+    },
+    "dense_reranked_roberta": {
+      "macro_f1": 0.4878707067339927,
+      "macro_precision": 0.4982098709371437,
+      "macro_recall": 0.4909274193548387
+    }
+  }
+}

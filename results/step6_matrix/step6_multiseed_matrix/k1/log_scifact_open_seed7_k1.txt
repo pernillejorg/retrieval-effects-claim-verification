@@ -1,0 +1,85 @@
+Using device: cuda
+Loading Model 1 (claim-only) from: models/saved_models/baseline_scifact_seed7
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 5113.83it/s]
+Loading Model 2 (claim+evidence) from: models/saved_models/evidence_scifact_seed7
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 5052.53it/s]
+[load_scifact_open] 279 claims loaded (15 had conflicting SUPPORT/CONTRADICT evidence, resolved to SUPPORT).
+Loaded 279 claims and corpus of 500000 documents
+
+Building BM25 retriever...
+Building BM25 index over 500000 documents...
+BM25 index built successfully.
+Building dense retriever (one-time encoding)...
+Loading dense retrieval model: sentence-transformers/all-mpnet-base-v2
+Using device: cuda
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 5834.22it/s]
+Encoding 500000 documents into dense vectors...
+(This happens once per corpus -- subsequent retrievals are fast)
+Loaded cached embeddings from /content/drive/MyDrive/rag-thesis/cache/embeddings/sentence-transformers_all-mpnet-base-v2_500000.npz
+Corpus encoded. Embedding matrix shape: (500000, 768)
+Building stance reranker...
+Loading stance reranker: cross-encoder/nli-deberta-v3-small
+Using device: cuda
+Loading weights:   0%|          | 0/106 [00:00<?, ?it/s]Loading weights: 100%|██████████| 106/106 [00:00<00:00, 5328.14it/s]
+[transformers] Token indices sequence length is longer than the specified maximum sequence length for this model (688 > 512). Running this sequence through the model will result in indexing errors
+Model label order: {0: 'contradiction', 1: 'entailment', 2: 'neutral'}
+Stance reranker loaded successfully.
+
+Running pipeline: No Retrieval (Model 1, claim-only)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.56      0.59      0.57       116
+  CONTRADICT       0.55      0.44      0.49        90
+         NEI       0.63      0.73      0.68        73
+
+    accuracy                           0.58       279
+   macro avg       0.58      0.59      0.58       279
+weighted avg       0.57      0.58      0.57       279
+
+Macro F1: 0.5791
+Macro F1: 0.5791  Precision: 0.5788  Recall: 0.5856
+
+Running pipeline: BM25 + RoBERTa (Model 2)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.56      0.64      0.60       116
+  CONTRADICT       0.47      0.09      0.15        90
+         NEI       0.45      0.79      0.57        73
+
+    accuracy                           0.50       279
+   macro avg       0.49      0.51      0.44       279
+weighted avg       0.50      0.50      0.45       279
+
+Macro F1: 0.4392
+Macro F1: 0.4392  Precision: 0.4924  Recall: 0.5071
+
+Running pipeline: Dense + RoBERTa (Model 2)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.56      0.64      0.60       116
+  CONTRADICT       0.48      0.12      0.19        90
+         NEI       0.46      0.78      0.58        73
+
+    accuracy                           0.51       279
+   macro avg       0.50      0.51      0.46       279
+weighted avg       0.51      0.51      0.46       279
+
+Macro F1: 0.4565
+Macro F1: 0.4565  Precision: 0.4997  Recall: 0.5137
+
+Running pipeline: Dense + Soft Stance Reranking + RoBERTa (Model 2)
+              precision    recall  f1-score   support
+
+     SUPPORT       0.50      0.34      0.41       116
+  CONTRADICT       0.67      0.09      0.16        90
+         NEI       0.31      0.79      0.45        73
+
+    accuracy                           0.38       279
+   macro avg       0.49      0.41      0.34       279
+weighted avg       0.50      0.38      0.34       279
+
+Macro F1: 0.3371
+Macro F1: 0.3371  Precision: 0.4923  Recall: 0.4094
+
+Aggregate metrics saved to results/step6_matrix/matrix_scifact_open_seed7_k1_thr0_5.json
+Per-claim records saved to results/step6_matrix/records_scifact_open_seed7_k1_thr0_5.json
