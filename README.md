@@ -150,87 +150,87 @@ rag-claim-verification/
  
 ### Step 1: Datasets
 
-The primary dataset is SciFact, which contains scientific claims verified against paper abstracts, with genuinely hard retrieval over a roughly 5,000-abstract corpus. This is the main experimental dataset: baseline training, the full matrix, and failure annotation all happen here.
+    The primary dataset is SciFact, which contains scientific claims verified against paper abstracts, with genuinely hard retrieval over a roughly 5,000-abstract corpus. This is the main experimental dataset: baseline training, the full matrix, and failure annotation all happen here.
 
-SciFact-Open is used as the secondary dataset. It provides a much larger open retrieval corpus (roughly 500,000 documents) in the same scientific domain, and because it is a test-only collection with no training split, the SciFact-trained pipeline is evaluated on it zero-shot. This contrasts retrieval on a small, tractable corpus (SciFact) with a large, hard one (SciFact-Open), testing whether the findings hold as retrieval difficulty scales up.
+    SciFact-Open is used as the secondary dataset. It provides a much larger open retrieval corpus (roughly 500,000 documents) in the same scientific domain, and because it is a test-only collection with no training split, the SciFact-trained pipeline is evaluated on it zero-shot. This contrasts retrieval on a small, tractable corpus (SciFact) with a large, hard one (SciFact-Open), testing whether the findings hold as retrieval difficulty scales up.
 
-Core experiments run on both datasets. Manual failure annotation is done on SciFact only.
+    Core experiments run on both datasets. Manual failure annotation is done on SciFact only.
 
-(An earlier version of the project used SciClaimHunt as the second dataset, but it was replaced by SciFact-Open because it does not provide the kind of large open retrieval corpus this analysis requires. The SciClaimHunt work is preserved on the `main-sciclaimhunt-archive` branch.)
+    (An earlier version of the project used SciClaimHunt as the second dataset, but it was replaced by SciFact-Open because it does not provide the kind of large open retrieval corpus this analysis requires. The SciClaimHunt work is preserved on the `main-sciclaimhunt-archive` branch.)
 
 ### Step 2: Baseline Model
 
-A RoBERTa model trained to verify claims without any retrieved evidence, and a second RoBERTa model trained on claim plus evidence pairs. Trained and evaluated on SciFact (F1, precision, recall), and additionally evaluated zero-shot on SciFact-Open. Both classifiers were retrained under three seeds (42, 123, 7), so the baseline figures carry a measured standard deviation rather than resting on a single run. This is the reference point that everything else is measured against.
+    A RoBERTa model trained to verify claims without any retrieved evidence, and a second RoBERTa model trained on claim plus evidence pairs. Trained and evaluated on SciFact (F1, precision, recall), and additionally evaluated zero-shot on SciFact-Open. Both classifiers were retrained under three seeds (42, 123, 7), so the baseline figures carry a measured standard deviation rather than resting on a single run. This is the reference point that everything else is measured against.
 
 ### Step 3: Evidence Retrieval
 
-Two retrieval methods are implemented:
+    Two retrieval methods are implemented:
 
-- BM25: keyword-based sparse retrieval
-- Dense retrieval: semantic similarity via sentence-transformers (all-mpnet-base-v2)
+    - BM25: keyword-based sparse retrieval
+    - Dense retrieval: semantic similarity via sentence-transformers (all-mpnet-base-v2)
 
-For each claim, a candidate pool of documents is retrieved from the evidence corpus using each method. These are the standard baselines the stance reranker is compared against.
+    For each claim, a candidate pool of documents is retrieved from the evidence corpus using each method. These are the standard baselines the stance reranker is compared against.
 
 ### Step 4: Stance-Aware Reranking
 
-After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents sink in the ordering, or in hard mode are removed outright, so that documents which actually take a stance on the claim are prioritised before verification.
+    After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents sink in the ordering, or in hard mode are removed outright, so that documents which actually take a stance on the claim are prioritised before verification.
 
-The motivation is that topical similarity may not be enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. Stance scoring is intended to catch this. Whether it actually improves evidence selection is one of the questions the project investigates.
+    The motivation is that topical similarity may not be enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. Stance scoring is intended to catch this. Whether it actually improves evidence selection is one of the questions the project investigates.
 
-| Retrieval condition | What it does |
-|---|---|
-| BM25 | keyword baseline, no filtering |
-| Dense | semantic similarity baseline, no filtering |
-| Dense + stance reranking | semantic retrieval reordered by NLI stance scores |
+    | Retrieval condition | What it does |
+    |---|---|
+    | BM25 | keyword baseline, no filtering |
+    | Dense | semantic similarity baseline, no filtering |
+    | Dense + stance reranking | semantic retrieval reordered by NLI stance scores |
 
-Two modes are tested: soft, which reorders the candidate pool without removing anything, and hard, which discards documents whose neutral probability exceeds a threshold set either loosely at 0.5 or strictly at 0.8. Hard filtering proved unusable at either threshold, leaving 0.6 to 1.2 documents per claim and collapsing R@10 from 0.803 to 0.077. Soft reranking also harms top-rank recall but at least preserves the full pool, so it is the mode carried into the pipeline as the lesser damage rather than as an improvement.
+    Two modes are tested: soft, which reorders the candidate pool without removing anything, and hard, which discards documents whose neutral probability exceeds a threshold set either loosely at 0.5 or strictly at 0.8. Hard filtering proved unusable at either threshold, leaving 0.6 to 1.2 documents per claim and collapsing R@10 from 0.803 to 0.077. Soft reranking also harms top-rank recall but at least preserves the full pool, so it is the mode carried into the pipeline as the lesser damage rather than as an improvement.
 
 ### Step 5: RAG Pipeline
 
-The retrieved evidence is integrated into the verification model. Four pipeline variants are compared: no retrieval, BM25 + RoBERTa, Dense + RoBERTa, and Dense + stance reranking + RoBERTa. This is where the effect of retrieved evidence on final verification is measured end to end.
+    The retrieved evidence is integrated into the verification model. Four pipeline variants are compared: no retrieval, BM25 + RoBERTa, Dense + RoBERTa, and Dense + stance reranking + RoBERTa. This is where the effect of retrieved evidence on final verification is measured end to end.
 
-An initial version used naive concatenation, which revealed that retrieval depth stopped mattering above roughly two documents because the context window saturated. That saturation was itself a finding, and it was addressed with per-document token budgeting so that k genuinely varies the evidence the model sees. The pipeline was also run across three seeds (42, 123, 7) to give the pipeline numbers a variance band rather than a single run.
+    An initial version used naive concatenation, which revealed that retrieval depth stopped mattering above roughly two documents because the context window saturated. That saturation was itself a finding, and it was addressed with per-document token budgeting so that k genuinely varies the evidence the model sees. The pipeline was also run across three seeds (42, 123, 7) to give the pipeline numbers a variance band rather than a single run.
 
-The variance study revealed that every retrieval condition has a seed standard deviation two to four times the claim-only baseline's, so retrieval-augmentation introduces instability the baseline does not have.
+    The variance study revealed that every retrieval condition has a seed standard deviation two to four times the claim-only baseline's, so retrieval-augmentation introduces instability the baseline does not have.
 
 ### Step 6: Controlled Experimental Matrix
 
-The pipeline variants are run under systematically varied retrieval depth:
+    The pipeline variants are run under systematically varied retrieval depth:
 
-| Variable | Values tested |
-|---|---|
-| Retrieval condition | no retrieval, BM25, dense, dense + stance |
-| k (number of docs retrieved) | 1, 3, 5, 10 |
-| Training seed | 42, 123, 7 |
+    | Variable | Values tested |
+    |---|---|
+    | Retrieval condition | no retrieval, BM25, dense, dense + stance |
+    | k (number of docs retrieved) | 1, 3, 5, 10 |
+    | Training seed | 42, 123, 7 |
 
-Metric: macro F1. Run on both datasets. The matrix spans four conditions by four depths on each of the two corpora, and was run in full under all three seeds, so every cell carries a mean and standard deviation rather than a single value. The stance threshold is not swept here: soft reranking retains all documents, so the threshold does not filter and the matrix runs at the loose setting only.
+    Metric: macro F1. Run on both datasets. The matrix spans four conditions by four depths on each of the two corpora, and was run in full under all three seeds, so every cell carries a mean and standard deviation rather than a single value. The stance threshold is not swept here: soft reranking retains all documents, so the threshold does not filter and the matrix runs at the loose setting only.
 
-Two readings from the original seed-42 run did not survive averaging: retrieval's apparent advantage at k = 1 on SciFact, and the corpus-dependent optimum on SciFact-Open. Both are reported in `results/step6_results.md` alongside the seed-42 tables.
+    Two readings from the original seed-42 run did not survive averaging: retrieval's apparent advantage at k = 1 on SciFact, and the corpus-dependent optimum on SciFact-Open. Both are reported in `results/step6_results.md` alongside the seed-42 tables.
 
-The multi-seed re-run was added late in the project specifically to test whether the depth findings were seed artefacts. It confirmed the overload trend and the SciFact-Open result, and overturned two readings that had been taken from seed 42 alone. The run is recorded in `notebooks/Step6_experiments_multiseed.ipynb`.
+    The multi-seed re-run was added late in the project specifically to test whether the depth findings were seed artefacts. It confirmed the overload trend and the SciFact-Open result, and overturned two readings that had been taken from seed 42 alone. The run is recorded in `notebooks/Step6_experiments_multiseed.ipynb`.
 
 ### Step 7: Failure Taxonomy
 
-Four failure categories, defined before running experiments:
+    Four failure categories, defined before running experiments:
 
-1. Irrelevant retrieval: retrieved documents are not really about the claim
-2. Contradictory retrieval: retrieved documents argue against the correct label
-3. Evidence overload: too many documents confuse or dilute the model
-4. Confident wrong prediction: model is wrong despite having reasonably relevant evidence
+    1. Irrelevant retrieval: retrieved documents are not really about the claim
+    2. Contradictory retrieval: retrieved documents argue against the correct label
+    3. Evidence overload: too many documents confuse or dilute the model
+    4. Confident wrong prediction: model is wrong despite having reasonably relevant evidence
 
-70 errors from SciFact (35 each from the dense and dense-plus-rerank conditions) are manually labelled into these categories as the primary failure analysis, and all 70 were then relabelled from scratch in a blind second pass, giving an intra-annotator agreement of Cohen's kappa 0.914 over the 65 categorised rows. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The reranker was designed to reduce the first two categories. Both instead roughly double as a share of each condition's errors, while the two downstream categories fall, so it moves failures upstream rather than removing them. The samples are small (around 33 per condition) and the Wilson intervals are wide, so the shift is directional rather than precisely quantified.
+    70 errors from SciFact (35 each from the dense and dense-plus-rerank conditions) are manually labelled into these categories as the primary failure analysis, and all 70 were then relabelled from scratch in a blind second pass, giving an intra-annotator agreement of Cohen's kappa 0.914 over the 65 categorised rows. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The reranker was designed to reduce the first two categories. Both instead roughly double as a share of each condition's errors, while the two downstream categories fall, so it moves failures upstream rather than removing them. The samples are small (around 33 per condition) and the Wilson intervals are wide, so the shift is directional rather than precisely quantified.
 
 ### Step 8: Retrieval-Aware Confidence Scoring
 
-RoBERTa outputs a softmax probability distribution, and the highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking changes the confidence–correctness relationship, and whether a simple flagging rule catches more errors. The central finding is an inversion: on refutation claims the classifier is on average more confident when wrong than when right, in all eight condition-by-corpus cells, and reranking extends the reversal to a second class on SciFact.
+    RoBERTa outputs a softmax probability distribution, and the highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking changes the confidence–correctness relationship, and whether a simple flagging rule catches more errors. The central finding is an inversion: on refutation claims the classifier is on average more confident when wrong than when right, in all eight condition-by-corpus cells, and reranking extends the reversal to a second class on SciFact.
 
 ### Step 9: Cross-Dataset Comparison
 
-Three questions are asked of the two corpora side by side: does reranking help consistently as retrieval difficulty scales, do the failure indicators shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. The main finding is that on the large corpus no retrieval configuration beats the no-retrieval baseline, so retrieval becomes counterproductive at scale rather than merely harder, and the confidence inversion on refutation claims holds on both corpora. Framing is retrieval-difficulty generalisation; domain generalisation is handled by Step 10.
+    Three questions are asked of the two corpora side by side: does reranking help consistently as retrieval difficulty scales, do the failure indicators shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. The main finding is that on the large corpus no retrieval configuration beats the no-retrieval baseline, so retrieval becomes counterproductive at scale rather than merely harder, and the confidence inversion on refutation claims holds on both corpora. Framing is retrieval-difficulty generalisation; domain generalisation is handled by Step 10.
 
 ### Step 10: Real-World Application
 
-30 real seafood and sustainability claims collected from public social media, run through the same pipeline and corpus under three conditions and four depths. Five expectations were fixed in advance, each carried in from an earlier step, and the claims were selected to exercise different failure modes rather than sampled at random, so the accuracy figures illustrate transferability rather than estimating deployment performance. The clearest result is that the confidence inversion on refutation claims reproduces in a domain the pipeline was never built for: the model scored zero of seven on the true-CONTRADICT claims in all nine condition-by-depth runs, at mean confidence rising to 0.96.
+    30 real seafood and sustainability claims collected from public social media, run through the same pipeline and corpus under three conditions and four depths. Five expectations were fixed in advance, each carried in from an earlier step, and the claims were selected to exercise different failure modes rather than sampled at random, so the accuracy figures illustrate transferability rather than estimating deployment performance. The clearest result is that the confidence inversion on refutation claims reproduces in a domain the pipeline was never built for: the model scored zero of seven on the true-CONTRADICT claims in all nine condition-by-depth runs, at mean confidence rising to 0.96.
  
   ---
  
