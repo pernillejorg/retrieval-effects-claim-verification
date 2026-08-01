@@ -68,7 +68,7 @@ SciFact-Open:
 
 ### 1. For plain retrieval, fewer documents are better (performance declines with k)
 
-The clearest result of the sweep: for the non-reranked retrieval conditions (BM25 and dense), macro F1 **peaks at the shallowest depth and declines as k grows on SciFact**, while on SciFact-Open dense is flat within noise. On SciFact, dense falls from 0.5478 at k = 1 to 0.4565 at k = 10, and BM25 from 0.5375 to 0.4449, both roughly monotone decreases of about 0.09 across the range and larger than any condition's standard deviation. On SciFact-Open the same downward trend holds for BM25 (0.4972 to 0.4734), while dense is flat within noise across the sweep. Supplying more retrieved documents dilutes rather than enriches the evidence: additional documents introduce more noise and, under the per-document budget, shorter fragments of each, and the classifier's performance suffers. This is a direct, empirical demonstration of the **"evidence overload"** failure mode, one of the four failure categories defined for Step 7, and it is a counterintuitive, decision-relevant finding: for scientific claim verification, one well-chosen document beats many.
+The clearest result of the sweep: for the non-reranked retrieval conditions (BM25 and dense), macro F1 **peaks at the shallowest depth and declines as k grows on SciFact**, while on SciFact-Open dense is flat within noise. On SciFact, dense falls from 0.5478 at k = 1 to 0.4565 at k = 10, and BM25 from 0.5375 to 0.4449, both roughly monotone decreases of about 0.09 across the range and larger than any condition's standard deviation. On SciFact-Open the same downward trend holds for BM25 (0.4972 to 0.4734). Supplying more retrieved documents dilutes rather than enriches the evidence: additional documents introduce more noise and, under the per-document budget, shorter fragments of each, and the classifier's performance suffers. This is a direct, empirical demonstration of the **"evidence overload"** failure mode, one of the four failure categories defined for Step 7, and it is a counterintuitive, decision-relevant finding: for scientific claim verification, one well-chosen document beats many.
 
 ### 2. Retrieval's apparent advantage at k = 1 does not survive averaging
 
@@ -186,6 +186,14 @@ overwrite one another.
 - Run logs: `results/step6_matrix/log_*_k{1,3,5,10}.txt`
 - Multi-seed matrix: `results/step6_matrix/step6_multiseed_matrix/k{1,3,5,10}/matrix_{scifact,scifact_open}_seed{123,7}_k{1,3,5,10}_thr0_5.json`
 - Assembled summary: `results/step6_matrix/step6_multiseed_matrix/matrix_multiseed_summary.json`
+
+The multi-seed runs applied a small runtime patch to `models/retrieval.py`,
+shown in cell 7 of `Step6_experiments_multiseed.ipynb`, which caches the dense
+embedding matrix so the 500,000-document corpus is encoded once rather than once
+per run. The cache is keyed on embedding model and corpus size and is only used
+when the stored document ids match exactly, so it changes runtime and not the
+embeddings or any reported result. The patch is not applied in the committed
+`retrieval.py`, which re-encodes on every run as before.
 
 ## Note on run logs
 
