@@ -14,14 +14,17 @@ Most fact-checking research assumes oracle evidence, meaning clean, perfectly re
 
 The project is centred on the effect and failure behaviour side of RAG. The work is focused on characterising where and why RAG fails for scientific claim verification, and on the conditions under which retrieval helps versus the failure modes it can introduce (such as evidence overload, degradation at scale, and unstable predictions), rather than re-confirming that retrieval helps, which is already well established. Part of the motivation is practical: several companies interested in adopting RAG for fact-checking appear largely unaware of its failure modes and cost/benefit trade-offs. There is real value in evidence about when these components actually hurt, so that adopting RAG becomes an informed decision rather than an assumption.
 
-A key component under investigation is a stance-aware reranking step: after standard retrieval, a zero-shot NLI model scores whether each retrieved document actually takes a *stance* on the claim, with the intention of filtering out documents that are topically related but say nothing specific about the claim. The project studies retrieval, reranking, retrieval depth, and confidence behaviour across two scientific claim datasets of very different corpus sizes, and examines whether the observed behaviour transfers to an out-of-domain real-world setting.
+A key component under investigation is a stance-aware reranking step: after standard retrieval, a zero-shot NLI model scores whether each retrieved document actually takes a *stance* on the claim, with the intention of demoting documents that are topically related but say nothing specific about the claim. The project studies retrieval, reranking, retrieval depth, and confidence behaviour across two scientific claim datasets of very different corpus sizes, and examines whether the observed behaviour transfers to an out-of-domain real-world setting.
 
 **The thesis question:**
 *This project asks not whether retrieval improves automated fact-checking, which prior work largely assumes, but under what conditions it fails: it systematically characterises the failure behaviour of retrieval-augmented scientific claim verification across retrieval method, retrieval depth, and corpus scale, links each failure to a defined failure category, and tests whether the behaviour holds on out-of-domain real-world claims, so that the reliability of RAG for automated fact-checking can be assessed rather than assumed.*
 
+**Scope:** 
+Ten pipeline stages evaluated across two corpora differing 100-fold in size; a 32-cell retrieval-depth matrix, four conditions by four depths on each of two corpora, run under three training seeds; both classifiers and the full pipeline retrained and re-run at each seed; 70 hand-annotated errors with a blind second annotation pass (Cohen's kappa 0.914); and a 30-claim out-of-domain case study with five pre-registered expectations. Three hypotheses were fixed before any experiment. Two were refuted, and both refutations are reported as findings rather than revised away.
+
   ---
  
-  ## Project Timeline
+## Project Timeline
  
   ```mermaid
   gantt
@@ -143,7 +146,7 @@ rag-claim-verification/
 ```
   ---
  
-  ## Methodology
+## Methodology
  
 ### Step 1: Datasets
 
@@ -157,7 +160,7 @@ Core experiments run on both datasets. Manual failure annotation is done on SciF
 
 ### Step 2: Baseline Model
 
-A RoBERTa model trained to verify claims without any retrieved evidence, and a second RoBERTa model trained on claim plus evidence pairs. Trained and evaluated on SciFact (F1, precision, recall), and additionally evaluated zero-shot on SciFact-Open. This is the reference point that everything else is measured against.
+A RoBERTa model trained to verify claims without any retrieved evidence, and a second RoBERTa model trained on claim plus evidence pairs. Trained and evaluated on SciFact (F1, precision, recall), and additionally evaluated zero-shot on SciFact-Open. Both classifiers were retrained under three seeds (42, 123, 7), so the baseline figures carry a measured standard deviation rather than resting on a single run. This is the reference point that everything else is measured against.
 
 ### Step 3: Evidence Retrieval
 
@@ -170,23 +173,25 @@ For each claim, a candidate pool of documents is retrieved from the evidence cor
 
 ### Step 4: Stance-Aware Reranking
 
-After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents are filtered out or downranked, so that documents which actually take a stance on the claim are prioritised before verification.
+After standard retrieval, a filtering step using `cross-encoder/nli-deberta-v3-small` (Hugging Face) scores each retrieved document for entailment, contradiction, or neutral. Neutral documents sink in the ordering, or in hard mode are removed outright, so that documents which actually take a stance on the claim are prioritised before verification.
 
-The motivation is that topical similarity may not be enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. The stance filter is intended to catch this. Whether it actually improves evidence selection is one of the questions the project investigates.
+The motivation is that topical similarity may not be enough. A document about omega-3 and cardiovascular health might be retrieved for a related claim but say nothing specific about it. Stance scoring is intended to catch this. Whether it actually improves evidence selection is one of the questions the project investigates.
 
 | Retrieval condition | What it does |
 |---|---|
 | BM25 | keyword baseline, no filtering |
 | Dense | semantic similarity baseline, no filtering |
-| Dense + stance reranking | semantic retrieval filtered by NLI stance scores |
+| Dense + stance reranking | semantic retrieval reordered by NLI stance scores |
 
-Two filter thresholds are tested, loose and strict, alongside a soft mode that reorders without removing anything. Hard filtering proved unusable at either threshold, discarding around nine of ten documents, so soft reranking is the mode carried into the pipeline.
+Two modes are tested: soft, which reorders the candidate pool without removing anything, and hard, which discards documents whose neutral probability exceeds a threshold set either loosely at 0.5 or strictly at 0.8. Hard filtering proved unusable at either threshold, leaving 0.6 to 1.2 documents per claim and collapsing R@10 from 0.803 to 0.077. Soft reranking also harms top-rank recall but at least preserves the full pool, so it is the mode carried into the pipeline as the lesser damage rather than as an improvement.
 
 ### Step 5: RAG Pipeline
 
 The retrieved evidence is integrated into the verification model. Four pipeline variants are compared: no retrieval, BM25 + RoBERTa, Dense + RoBERTa, and Dense + stance reranking + RoBERTa. This is where the effect of retrieved evidence on final verification is measured end to end.
 
 An initial version used naive concatenation, which revealed that retrieval depth stopped mattering above roughly two documents because the context window saturated. That saturation was itself a finding, and it was addressed with per-document token budgeting so that k genuinely varies the evidence the model sees. The pipeline was also run across three seeds (42, 123, 7) to give the pipeline numbers a variance band rather than a single run.
+
+The variance study revealed that every retrieval condition has a seed standard deviation two to four times the claim-only baseline's, so retrieval-augmentation introduces instability the baseline does not have.
 
 ### Step 6: Controlled Experimental Matrix
 
@@ -198,9 +203,11 @@ The pipeline variants are run under systematically varied retrieval depth:
 | k (number of docs retrieved) | 1, 3, 5, 10 |
 | Training seed | 42, 123, 7 |
 
-Metric: macro F1. Run on both datasets. The matrix was run under all three seeds, so every cell carries a mean and standard deviation rather than a single value. The stance threshold is not swept here: soft reranking retains all documents, so the threshold does not filter and the matrix runs at the loose setting only.
+Metric: macro F1. Run on both datasets. The matrix spans four conditions by four depths on each of the two corpora, and was run in full under all three seeds, so every cell carries a mean and standard deviation rather than a single value. The stance threshold is not swept here: soft reranking retains all documents, so the threshold does not filter and the matrix runs at the loose setting only.
 
 Two readings from the original seed-42 run did not survive averaging: retrieval's apparent advantage at k = 1 on SciFact, and the corpus-dependent optimum on SciFact-Open. Both are reported in `results/step6_results.md` alongside the seed-42 tables.
+
+The multi-seed re-run was added late in the project specifically to test whether the depth findings were seed artefacts. It confirmed the overload trend and the SciFact-Open result, and overturned two readings that had been taken from seed 42 alone. The run is recorded in `notebooks/Step6_experiments_multiseed.ipynb`.
 
 ### Step 7: Failure Taxonomy
 
@@ -211,15 +218,15 @@ Four failure categories, defined before running experiments:
 3. Evidence overload: too many documents confuse or dilute the model
 4. Confident wrong prediction: model is wrong despite having reasonably relevant evidence
 
-70 errors from SciFact (35 each from the dense and dense-plus-rerank conditions) are manually labelled into these categories as the primary failure analysis, with a second blind annotation pass giving an intra-annotator agreement of Cohen's kappa 0.914. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The analysis examines which retrieval conditions produce which failure types, and whether stance reranking affects the first two categories in particular.
+70 errors from SciFact (35 each from the dense and dense-plus-rerank conditions) are manually labelled into these categories as the primary failure analysis, and all 70 were then relabelled from scratch in a blind second pass, giving an intra-annotator agreement of Cohen's kappa 0.914 over the 65 categorised rows. For SciFact-Open, quantitative failure rates are compared across conditions without full manual annotation, which is an honest scoping decision for a solo project. The reranker was designed to reduce the first two categories. Both instead roughly double as a share of each condition's errors, while the two downstream categories fall, so it moves failures upstream rather than removing them. The samples are small (around 33 per condition) and the Wilson intervals are wide, so the shift is directional rather than precisely quantified.
 
 ### Step 8: Retrieval-Aware Confidence Scoring
 
-RoBERTa outputs a softmax probability distribution, and the highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking changes the confidence–correctness relationship, and whether a simple flagging rule (mark predictions below a threshold as unreliable) catches more errors.
+RoBERTa outputs a softmax probability distribution, and the highest probability is used as a confidence score. The analysis looks at whether low-confidence predictions are more likely to be wrong, whether stance reranking changes the confidence–correctness relationship, and whether a simple flagging rule catches more errors. The central finding is an inversion: on refutation claims the classifier is on average more confident when wrong than when right, in all eight condition-by-corpus cells, and reranking extends the reversal to a second class on SciFact.
 
 ### Step 9: Cross-Dataset Comparison
 
-Once results are in for both datasets, the key questions are: does reranking help consistently as retrieval difficulty scales, do the failure indicators shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. The main finding is that on the large corpus no retrieval configuration beats the no-retrieval baseline, so retrieval becomes counterproductive at scale rather than merely harder, and the confidence inversion on refutation claims holds on both corpora. Framing is retrieval-difficulty generalisation; domain generalisation is handled by Step 10.
+Three questions are asked of the two corpora side by side: does reranking help consistently as retrieval difficulty scales, do the failure indicators shift as the corpus grows roughly 100 times larger, and does the confidence–correctness pattern hold under harder retrieval. The main finding is that on the large corpus no retrieval configuration beats the no-retrieval baseline, so retrieval becomes counterproductive at scale rather than merely harder, and the confidence inversion on refutation claims holds on both corpora. Framing is retrieval-difficulty generalisation; domain generalisation is handled by Step 10.
 
 ### Step 10: Real-World Application
 
@@ -227,7 +234,7 @@ Once results are in for both datasets, the key questions are: does reranking hel
  
   ---
  
-  ## Models and Libraries
+## Models and Libraries
  
 - `transformers` + `roberta-base`: claim verification model
 - `rank_bm25`: BM25 retrieval
@@ -238,31 +245,31 @@ Once results are in for both datasets, the key questions are: does reranking hel
 
 ---
  
-  ## What Goes Beyond Prior Work
+## What Goes Beyond Prior Work
  
-  | | MAPLE | Stammbach & Neumann (2019) | This project |
-  |---|---|---|---|
-  | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
-  | Retrieval analysis | Drop under retrieved evidence noted for baselines | Single noisy vs filtered evidence comparison | Controlled matrix: method, depth k, three seeds |
-  | Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
-  | Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
-  | Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
-  | Cross-dataset | Not possible | Not possible | Core findings compared across both |
-  | Real-world domain | Not done | Not done | Seafood/sustainability social media claims |
-  | Retrieval value at scale | Not studied | Not studied | Shown counterproductive on the large corpus |
+| | MAPLE | Stammbach & Neumann (2019) | This project |
+|---|---|---|---|
+| Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
+| Retrieval analysis | Drop under retrieved evidence noted for baselines | Single noisy vs filtered evidence comparison | Controlled matrix: method, depth k, three seeds |
+| Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
+| Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
+| Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
+| Cross-dataset | Not possible | Not possible | Core findings compared across both |
+| Real-world domain | Not done | Not done | Seafood/sustainability social media claims |
+| Retrieval value at scale | Not studied | Not studied | Shown counterproductive on the large corpus |
  
   ---
  
-  ## Status
+## Status
  
-  - [x] Step 1: Dataset loading and preprocessing
-  - [x] Step 2: RoBERTa baseline
-  - [x] Step 3: BM25 + dense retrieval
-  - [x] Step 4: Stance-aware reranker
-  - [x] Step 5: Full RAG pipeline
-  - [x] Step 6: Experimental matrix
-  - [x] Step 7: Failure taxonomy and annotation
-  - [x] Step 8: Confidence scoring analysis
-  - [x] Step 9: Cross-dataset comparison
-  - [x] Step 10: Real-world case study
+- [x] Step 1: Dataset loading and preprocessing
+- [x] Step 2: RoBERTa baseline
+- [x] Step 3: BM25 + dense retrieval
+- [x] Step 4: Stance-aware reranker
+- [x] Step 5: Full RAG pipeline
+- [x] Step 6: Experimental matrix
+- [x] Step 7: Failure taxonomy and annotation
+- [x] Step 8: Confidence scoring analysis
+- [x] Step 9: Cross-dataset comparison
+- [x] Step 10: Real-world case study
  
