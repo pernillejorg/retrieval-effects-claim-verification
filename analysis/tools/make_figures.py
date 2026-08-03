@@ -1,6 +1,7 @@
 """
 Building the two Results figures directly from the saved result files.
 
+Relevance to the dissertation paper:
 Both figures are written as PGF, so matplotlib renders every label through LaTeX
 itself and the output stays vector and in the document's own font. Nothing is typed
 by hand: the depth sweep reads matrix_multiseed_summary.json and the per-label
@@ -71,19 +72,41 @@ def make_ksweep(summary_path, out_path):
         2, 1, figsize=(COLUMN_WIDTH_IN, 3.0), sharex=True
     )
 
+    #offsetting the three retrieval series slightly on x so their error bars sit
+    #side by side rather than overlapping where the conditions converge
+    offsets = {"bm25_roberta": -0.18, "dense_roberta": 0.0,
+               "dense_reranked_roberta": 0.18}
+
     for axis, (dataset, title) in zip(axes, CORPORA):
         for key, label, colour, style, marker in CONDITIONS:
             means = [summary[dataset][key][str(k)]["mean"] for k in DEPTHS]
             deviations = [summary[dataset][key][str(k)]["sd"] for k in DEPTHS]
+
+            if key == "no_retrieval":
+                #drawing the constant baseline as a band, since repeating the same
+                #error bar at four depths says nothing the band does not
+                mean, deviation = means[0], deviations[0]
+                axis.axhspan(
+                    mean - deviation, mean + deviation,
+                    color="0.88", zorder=0,
+                )
+                axis.axhline(
+                    mean, color=colour, linestyle=style, label=label,
+                )
+                continue
+
+            shifted = [k + offsets[key] for k in DEPTHS]
             axis.errorbar(
-                DEPTHS, means, yerr=deviations,
+                shifted, means, yerr=deviations,
                 label=label, color=colour, linestyle=style,
-                marker=None if marker == "none" else marker,
-                markersize=2.5, capsize=1.5, elinewidth=0.5,
+                marker=marker, markersize=2.5, capsize=1.5, elinewidth=0.5,
             )
+
         axis.set_title(title)
         axis.set_ylabel("Macro F1")
         axis.set_ylim(0.30, 0.65)
+        #labelling every 0.1 so a reader can recover values between the curves
+        axis.set_yticks([0.3, 0.4, 0.5, 0.6])
         axis.grid(True, color="0.88")
         axis.set_axisbelow(True)
 
@@ -91,7 +114,7 @@ def make_ksweep(summary_path, out_path):
     axes[1].set_xticks(DEPTHS)
     #placing the legend below both panels so neither plot area is obscured
     axes[1].legend(
-        loc="upper center", bbox_to_anchor=(0.5, -0.32),
+        loc="upper center", bbox_to_anchor=(0.5, -0.41),
         ncol=2, frameon=True, edgecolor="0.7",
     )
 
@@ -114,7 +137,7 @@ def read_by_label(csv_path):
 
 def make_bylabel(csv_dir, out_path):
     """Drawing confidence AUROC by true label, with a chance line at 0.5."""
-    figure, axes = plt.subplots(2, 1, figsize=(COLUMN_WIDTH_IN, 3.0))
+    figure, axes = plt.subplots(2, 1, figsize=(COLUMN_WIDTH_IN, 2.6))
 
     #shading from white to dark so the four conditions separate in greyscale
     fills = ["white", "0.80", "0.55", "0.30"]
@@ -137,14 +160,17 @@ def make_bylabel(csv_dir, out_path):
         axis.set_title(title.split(" (")[0])
         axis.set_ylabel("AUROC")
         axis.set_ylim(0, 1.05)
+        #labelling quarter points so the gradient across conditions is readable
+        axis.set_yticks([0, 0.25, 0.5, 0.75, 1.0])
         axis.set_xticks(list(positions))
         axis.set_xticklabels(LABELS)
         axis.grid(True, axis="y", color="0.88")
         axis.set_axisbelow(True)
 
+    #placing chance in the gap between the first two groups, clear of every bar
     axes[0].text(
-        len(LABELS) - 0.55, 0.52, "chance",
-        fontsize=6, style="italic", ha="right",
+        0.5, 0.53, "chance",
+        fontsize=6, style="italic", ha="center",
     )
     axes[1].legend(
         loc="upper center", bbox_to_anchor=(0.5, -0.18),
