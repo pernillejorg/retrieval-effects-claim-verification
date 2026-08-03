@@ -187,6 +187,10 @@ overwrite one another.
 - Multi-seed matrix: `results/step6_matrix/step6_multiseed_matrix/k{1,3,5,10}/matrix_{scifact,scifact_open}_seed{123,7}_k{1,3,5,10}_thr0_5.json`
 - Assembled summary: `results/step6_matrix/step6_multiseed_matrix/matrix_multiseed_summary.json`
 
+- Figure coordinates: `analysis/tools/emit_figure_coords.py`, which prints the
+  pgfplots coordinate lines used in the dissertation directly from the saved
+  results, so the figures are regenerated rather than retyped.
+
 The multi-seed runs applied a small runtime patch to `models/retrieval.py`,
 shown in cell 7 of `Step6_experiments_multiseed.ipynb`, which caches the dense
 embedding matrix so the 500,000-document corpus is encoded once rather than once

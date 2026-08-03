@@ -299,6 +299,7 @@ another; the aggregate metrics file additionally records `top_k` inside it.
   `results/step5_records_scifact_open_k3_thr0_5.json` (now including full document text and the
   exact classifier input, see the record-enrichment section above)
 - Part A (naive concatenation) results are retained separately for the saturation finding.
+- Document length measurement: `analysis/tools/measure_doc_lengths.py`
 
 ## Note on run logs
 
