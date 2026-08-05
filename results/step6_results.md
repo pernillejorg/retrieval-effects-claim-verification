@@ -99,7 +99,7 @@ The no-retrieval condition is identical at every k (SciFact 0.5242 ± 0.0141, Sc
 
 ### 5. On SciFact-Open, no retrieval still wins at every k
 
-Even at the retrieval conditions' best depths, no retrieval (mean 0.5938) remains above every retrieval condition at every k on SciFact-Open (the best retrieval mean is 0.5113 for reranking at k = 10, still 0.083 below the baseline). The Step 5 finding that retrieval does not help at scale is therefore robust across the entire depth sweep, not an artefact of one k. Depth tuning does not rescue retrieval on the large, hard corpus.
+Even at the retrieval conditions' best depths, no retrieval (mean 0.5938) remains above every retrieval condition at every k on SciFact-Open (the best retrieval mean is 0.5113 for reranking at k = 10, still 0.082 below the baseline). The Step 5 finding that retrieval does not help at scale is therefore robust across the entire depth sweep, not an artefact of one k. Depth tuning does not rescue retrieval on the large, hard corpus.
 
 ## Interpretation for the thesis
 
