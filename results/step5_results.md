@@ -60,7 +60,7 @@ This is a genuine finding rather than a mere implementation detail, and it is di
 | Dense | 0.5666 | 0.5881 |
 | Dense + rerank | 0.4939 | 0.4727 |
 
-These are valid results for the naive scheme, but because they saturate above k ≈ 2 documents they cannot support a study of retrieval depth. This motivated Part B.
+These are valid results for the naive scheme, but because they saturate almost immediately they cannot support a study of retrieval depth. This motivated Part B.
 
 ---
 
