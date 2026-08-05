@@ -45,9 +45,9 @@ Model 2 was trained on gold evidence but is fed **retrieved** evidence here, whi
 
 The first implementation concatenated retrieved documents whole, adding each document in rank order until the 512-token input limit was reached, then stopping. Running the pipeline at k = 3, k = 5 and k = 10 under this scheme produced **identical results** at every k above a small value.
 
-Investigation showed why. Retrieved abstracts have a median length of 306 tokens on SciFact (IQR 230–398, n = 900) and 282 on SciFact-Open (IQR 214–370, n = 837). With a 512-token input and the claim consuming part of it, only about **two whole abstracts fit** before the budget is exhausted; any further retrieved documents are truncated away and never reach the classifier. Increasing k beyond ~2 therefore changes nothing, because the additional documents are discarded. **The effective retrieval depth is bounded by the context window, not by k.**
+Investigation showed why. Retrieved abstracts have a median length of 306 tokens on SciFact (IQR 230–398, n = 900) and 282 on SciFact-Open (IQR 214–370, n = 837). With a 512-token input and the claim consuming part of it, only about **one whole abstract fits** before the budget is exhausted, with the remainder filled by part of the second (median 1, mean 1.02 on SciFact and 1.25 on SciFact-Open; on 16% of SciFact claims not even the first document fits whole). Any further retrieved documents are truncated away and never reach the classifier. Increasing k beyond the second document therefore changes nothing, because the additional documents are discarded. **The effective retrieval depth is bounded by the context window, not by k.**
 
-This is a genuine finding rather than a mere implementation detail, and it is directly relevant to any pipeline that concatenates retrieved abstracts into a fixed context window. MAPLE (Zeng and Zubiaga, 2024) retrieves the top-3 BM25 abstracts for its SciFact_retrieved configuration and operates at a maximum length of 512 tokens, and it reports that its LLaMA 2 baseline degrades badly on that configuration partly because the lengthy retrieved instances may exceed that model's context length. The present analysis makes a related consequence explicit for the concatenation setting used here: with whole-document concatenation, the nominal retrieval depth (k = 3) overstates the evidence the model actually reads, because the context window saturates after roughly two abstracts. The effective depth in such setups is set by the model's context length, not by the retrieval parameter.
+This is a genuine finding rather than a mere implementation detail, and it is directly relevant to any pipeline that concatenates retrieved abstracts into a fixed context window. MAPLE (Zeng and Zubiaga, 2024) retrieves the top-3 BM25 abstracts for its SciFact_retrieved configuration and operates at a maximum length of 512 tokens, and it reports that its LLaMA 2 baseline degrades badly on that configuration partly because the lengthy retrieved instances may exceed that model's context length. The present analysis makes a related consequence explicit for the concatenation setting used here: with whole-document concatenation, the nominal retrieval depth (k = 3) overstates the evidence the model actually reads, because the context window saturates after roughly one abstract. The effective depth in such setups is set by the model's context length, not by the retrieval parameter.
 
 *Note on scope.* MAPLE is cited here only for its retrieval depth (k = 3), which anchors the depth used in this step to prior work on the same dataset. MAPLE is a methodologically different system: a few-shot method that fine-tunes T5-small with LoRA on unlabelled claim-evidence pairs, transforms the resulting semantic-similarity trajectories into features, and trains a logistic classifier on a handful of labelled examples. This project instead fully fine-tunes a RoBERTa classifier that reads claim and evidence directly. The two are therefore not comparable in absolute performance, and no such comparison is drawn; the connection is limited to retrieval depth.
 
@@ -60,7 +60,7 @@ This is a genuine finding rather than a mere implementation detail, and it is di
 | Dense | 0.5666 | 0.5881 |
 | Dense + rerank | 0.4939 | 0.4727 |
 
-These are valid results for the naive scheme, but because they saturate above k ≈ 2 they cannot support a study of retrieval depth. This motivated Part B.
+These are valid results for the naive scheme, but because they saturate above k ≈ 2 documents they cannot support a study of retrieval depth. This motivated Part B.
 
 ---
 
@@ -117,7 +117,7 @@ Per-class F1 (SciFact-Open, Part B):
 | Dense | 0.5666 | 0.5583 | 0.5881 | 0.5560 |
 | Dense + rerank | 0.4939 | 0.4879 | 0.4727 | 0.5075 |
 
-The no-retrieval condition is identical in both parts (it uses no documents, so truncation does not apply). The retrieval conditions are slightly **lower** under Part B on SciFact: spreading the budget across three documents means each is truncated to roughly a third of an abstract, so the model sees shorter fragments of more documents rather than the full text of ~2. That the naive scheme scores marginally higher at k = 3 is consistent with the saturation finding where Part A effectively used ~2 near-complete abstracts, while Part B uses 3 partial ones. The value of Part B is not a higher score at a single k, but that it makes k a
+The no-retrieval condition is identical in both parts (it uses no documents, so truncation does not apply). The retrieval conditions are slightly **lower** under Part B on SciFact: spreading the budget across three documents means each is truncated to roughly a third of an abstract, so the model sees shorter fragments of more documents rather than one near-complete abstract. That the naive scheme scores marginally higher at k = 3 is consistent with the saturation finding, since Part A effectively used one near-complete abstract, while Part B uses 3 partial ones. The value of Part B is not a higher score at a single k, but that it makes k a
 real variable, which is required for the Step 6 depth study. On SciFact-Open the reranked condition is actually higher under Part B, but the overall ordering of conditions is unchanged.
 
 ## Consistency check
@@ -164,7 +164,7 @@ Refuted, consistently and with a diagnosed mechanism, at both the retrieval leve
 ## Relevance to later steps
 
 **Step 6 (controlled experimental matrix).** 
-Step 5 fixes k = 3. Because Part B makes 'k' a genuine variable, Step 6 sweeps k ∈ {1, 3, 5, 10} across the retrieval conditions to study sensitivity to retrieval depth, including the breadth-vs-depth trade-off introduced by per-document budgeting (more documents, each shorter, as k grows). The Part A saturation finding is precisely why this sweep uses the Part B design: under Part A the sweep would be uninformative above k ≈ 2.
+Step 5 fixes k = 3. Because Part B makes 'k' a genuine variable, Step 6 sweeps k ∈ {1, 3, 5, 10} across the retrieval conditions to study sensitivity to retrieval depth, including the breadth-vs-depth trade-off introduced by per-document budgeting (more documents, each shorter, as k grows). The Part A saturation finding is precisely why this sweep uses the Part B design: under Part A the sweep would be uninformative above the second document.
 
 **Step 7 (failure taxonomy).** 
 The per-claim records saved by this pipeline (claim, true and predicted label, confidence, retrieved document ids and full retrieved text, the exact classifier input with its truncation flag, and for the reranked condition, the pre-rerank order and per-document stance scores) are the direct input to the failure taxonomy. These records were enriched and regenerated specifically to support Step 7 (see the record-enrichment section below). The
@@ -300,6 +300,7 @@ another; the aggregate metrics file additionally records `top_k` inside it.
   exact classifier input, see the record-enrichment section above)
 - Part A (naive concatenation) results are retained separately for the saturation finding.
 - Document length measurement: `analysis/tools/measure_doc_lengths.py`
+- Document packing under Part A: `analysis/tools/count_docs_that_fit.py`
 
 ## Note on run logs
 
