@@ -302,6 +302,7 @@ Accuracy and macro F1 are not interchangeable, as noted in the design section. O
   `confidence_by_label_*`, `paired_reranking_*`, `confidence_by_k_*`
 - Analysis script: `analysis/confidence_analysis.py`
 - Notebook: `notebooks/Step8_ConfidenceScoring.ipynb`
+- Per-label AUROC values are in `results/step8_confidence/confidence_by_label_{scifact,scifact_open}_k3.csv`.
 
 ## Reproduction
 
