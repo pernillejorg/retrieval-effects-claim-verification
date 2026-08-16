@@ -263,13 +263,13 @@ Full pinned versions are in `requirements.txt`.
 | | MAPLE | DOMLIN | This project |
 |---|---|---|---|
 | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
-| Retrieval analysis | Drop under retrieved evidence noted for baselines | Single noisy vs filtered evidence comparison | Controlled matrix: method, depth k, three seeds |
+| Retrieval analysis | Fixed depth k = 3, no sweep | Single comparison of five sentences against a thresholded variant | Controlled matrix: method, depth k, three seeds |
 | Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
 | Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
 | Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
 | Cross-dataset | Not possible | Not possible | Core findings compared across both |
 | Real-world domain | Not done | Not done | Seafood/sustainability social media claims |
-| Retrieval value at scale | Not studied | Not studied | Shown counterproductive on the large corpus |
+| Retrieval value at scale | Quality studied, not depth or scale | Not studied | Shown counterproductive on the large corpus |
  
 
 - **MAPLE** (Zeng and Zubiaga, 2024): a few-shot claim verification method using seq2seq training dynamics as classifier features
