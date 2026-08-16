@@ -263,7 +263,7 @@ Full pinned versions are in `requirements.txt`.
 | | MAPLE | DOMLIN | This project |
 |---|---|---|---|
 | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
-| Retrieval analysis | Fixed depth k = 3, no sweep | Single comparison of five sentences against a thresholded variant | Controlled matrix: method, depth k, three seeds |
+| Retrieval analysis | Fixed depth k = 3, no sweep | Single comparison of five sentences against a thresholded variant | Controlled matrix: method, depth k, stance threshold, three seeds |
 | Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
 | Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
 | Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
