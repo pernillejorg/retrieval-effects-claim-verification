@@ -4,7 +4,7 @@
 
  ---
 
-**Author:** Pernille Bergesen · **Supervisor:** Arkaitz Zubiaga
+**Author:** Pernille Bergesen · **Supervisor:** Dr. Arkaitz Zubiaga
 
  ---
 
