@@ -36,21 +36,21 @@ matplotlib.rcParams.update({
     "axes.titlesize": 8,
     "xtick.labelsize": 7,
     "ytick.labelsize": 7,
-    "legend.fontsize": 6.5,
+    "legend.fontsize": 7.5,
     "axes.linewidth": 0.6,
     "grid.linewidth": 0.4,
-    "lines.linewidth": 1.0,
+    "lines.linewidth": 1.3,
 })
 
 import matplotlib.pyplot as plt  # noqa: E402
 
-#keeping the plot order and styling the paper uses, so the two figures stay readable
-#in greyscale print as well as on screen
+#using consistent colours, line styles, and markers so the conditions remain
+#doing this for simplicity to distinguish on screen and in greyscale print
 CONDITIONS = [
-    ("no_retrieval", "No retrieval", "black", "--", "none"),
-    ("bm25_roberta", "BM25", "0.45", "-", "s"),
-    ("dense_roberta", "Dense", "black", "-", "o"),
-    ("dense_reranked_roberta", "Dense + rerank", "0.45", ":", "^"),
+    ("no_retrieval", "No retrieval", "#4D4D4D", "--", "none"),
+    ("bm25_roberta", "BM25", "#D19A3E", "-",  "s"),
+    ("dense_roberta", "Dense", "#4C78A8", "-",  "o"),
+    ("dense_reranked_roberta", "Dense + rerank", "#B05A67", ":", "^"),
 ]
 DEPTHS = [1, 3, 5, 10]
 LABELS = ["SUPPORT", "CONTRADICT", "NEI"]
@@ -69,7 +69,8 @@ def make_ksweep(summary_path, out_path):
         summary = json.load(f)
 
     figure, axes = plt.subplots(
-        2, 1, figsize=(COLUMN_WIDTH_IN, 3.0), sharex=True
+        #2, 1, figsize=(COLUMN_WIDTH_IN, 3.8), sharex=True
+        2, 1, figsize=(COLUMN_WIDTH_IN, 4.4), sharex=True
     )
 
     #offsetting the three retrieval series slightly on x so their error bars sit
@@ -88,7 +89,7 @@ def make_ksweep(summary_path, out_path):
                 mean, deviation = means[0], deviations[0]
                 axis.axhspan(
                     mean - deviation, mean + deviation,
-                    color="0.88", zorder=0,
+                    color="0.80", zorder=0,
                 )
                 axis.axhline(
                     mean, color=colour, linestyle=style, label=label,
@@ -99,7 +100,7 @@ def make_ksweep(summary_path, out_path):
             axis.errorbar(
                 shifted, means, yerr=deviations,
                 label=label, color=colour, linestyle=style,
-                marker=marker, markersize=2.5, capsize=1.5, elinewidth=0.5,
+                marker=marker, markersize=4.0, capsize=2.0, elinewidth=0.7,
             )
 
         axis.set_title(title)
@@ -113,6 +114,7 @@ def make_ksweep(summary_path, out_path):
     axes[1].set_xlabel("Retrieval depth $k$")
     axes[1].set_xticks(DEPTHS)
     #placing the legend below both panels so neither plot area is obscured
+    '''
     axes[1].legend(
         loc="upper center", bbox_to_anchor=(0.5, -0.41),
         ncol=2, frameon=True, edgecolor="0.7",
@@ -120,6 +122,15 @@ def make_ksweep(summary_path, out_path):
 
     figure.tight_layout()
     figure.savefig(out_path, bbox_inches="tight")
+    '''
+    axes[1].legend(
+        loc="upper center", bbox_to_anchor=(0.5, -0.32),
+        ncol=2, frameon=True, edgecolor="0.7",
+    )
+
+    #figure.tight_layout(pad=0.2)
+    figure.tight_layout(pad=0.2, rect=[0, 0.03, 1, 1])
+    figure.savefig(out_path, bbox_inches="tight", pad_inches=0.02)
     plt.close(figure)
     print(f"wrote {out_path}")
 
@@ -137,10 +148,9 @@ def read_by_label(csv_path):
 
 def make_bylabel(csv_dir, out_path):
     """Drawing confidence AUROC by true label, with a chance line at 0.5."""
-    figure, axes = plt.subplots(2, 1, figsize=(COLUMN_WIDTH_IN, 2.6))
+    figure, axes = plt.subplots(2, 1, figsize=(COLUMN_WIDTH_IN, 3.2))
 
-    #shading from white to dark so the four conditions separate in greyscale
-    fills = ["white", "0.80", "0.55", "0.30"]
+    #reusing the CONDITIONS colours thats above so a condition looks the same in both figures
     positions = range(len(LABELS))
     width = 0.2
 
@@ -148,12 +158,12 @@ def make_bylabel(csv_dir, out_path):
         scores = read_by_label(
             os.path.join(csv_dir, f"confidence_by_label_{dataset}_k3.csv")
         )
-        for index, ((key, label, _, _, _), fill) in enumerate(zip(CONDITIONS, fills)):
+        for index, (key, label, colour, _, _) in enumerate(CONDITIONS):
             values = [scores[(key, name)] for name in LABELS]
             offsets = [p + (index - 1.5) * width for p in positions]
             axis.bar(
                 offsets, values, width * 0.9,
-                label=label, facecolor=fill, edgecolor="black", linewidth=0.5,
+                label=label, facecolor=colour, edgecolor="black", linewidth=0.5,
             )
         #marking chance, since a bar below this line is the inversion the paper reports
         axis.axhline(0.5, color="black", linestyle="--", linewidth=0.8)
@@ -173,8 +183,8 @@ def make_bylabel(csv_dir, out_path):
         fontsize=6, style="italic", ha="center",
     )
     axes[1].legend(
-        loc="upper center", bbox_to_anchor=(0.5, -0.18),
-        ncol=4, frameon=True, edgecolor="0.7",
+        loc="upper center", bbox_to_anchor=(0.5, -0.20),
+        ncol=2, frameon=True, edgecolor="0.7",
     )
 
     figure.tight_layout()
