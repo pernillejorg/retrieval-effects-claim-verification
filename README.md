@@ -263,12 +263,12 @@ Full pinned versions are in `requirements.txt`.
 |---|---|---|---|
 | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
 | Retrieval analysis | Fixed depth k = 3, no sweep | Single comparison of five sentences against a thresholded variant | Controlled matrix: method, depth k, stance threshold, three seeds |
-| Stance-aware retrieval | Not done | Not done (supervised sentence ranker; entailment used only as verifier) | NLI filtering for scientific claims + full evaluation |
-| Failure taxonomy | Not done | Not done | Pre-defined 4-category taxonomy |
-| Confidence scoring | Not done | Not done | Retrieval-aware confidence signal |
-| Cross-dataset | Not possible | Not possible | Core findings compared across both |
-| Real-world domain | Not done | Not done | Seafood/sustainability social media claims |
-| Retrieval value at scale | Quality studied, not depth or scale | Not studied | Shown counterproductive on the large corpus |
+| Stance-aware retrieval | Not addressed | Entailment used as verifier, not as selection criterion | NLI filtering for scientific claims + full evaluation |
+| Failure taxonomy | Not addressed | Not addressed | Pre-defined 4-category taxonomy |
+| Confidence scoring | Not addressed | Not addressed | Retrieval-aware confidence signal |
+| Cross-dataset | Outside scope | Outside scope | Core findings compared across both |
+| Real-world domain | Not addressed | Not addressed | Seafood/sustainability social media claims |
+| Retrieval value at scale | Quality studied, not depth or scale | Outside scope | Shown counterproductive on the large corpus |
  
 
 - **MAPLE** (Zeng and Zubiaga, 2024): a few-shot claim verification method using seq2seq training dynamics as classifier features
