@@ -125,7 +125,26 @@ under three seeds takes several hours. Full arguments and seed settings for
 each stage are in the corresponding `results/stepN_results.md`.
 
 ---
- 
+
+### Why there is no executable
+
+This project is a set of research experiments rather than a deployable
+application, so there is no single executable to run. Each stage is a Python
+script invoked from the command line, as listed above, and each writes its
+output to `results/` for the next stage to read.
+
+To reproduce the work from scratch, install the pinned dependencies with
+`pip install -r requirements.txt`, download the datasets with
+`python download.py`, then run the stages in the order given. The notebooks
+in `notebooks/` show each stage as it was originally run in Google Colab,
+with the outputs preserved.
+
+The written analysis for every stage is in the corresponding
+`results/stepN_results.md`, so the findings can be read and checked without
+running anything.
+
+---
+
 ## Methodology
  
 ### Step 1: Datasets
