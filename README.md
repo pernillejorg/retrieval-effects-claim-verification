@@ -1,4 +1,4 @@
-# Empirical Analysis of Retrieval Effects and Failure Behaviour in RAG Models for Scientific Claim Verification
+# Empirical Analysis of Retrieval Effects and Failure Behaviour in Retrieval-Augmented Scientific Claim Verification
 
 *MSc Artificial Intelligence dissertation, Queen Mary University of London*
 
@@ -12,12 +12,12 @@
 
 Most fact-checking research assumes oracle evidence, meaning clean, perfectly retrieved documents handed to the model. This project looks at what actually happens under realistic retrieval conditions: when the system has to find its own evidence and sometimes gets it wrong.
 
-The project is centred on the effect and failure behaviour side of RAG. The work is focused on characterising where and why RAG fails for scientific claim verification, and on the conditions under which retrieval helps versus the failure modes it can introduce (such as evidence overload, degradation at scale, and unstable predictions), rather than re-confirming that retrieval helps, which is already well established. Part of the motivation is practical: several companies interested in adopting RAG for fact-checking appear largely unaware of its failure modes and cost/benefit trade-offs. There is real value in evidence about when these components actually hurt, so that adopting RAG becomes an informed decision rather than an assumption.
+The project is centred on the effect and failure behaviour side of retrieval augmentation. The work is focused on characterising where and why it fails for scientific claim verification, and on the conditions under which retrieval helps versus the failure modes it can introduce (such as evidence overload, degradation at scale, and unstable predictions), rather than re-confirming that retrieval helps, which is already well established.
 
 A key component under investigation is a stance-aware reranking step: after standard retrieval, a zero-shot NLI model scores whether each retrieved document actually takes a *stance* on the claim, with the intention of demoting documents that are topically related but say nothing specific about the claim. The project studies retrieval, reranking, retrieval depth, and confidence behaviour across two scientific claim datasets of very different corpus sizes, and examines whether the observed behaviour transfers to an out-of-domain real-world setting.
 
 **The thesis question:**
-*This project asks not whether retrieval improves automated fact-checking, which prior work largely assumes, but under what conditions it fails: it systematically characterises the failure behaviour of retrieval-augmented scientific claim verification across retrieval method, retrieval depth, and corpus scale, links each failure to a defined failure category, and tests whether the behaviour holds on out-of-domain real-world claims, so that the reliability of RAG for automated fact-checking can be assessed rather than assumed.*
+*This project asks not whether retrieval improves automated fact-checking, which prior work largely assumes, but under what conditions it fails: it systematically characterises the failure behaviour of retrieval-augmented scientific claim verification across retrieval method, retrieval depth, and corpus scale, links each failure to a defined failure category, and tests whether the behaviour holds on out-of-domain real-world claims, so that the reliability of retrieval augmentation for automated fact-checking can be assessed rather than assumed.*
 
 **Scope:** 
 Ten pipeline stages evaluated across two corpora differing 100-fold in size; a 32-cell retrieval-depth matrix, four conditions by four depths on each of two corpora, run under three training seeds; both classifiers and the full pipeline retrained and re-run at each seed; 70 hand-annotated errors with a blind second annotation pass (Cohen's kappa 0.914); and a 30-claim out-of-domain case study with five pre-registered expectations. Three hypotheses were fixed before any experiment. Two were refuted, and both refutations are reported as findings rather than revised away.
@@ -74,7 +74,7 @@ Ten pipeline stages evaluated across two corpora differing 100-fold in size; a 3
 ## Final Project Structure
 
 ```
-rag-claim-verification/
+retrieval-effects-claim-verification/
 ├── data/                           #dataset loading and preprocessing
 │   ├── README.md                   #dataset setup and loading instructions
 │   ├── utils.py                    #load_scifact / load_scifact_open loaders
@@ -84,8 +84,7 @@ rag-claim-verification/
 │   ├── baseline.py                 #RoBERTa classifiers (claim-only + claim+evidence)
 │   ├── retrieval.py                #BM25 + dense (mpnet) retrieval
 │   ├── reranker.py                 #stance-aware reranking via NLI
-│   ├── pipeline.py                 #full RAG pipeline (also used for the Step 6 k-sweep)
-│   └── pipeline1.py                #earlier pipeline variant (retained)
+│   └── pipeline.py                 #full pipeline (also used for the Step 6 k-sweep)
 ├── analysis/
 │   ├── annotation_guide.md         #failure category annotation rules
 │   ├── tools/                      #annotation and analysis helper scripts
@@ -185,7 +184,7 @@ The motivation is that topical similarity may not be enough. A document about om
 
 Two modes are tested: soft, which reorders the candidate pool without removing anything, and hard, which discards documents whose neutral probability exceeds a threshold set either loosely at 0.5 or strictly at 0.8. Hard filtering proved unusable at either threshold, leaving 0.6 to 1.2 documents per claim and collapsing R@10 from 0.803 to 0.077. Soft reranking also harms top-rank recall but at least preserves the full pool, so it is the mode carried into the pipeline as the lesser damage rather than as an improvement.
 
-### Step 5: RAG Pipeline
+### Step 5: Full Pipeline
 
 The retrieved evidence is integrated into the verification model. Four pipeline variants are compared: no retrieval, BM25 + RoBERTa, Dense + RoBERTa, and Dense + stance reranking + RoBERTa. This is where the effect of retrieved evidence on final verification is measured end to end.
 
@@ -233,8 +232,6 @@ Three questions are asked of the two corpora side by side: does reranking help c
 30 real seafood and sustainability claims collected from public social media, run through the same pipeline and corpus under three conditions and four depths. Five expectations were fixed in advance, each carried in from an earlier step, and the claims were selected to exercise different failure modes rather than sampled at random, so the accuracy figures illustrate transferability rather than estimating deployment performance. The clearest result is that the confidence inversion on refutation claims reproduces in a domain the pipeline was never built for: the model scored zero of seven on the true-CONTRADICT claims in all nine condition-by-depth runs, at mean confidence rising to 0.96.
  
   ---
- 
-## Models and Libraries
 
 ## Models and Libraries
 
@@ -260,7 +257,7 @@ Full pinned versions are in `requirements.txt`.
  
 ## What Goes Beyond Prior Work
  
-| | MAPLE | DOMLIN | This project |
+| | MAPLE | Stammbach and Neumann | This project |
 |---|---|---|---|
 | Datasets | FEVER, cFEVER, SciFact (oracle and retrieved) | FEVER (Wikipedia) | SciFact + SciFact-Open |
 | Retrieval analysis | Fixed depth k = 3, no sweep | Single comparison of five sentences against a thresholded variant | Controlled matrix: method, depth k, stance threshold, three seeds |
@@ -273,7 +270,7 @@ Full pinned versions are in `requirements.txt`.
  
 
 - **MAPLE** (Zeng and Zubiaga, 2024): a few-shot claim verification method using seq2seq training dynamics as classifier features
-- **DOMLIN** (Stammbach and Neumann, 2019): a FEVER shared-task system built on a supervised sentence ranker followed by an entailment classifier
+- **Stammbach and Neumann** (2019), the DOMLIN system: a FEVER shared-task entry built on a supervised sentence ranker followed by an entailment classifier
 
 Both are systems proposed to verify claims better. This project holds the task fixed and varies retrieval instead, so the comparison is one of scope: neither prior system set out to characterise how retrieval fails, which is the question asked here.
 
@@ -285,7 +282,7 @@ Both are systems proposed to verify claims better. This project holds the task f
 - [x] Step 2: RoBERTa baseline
 - [x] Step 3: BM25 + dense retrieval
 - [x] Step 4: Stance-aware reranker
-- [x] Step 5: Full RAG pipeline
+- [x] Step 5: Full pipeline
 - [x] Step 6: Experimental matrix
 - [x] Step 7: Failure taxonomy and annotation
 - [x] Step 8: Confidence scoring analysis
