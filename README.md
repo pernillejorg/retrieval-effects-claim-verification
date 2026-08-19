@@ -96,7 +96,35 @@ retrieval-effects-claim-verification/
 ├── README.md
 └── requirements.txt
 ```
-  ---
+---
+
+## Running the Project
+
+Install dependencies, then run the stages in order. Each script writes to
+`results/`, and the later analyses read those files rather than re-invoking
+models.
+
+```bash
+pip install -r requirements.txt
+```
+
+| Stage | Command |
+|---|---|
+| 2. Baseline | `python models/baseline.py --dataset scifact` |
+| 3. Retrieval | `python models/retrieval.py --dataset scifact` |
+| 4. Reranking | `python models/reranker.py --dataset scifact --mode soft` |
+| 5. Pipeline | `python models/pipeline.py --dataset scifact --top_k 3` |
+| 7. Failure taxonomy | `python analysis/failure_taxonomy.py` |
+| 8. Confidence | `python analysis/confidence_analysis.py` |
+| 9. Cross-corpus | `python analysis/cross_corpus.py` |
+| 10. Case study | `python realworld/seafood_claims.py --claims_csv realworld/seafood_claims.csv` |
+
+All stages were run on a Google Colab GPU. Encoding the 500,000-document
+SciFact-Open corpus takes roughly 40 minutes, and the full depth matrix
+under three seeds takes several hours. Full arguments and seed settings for
+each stage are in the corresponding `results/stepN_results.md`.
+
+---
  
 ## Methodology
  
