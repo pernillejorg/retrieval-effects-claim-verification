@@ -133,15 +133,16 @@ application, so there is no single executable to run. Each stage is a Python
 script invoked from the command line, as listed above, and each writes its
 output to `results/` for the next stage to read.
 
-To reproduce the work from scratch, install the pinned dependencies with
-`pip install -r requirements.txt`, download the datasets with
-`python download.py`, then run the stages in the order given. The notebooks
-in `notebooks/` show each stage as it was originally run in Google Colab,
-with the outputs preserved.
+To reproduce the work, install the pinned dependencies with
+`pip install -r requirements.txt`. SciFact is fetched automatically from the
+HuggingFace Hub on first use. SciFact-Open is not on the Hub, so its corpus
+files must be placed under `data/scifact_open/cache/` manually, as described
+in `data/README.md`. The stages can then be run in the order given above.
 
-The written analysis for every stage is in the corresponding
-`results/stepN_results.md`, so the findings can be read and checked without
-running anything.
+The notebooks in `notebooks/` show each stage as it was originally run in
+Google Colab, with the outputs preserved. The written analysis for every
+stage is in the corresponding `results/stepN_results.md`, so the findings
+can be read and checked without running anything.
 
 ---
 
