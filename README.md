@@ -114,6 +114,7 @@ pip install -r requirements.txt
 | 3. Retrieval | `python models/retrieval.py --dataset scifact` |
 | 4. Reranking | `python models/reranker.py --dataset scifact --mode soft` |
 | 5. Pipeline | `python models/pipeline.py --dataset scifact --top_k 3` |
+| 6. Depth matrix | `python models/pipeline.py --dataset scifact --top_k 1` (repeat for k = 3, 5, 10) |
 | 7. Failure taxonomy | `python analysis/failure_taxonomy.py` |
 | 8. Confidence | `python analysis/confidence_analysis.py` |
 | 9. Cross-corpus | `python analysis/cross_corpus.py` |
